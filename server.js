@@ -26,6 +26,7 @@ const MODEL         = process.env.MODEL || 'claude-sonnet-4-6';
 // same as BBZ build 50). Keys always present so AUTH_ENABLED stays true; a user whose PW_* is
 // unset simply cannot sign in. NOTE: confirm/replace the Sicora client email below.
 const USERS = {
+  'conor@astoriaadvertising.co': process.env.PW_CONOR,
   'robert@sicoraconsulting.com': process.env.PW_ROBERT,
   'magnus@sicoraconsulting.com': process.env.PW_MAGNUS,
   'lorri@sicoraconsulting.com':  process.env.PW_LORRI,
@@ -35,7 +36,7 @@ const USERS = {
 };
 const AUTH_ENABLED = true; // always gate this client report
 const AUTH_SALT = process.env.AUTH_SALT || 'sicora-dash-v1';
-const BUILD = 2; // bump every deploy; surfaced in the footer and /api/health
+const BUILD = 3; // bump every deploy; surfaced in the footer and /api/health
 
 const LOGIN_PAGE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sicora Consulting — Performance Dashboard</title>

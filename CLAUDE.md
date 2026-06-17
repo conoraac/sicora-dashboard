@@ -33,11 +33,11 @@ No CallRail.
 
 ## Auth
 
-Env-only, fails closed (no hardcoded fallbacks). `USERS` in server.js → env var: robert@sicoraconsulting.com (PW_ROBERT), magnus@sicoraconsulting.com (PW_MAGNUS), lorri@sicoraconsulting.com (PW_LORRI), lorrimguimond@gmail.com (PW_LORRI_GMAIL), gus@astoriaadvertising.co (PW_GUS), jason@astoriaadvertising.co (PW_JASON). Note: conor@astoriaadvertising.co is intentionally NOT a Sicora login (not in Conor's list).
+Env-only, fails closed (no hardcoded fallbacks). `USERS` in server.js → env var: robert@sicoraconsulting.com (PW_ROBERT), magnus@sicoraconsulting.com (PW_MAGNUS), lorri@sicoraconsulting.com (PW_LORRI), lorrimguimond@gmail.com (PW_LORRI_GMAIL), gus@astoriaadvertising.co (PW_GUS), jason@astoriaadvertising.co (PW_JASON). Plus conor@astoriaadvertising.co (PW_CONOR).
 
 ## Env vars (Railway)
 
-`WINDSOR_API_KEY`, `ANTHROPIC_API_KEY`, optional `GHL_API_KEY`, the six `PW_*` vars (see .env.example), optional `MODEL` (default claude-sonnet-4-6). See `.env.example`.
+`WINDSOR_API_KEY`, `ANTHROPIC_API_KEY`, optional `GHL_API_KEY`, the seven `PW_*` vars (see .env.example), optional `MODEL` (default claude-sonnet-4-6). See `.env.example`.
 
 ## Theme
 
