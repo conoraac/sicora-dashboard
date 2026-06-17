@@ -137,11 +137,18 @@ service + env vars; this build produces the code + a setup checklist.
 ## 9. Build status / TODO
 - [x] Discovery: Sicora accounts, GHL data model, pipelines, gap analysis
 - [x] Scaffold project from BBZ
-- [ ] server.js: config head (accounts/branding/auth/sections), strip BBZ-only builders
-- [ ] server.js: GHL Windsor builders (forms, sources, pipeline, transactions)
-- [ ] ghl-integration.js: direct GHL API for email engagement
-- [ ] index.html: Sicora sections + multi-select form filter + journey view
-- [ ] snapshot.json: Sicora cold-start sample
-- [ ] /api/health + analyst-note prompt updated for Sicora channels
-- [ ] Build brief handed to Conor + Railway/env checklist
+- [x] server.js: config head (accounts/branding/auth/sections), stripped BBZ-only builders
+- [x] server.js: GHL Windsor builders (forms, sources, pipeline+stage, transactions/orders, journey)
+- [x] ghl-integration.js: direct GHL API for email (best-effort; GHL API can't reliably serve it — wire stays, hides cleanly)
+- [x] index.html: Sicora sections + multi-select form filter + journey view (verified locally)
+- [x] snapshot.json: Sicora cold-start sample (real-shaped figures)
+- [x] /api/health + analyst-note prompt updated for Sicora channels (ga4/gads/gsc/ghl)
+- [x] Build brief + README Railway/env checklist; git initialized, build-1 committed
+
+### Remaining (Conor / next session)
+- [ ] Create private GitHub repo + Railway service "Sicora-Dashboard"; set env vars (README §setup)
+- [ ] Confirm/replace the real Sicora login email in `server.js` USERS (placeholder client@sicoraconsulting.com)
+- [ ] Post-deploy: verify `/api/health` shows live data (windsorKeySet, ghlForms, ghlPipelines)
+- [ ] Decide email-engagement source later (GHL API can't; HubSpot/ESP is the real source if needed)
+- [ ] Optional: Google Ads keyword drill-down (kept lean for v1), GA4 region/city section UI
 ```

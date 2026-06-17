@@ -10,9 +10,9 @@
 <script src="/vendor/chart.js"></script>
 <style>
 :root{
-  --black:#0d0d0f;--char:#161719;--ink:#24262b;--muted:#9a9ea6;--faint:#bcbfc5;
-  --gold:#c0a35e;--gold-lt:#dcc28d;--paper:#fff;--bg:#eceae3;--line:#e7e3db;
-  --pos:#3f9e74;--neg:#cf6b5f;--c1:#c0a35e;--c2:#2b2d33;--c3:#6e8298;--c4:#8a9b7e;--c5:#b5835f;--c6:#9a7e8d;--c7:#88939b;--c8:#d3c08f;--c9:#6f6280;
+  --black:#2c3f6b;--char:#243154;--ink:#24262b;--muted:#9a9ea6;--faint:#bcbfc5;
+  --gold:#f58459;--gold-lt:#f79a76;--paper:#fff;--bg:#ffffff;--line:#e6eaf2;
+  --pos:#3f9e74;--neg:#cf6b5f;--c1:#f58459;--c2:#405ba4;--c3:#6e8298;--c4:#8a9b7e;--c5:#b5835f;--c6:#9a7e8d;--c7:#88939b;--c8:#d3c08f;--c9:#6f6280;
   --serif:'Fraunces',Georgia,serif;--sans:'Hanken Grotesk',-apple-system,Arial,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -206,7 +206,7 @@ function allMonths(){return (DATA.months||[]).slice().sort();}
 function windowMonths(){var ms=allMonths();var tf=$('f_tf').value;if(tf==='all')return ms;var n=tf==='last'?1:tf==='3m'?3:6;return ms.slice(-n);}
 function prevMonths(win){var ms=allMonths();var cmp=$('f_cmp').value;if(cmp==='year'){return win.map(function(m){var y=+m.slice(0,4)-1;return ''+y+m.slice(4);}).filter(function(m){return ms.indexOf(m)>=0;});}var i=ms.indexOf(win[0]);return i<=0?[]:ms.slice(Math.max(0,i-win.length),i);}
 
-var PALETTE=['#c0a35e','#2b2d33','#6e8298','#8a9b7e','#b5835f','#9a7e8d','#88939b','#d3c08f','#6f6280'];
+var PALETTE=['#f58459','#405ba4','#6e8298','#8a9b7e','#b5835f','#9a7e8d','#88939b','#d3c08f','#6f6280'];
 function mkChart(id,cfg){if(!HASCHART)return;if(charts[id]){charts[id].destroy();}var el=$(id);if(!el)return;charts[id]=new Chart(el.getContext('2d'),cfg);}
 function lineCfg(labels,datasets){return {type:'line',data:{labels:labels,datasets:datasets},options:baseOpts(true)};}
 function baseOpts(legend){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:!!legend,position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{font:{size:10}}}}};}
@@ -221,7 +221,7 @@ function renderGA4(){
   var sess=win.map(function(m){return ga4MonthTotal(m)[0];});
   var users=win.map(function(m){return ga4MonthTotal(m)[1];});
   mkChart('ga4Trend',{type:'line',data:{labels:labels,datasets:[
-    {label:'Sessions',data:sess,borderColor:PALETTE[0],backgroundColor:'rgba(192,163,94,.12)',fill:true,tension:.3},
+    {label:'Sessions',data:sess,borderColor:PALETTE[0],backgroundColor:'rgba(245,132,89,.12)',fill:true,tension:.3},
     {label:'Users',data:users,borderColor:PALETTE[2],backgroundColor:'transparent',tension:.3}
   ]},options:baseOpts(true)});
   // channel mix for last month in window
