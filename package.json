@@ -1,0 +1,16 @@
+{
+  "name": "sicora-performance-dashboard",
+  "version": "1.0.0",
+  "description": "Client-facing Sicora Consulting performance dashboard — live GA4 + Google Ads + Search Console + GoHighLevel data with AI analyst notes. Built by Astoria Advertising Company.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

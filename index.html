@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sicora Consulting — Performance Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/vendor/chart.js"></script>
+<style>
+:root{
+  --black:#0d0d0f;--char:#161719;--ink:#24262b;--muted:#9a9ea6;--faint:#bcbfc5;
+  --gold:#c0a35e;--gold-lt:#dcc28d;--paper:#fff;--bg:#eceae3;--line:#e7e3db;
+  --pos:#3f9e74;--neg:#cf6b5f;--c1:#c0a35e;--c2:#2b2d33;--c3:#6e8298;--c4:#8a9b7e;--c5:#b5835f;--c6:#9a7e8d;--c7:#88939b;--c8:#d3c08f;--c9:#6f6280;
+  --serif:'Fraunces',Georgia,serif;--sans:'Hanken Grotesk',-apple-system,Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);font-family:var(--sans);color:var(--ink);font-size:14px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+.brand .w{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:.05em;color:var(--ink)}
+.brand .sub{font-size:9px;letter-spacing:.26em;color:var(--muted);margin-top:2px}
+.brand .rule{height:1px;background:var(--gold);width:120px;margin:6px 0 5px}
+.hmeta{text-align:right;font-size:11px;color:var(--muted)}
+.hmeta .live{display:inline-flex;align-items:center;gap:5px;color:var(--pos);font-weight:600}
+.hmeta .dot{width:7px;height:7px;border-radius:50%;background:var(--pos);display:inline-block}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0 6px}
+.controls label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+select{font-family:inherit;font-size:13px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:7px 10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0 8px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi .lab{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi .val{font-family:var(--serif);font-size:26px;font-weight:600;margin-top:4px;color:var(--ink)}
+.kpi .chg{font-size:11.5px;margin-top:3px}
+.up{color:var(--pos)}.down{color:var(--neg)}
+section{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:18px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}
+h2{font-family:var(--serif);font-weight:600;font-size:18px;color:var(--ink)}
+.sec-sub{font-size:11.5px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-top:14px}
+.grid2.even{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.grid2,.grid2.even{grid-template-columns:1fr}}
+.chartbox{position:relative;height:240px}
+.chartbox.sm{height:200px}
+.anote{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.anote-h{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700;display:flex;gap:8px;align-items:center}
+.anote-h .edhint{font-size:9px;color:var(--faint);letter-spacing:.06em;font-weight:500;text-transform:none}
+.anote-b{font-size:13px;color:var(--ink);margin-top:6px;white-space:pre-wrap}
+.anote-b[data-empty]{color:var(--muted);font-style:italic}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.exec{background:linear-gradient(180deg,#fff, #fbf9f4);border:1px solid var(--gold-lt)}
+.exec h2{color:var(--gold-dk,#a3884a)}
+#execSum{font-size:15px;line-height:1.6;color:var(--ink);white-space:pre-wrap}
+#execSum[data-empty]{color:var(--muted);font-style:italic}
+.actions{margin-top:14px}
+.actions h3{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px}
+#actionList{font-size:13.5px}
+.forms-filter{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:5px 11px;cursor:pointer;user-select:none}
+.chip input{margin:0}
+.chip.on{background:#f6efde;border-color:var(--gold)}
+.jrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:8px}
+.jcard{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:12px}
+.jcard .lab{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.jcard .val{font-family:var(--serif);font-size:22px;font-weight:600;margin-top:3px}
+.pipes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:14px}
+@media(max-width:860px){.pipes{grid-template-columns:1fr}}
+.pipe h4{font-size:13px;font-family:var(--serif);margin-bottom:8px}
+.stage{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:11.5px}
+.stage .bar{height:14px;background:var(--c1);border-radius:3px;min-width:2px}
+.stage .nm{flex:0 0 130px;color:var(--ink)}
+.stage .ct{color:var(--muted);font-variant-numeric:tabular-nums}
+.ask{margin-top:18px;display:flex;gap:8px}
+.ask input{flex:1;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--paper)}
+.ask button,.btn{font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.05em;color:#1a1208;background:var(--gold);border:0;border-radius:8px;padding:9px 14px;cursor:pointer}
+.btn.ghost{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+#askAns{margin-top:10px;font-size:13px;white-space:pre-wrap;color:var(--ink)}
+.foot{text-align:center;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:30px}
+.muted{color:var(--muted)}.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="w">SICORA</div><div class="rule"></div>
+      <div class="sub">CONSULTING &middot; PERFORMANCE DASHBOARD</div>
+    </div>
+    <div class="hmeta">
+      <div class="live"><span class="dot"></span><span id="liveLabel">Live data</span></div>
+      <div id="genAt"></div>
+      <div>Astoria Advertising Company</div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <label for="f_tf">Timeframe</label>
+    <select id="f_tf">
+      <option value="last">Last Month</option>
+      <option value="3m" selected>Last 3 Months</option>
+      <option value="6m">Last 6 Months</option>
+      <option value="all">All Time</option>
+    </select>
+    <label for="f_cmp">Compare</label>
+    <select id="f_cmp">
+      <option value="period" selected>Previous Period</option>
+      <option value="year">Previous Year</option>
+    </select>
+    <button class="btn ghost" id="anBtn" style="margin-left:auto">Regenerate analysis</button>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section class="exec">
+    <div class="sec-h"><h2>Executive Summary</h2><span class="sec-sub" id="winLabel"></span></div>
+    <div id="execSum" data-empty="1">Analysis runs on the live dashboard.</div>
+    <div class="actions"><h3>Priority Actions</h3><div id="actionList" data-empty="1" class="muted">No action items for this view.</div></div>
+  </section>
+
+  <!-- GA4 -->
+  <section>
+    <div class="sec-h"><h2>Website Traffic &middot; GA4</h2><span class="sec-sub">Sessions, users and channel mix</span></div>
+    <div class="grid2">
+      <div class="chartbox"><canvas id="ga4Trend"></canvas></div>
+      <div class="chartbox"><canvas id="ga4Channels"></canvas></div>
+    </div>
+    <div id="an_ga4" class="anote"><div class="anote-h">GA4 Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
+  </section>
+
+  <!-- Google Ads -->
+  <section>
+    <div class="sec-h"><h2>Google Ads</h2><span class="sec-sub">Spend, conversions and campaigns</span></div>
+    <div class="grid2">
+      <div class="chartbox"><canvas id="gadsTrend"></canvas></div>
+      <div><table id="gadsCamps"></table></div>
+    </div>
+    <div id="an_gads" class="anote"><div class="anote-h">Google Ads Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
+  </section>
+
+  <!-- Search Console -->
+  <section>
+    <div class="sec-h"><h2>Search Console &middot; SEO</h2><span class="sec-sub">Clicks, impressions, position &amp; top queries</span></div>
+    <div class="grid2">
+      <div class="chartbox"><canvas id="gscTrend"></canvas></div>
+      <div><table id="gscQueries"></table></div>
+    </div>
+    <div id="an_gsc" class="anote"><div class="anote-h">Search Console Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
+  </section>
+
+  <!-- GHL: Forms & Sources -->
+  <section>
+    <div class="sec-h"><h2>Form Submissions &middot; GoHighLevel</h2><span class="sec-sub">Filter by form — select one or many</span></div>
+    <div class="forms-filter" id="formFilter"></div>
+    <div class="grid2 even">
+      <div class="chartbox"><canvas id="ghlForms"></canvas></div>
+      <div class="chartbox"><canvas id="ghlSources"></canvas></div>
+    </div>
+  </section>
+
+  <!-- GHL: Journey -->
+  <section>
+    <div class="sec-h"><h2>Form-Filler Journey</h2><span class="sec-sub" id="jrnScope">All forms</span></div>
+    <div class="jrow" id="journeyCards"></div>
+    <div id="emailBlock" class="anote hide"><div class="anote-h">Email Engagement</div><div class="anote-b" id="emailBody"></div></div>
+    <div class="muted" id="journeyNote" style="font-size:11px;margin-top:10px"></div>
+  </section>
+
+  <!-- GHL: Pipelines -->
+  <section>
+    <div class="sec-h"><h2>Pipeline Visibility</h2><span class="sec-sub">Open opportunities by pipeline &amp; stage</span></div>
+    <div class="pipes" id="pipes"></div>
+    <div id="an_ghl" class="anote"><div class="anote-h">GoHighLevel Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
+  </section>
+
+  <!-- Q&A -->
+  <section>
+    <div class="sec-h"><h2>Ask the data</h2><span class="sec-sub">Questions answered from this report only</span></div>
+    <div class="ask"><input id="askQ" placeholder="e.g. Which form drives the most won revenue?"><button id="askGo">Ask</button></div>
+    <div id="askAns"></div>
+  </section>
+
+  <div class="foot">Sicora Consulting &middot; Built by Astoria Advertising Company &middot; <span id="buildNo"></span></div>
+</div>
+
+<script>
+"use strict";
+/*__DATA__*/
+var DATA = window.__DASH_DATA__ || {};
+var HASCHART = (typeof Chart !== 'undefined');
+var charts = {};
+var MET = 0; // metric index for GA4 (0=sessions)
+var selectedForms = null; // null = all
+
+// ---------- helpers ----------
+function $(id){return document.getElementById(id);}
+function fmt(n){n=+n||0;return n>=1000?n.toLocaleString('en-US',{maximumFractionDigits:0}):(Math.round(n*10)/10+'').replace(/\.0$/,'');}
+function money(n){return '$'+ (Math.round(+n||0)).toLocaleString('en-US');}
+function pct(a,b){if(!b)return null;return (a-b)/b*100;}
+function chgHtml(cur,prev){var p=pct(cur,prev);if(p===null)return '<span class="chg muted">—</span>';var up=p>=0;return '<span class="chg '+(up?'up':'down')+'">'+(up?'▲':'▼')+' '+Math.abs(p).toFixed(1)+'% vs prev</span>';}
+function mLabel(ym){if(!ym)return '';var y=ym.slice(0,4),m=+ym.slice(4,6);return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]+" '"+y.slice(2);}
+function allMonths(){return (DATA.months||[]).slice().sort();}
+function windowMonths(){var ms=allMonths();var tf=$('f_tf').value;if(tf==='all')return ms;var n=tf==='last'?1:tf==='3m'?3:6;return ms.slice(-n);}
+function prevMonths(win){var ms=allMonths();var cmp=$('f_cmp').value;if(cmp==='year'){return win.map(function(m){var y=+m.slice(0,4)-1;return ''+y+m.slice(4);}).filter(function(m){return ms.indexOf(m)>=0;});}var i=ms.indexOf(win[0]);return i<=0?[]:ms.slice(Math.max(0,i-win.length),i);}
+
+var PALETTE=['#c0a35e','#2b2d33','#6e8298','#8a9b7e','#b5835f','#9a7e8d','#88939b','#d3c08f','#6f6280'];
+function mkChart(id,cfg){if(!HASCHART)return;if(charts[id]){charts[id].destroy();}var el=$(id);if(!el)return;charts[id]=new Chart(el.getContext('2d'),cfg);}
+function lineCfg(labels,datasets){return {type:'line',data:{labels:labels,datasets:datasets},options:baseOpts(true)};}
+function baseOpts(legend){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:!!legend,position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{font:{size:10}}}}};}
+
+// ---------- GA4 ----------
+function ga4MonthTotal(ym){var t=(DATA.totals&&DATA.totals[ym])||null;if(t)return t;var chm=(DATA.chm&&DATA.chm[ym])||{};var s=[0,0,0,0,0];Object.keys(chm).forEach(function(c){chm[c].forEach(function(v,i){s[i]+=+v||0;});});return s;}
+function sumMetric(win,idx){return win.reduce(function(a,m){return a+(ga4MonthTotal(m)[idx]||0);},0);}
+function renderGA4(){
+  var win=windowMonths();
+  // trend: sessions + users
+  var labels=win.map(mLabel);
+  var sess=win.map(function(m){return ga4MonthTotal(m)[0];});
+  var users=win.map(function(m){return ga4MonthTotal(m)[1];});
+  mkChart('ga4Trend',{type:'line',data:{labels:labels,datasets:[
+    {label:'Sessions',data:sess,borderColor:PALETTE[0],backgroundColor:'rgba(192,163,94,.12)',fill:true,tension:.3},
+    {label:'Users',data:users,borderColor:PALETTE[2],backgroundColor:'transparent',tension:.3}
+  ]},options:baseOpts(true)});
+  // channel mix for last month in window
+  var last=win[win.length-1];var chm=(DATA.chm&&DATA.chm[last])||{};
+  var entries=Object.keys(chm).map(function(c){return [c,chm[c][0]||0];}).sort(function(a,b){return b[1]-a[1];});
+  mkChart('ga4Channels',{type:'doughnut',data:{labels:entries.map(function(e){return e[0];}),datasets:[{data:entries.map(function(e){return e[1];}),backgroundColor:PALETTE}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10}}},title:{display:true,text:'Channel mix — '+mLabel(last),font:{size:11}}}}});
+}
+
+// ---------- Google Ads ----------
+function gadsMonthAgg(ym){var d=(DATA.gads&&DATA.gads.data&&DATA.gads.data[ym])||{};var s=[0,0,0,0];Object.keys(d).forEach(function(c){d[c].forEach(function(v,i){s[i]+=+v||0;});});return s;} // [clicks,impr,cost,conv]
+function renderGads(){
+  var win=windowMonths().filter(function(m){return DATA.gads&&DATA.gads.data&&DATA.gads.data[m];});
+  var labels=win.map(mLabel);
+  var cost=win.map(function(m){return gadsMonthAgg(m)[2];});
+  var conv=win.map(function(m){return gadsMonthAgg(m)[3];});
+  mkChart('gadsTrend',{type:'bar',data:{labels:labels,datasets:[
+    {type:'bar',label:'Spend ($)',data:cost,backgroundColor:PALETTE[0],yAxisID:'y',order:2},
+    {type:'line',label:'Conversions',data:conv,borderColor:PALETTE[1],yAxisID:'y1',tension:.3,order:1}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,position:'left',ticks:{font:{size:10}}},y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{font:{size:10}}}}}});
+  // campaigns table for last month
+  var last=win[win.length-1];var d=(DATA.gads&&DATA.gads.data&&DATA.gads.data[last])||{};
+  var rows=Object.keys(d).map(function(c){var v=d[c];return {c:c,clicks:v[0],cost:v[2],conv:v[3]};}).sort(function(a,b){return b.cost-a.cost;});
+  var html='<tr><th>Campaign — '+mLabel(last)+'</th><th class="num">Clicks</th><th class="num">Spend</th><th class="num">Conv</th><th class="num">CPA</th></tr>';
+  rows.forEach(function(r){html+='<tr><td>'+esc(r.c)+'</td><td class="num">'+fmt(r.clicks)+'</td><td class="num">'+money(r.cost)+'</td><td class="num">'+fmt(r.conv)+'</td><td class="num">'+(r.conv?money(r.cost/r.conv):'—')+'</td></tr>';});
+  $('gadsCamps').innerHTML=html||'<tr><td class="muted">No campaign data.</td></tr>';
+}
+
+// ---------- Search Console ----------
+function renderGSC(){
+  var win=windowMonths().filter(function(m){return DATA.gsc&&DATA.gsc.data&&DATA.gsc.data[m];});
+  var labels=win.map(mLabel);
+  var clicks=win.map(function(m){return DATA.gsc.data[m][0];});
+  var pos=win.map(function(m){return DATA.gsc.data[m][2];});
+  mkChart('gscTrend',{type:'bar',data:{labels:labels,datasets:[
+    {type:'bar',label:'Clicks',data:clicks,backgroundColor:PALETTE[2],yAxisID:'y',order:2},
+    {type:'line',label:'Avg position',data:pos,borderColor:PALETTE[4],yAxisID:'y1',tension:.3,order:1}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,position:'left',ticks:{font:{size:10}}},y1:{reverse:true,position:'right',grid:{display:false},ticks:{font:{size:10}}}}}});
+  var last=win[win.length-1];var q=(DATA.gsc&&DATA.gsc.queries&&DATA.gsc.queries[last])||{};
+  var rows=Object.keys(q).map(function(k){return {k:k,c:q[k][0],i:q[k][1],p:q[k][2]};}).sort(function(a,b){return b.c-a.c;}).slice(0,8);
+  var html='<tr><th>Top query — '+mLabel(last)+'</th><th class="num">Clicks</th><th class="num">Impr</th><th class="num">Pos</th></tr>';
+  rows.forEach(function(r){html+='<tr><td>'+esc(r.k)+'</td><td class="num">'+fmt(r.c)+'</td><td class="num">'+fmt(r.i)+'</td><td class="num">'+(r.p?r.p.toFixed(1):'—')+'</td></tr>';});
+  $('gscQueries').innerHTML=html||'<tr><td class="muted">No query data.</td></tr>';
+}
+
+// ---------- GHL ----------
+function ghlForms(){return (DATA.ghl&&DATA.ghl.forms)||[];}
+function activeForms(){return selectedForms||ghlForms().map(function(f){return f.name;});}
+function renderFormFilter(){
+  var box=$('formFilter');var forms=ghlForms();
+  if(!forms.length){box.innerHTML='<span class="muted">No GoHighLevel form data.</span>';return;}
+  var sel=activeForms();
+  box.innerHTML=forms.map(function(f){var on=sel.indexOf(f.name)>=0;return '<label class="chip '+(on?'on':'')+'"><input type="checkbox" data-form="'+esc(f.name)+'" '+(on?'checked':'')+'>'+esc(f.name)+' <span class="muted">('+f.total+')</span></label>';}).join('');
+  Array.prototype.forEach.call(box.querySelectorAll('input'),function(cb){cb.addEventListener('change',onFormToggle);});
+}
+function onFormToggle(){
+  var box=$('formFilter');var on=[];
+  Array.prototype.forEach.call(box.querySelectorAll('input'),function(cb){if(cb.checked)on.push(cb.getAttribute('data-form'));});
+  selectedForms=on.length?on:null; // none checked = treat as all
+  renderFormFilter();renderGHLForms();renderJourney();
+}
+function renderGHLForms(){
+  var byMonth=(DATA.ghl&&DATA.ghl.byMonth)||{};
+  var win=windowMonths().filter(function(m){return byMonth[m];});
+  var forms=activeForms();
+  var labels=win.map(mLabel);
+  var ds=forms.map(function(f,i){return {label:f,data:win.map(function(m){return (byMonth[m]&&byMonth[m][f])||0;}),backgroundColor:PALETTE[i%PALETTE.length]};});
+  mkChart('ghlForms',{type:'bar',data:{labels:labels,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}},title:{display:true,text:'Form submissions by month',font:{size:11}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}},y:{stacked:true,beginAtZero:true,ticks:{font:{size:10}}}}}});
+  // sources: aggregate marketing channels across selected forms
+  var srcAgg={};
+  ghlForms().forEach(function(f){if(forms.indexOf(f.name)<0)return;Object.keys(f.channels||{}).forEach(function(ch){srcAgg[ch]=(srcAgg[ch]||0)+f.channels[ch];});});
+  var ents=Object.keys(srcAgg).map(function(k){return [k,srcAgg[k]];}).sort(function(a,b){return b[1]-a[1];});
+  mkChart('ghlSources',{type:'doughnut',data:{labels:ents.map(function(e){return prettySrc(e[0]);}),datasets:[{data:ents.map(function(e){return e[1];}),backgroundColor:PALETTE}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10}}},title:{display:true,text:'Marketing source of fills',font:{size:11}}}}});
+}
+function prettySrc(s){return String(s||'').replace(/_/g,' ').toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase();});}
+function renderJourney(){
+  var forms=activeForms();
+  $('jrnScope').textContent=(selectedForms?forms.join(', '):'All forms');
+  var contacts=((DATA.ghl&&DATA.ghl.contacts)||[]).filter(function(c){return c.isForm&&forms.indexOf(c.form)>=0;});
+  var n=contacts.length;
+  var txn=contacts.filter(function(c){return c.txn;}).length;
+  var val=contacts.reduce(function(a,c){return a+(+c.txnVal||0);},0);
+  var rec=contacts.filter(function(c){return c.recurring;}).length;
+  var inPipe=contacts.filter(function(c){return c.pipeline;}).length;
+  var won=contacts.filter(function(c){return /won/i.test(c.oppStatus||'');}).length;
+  var cards=[
+    ['Contacts',fmt(n)],
+    ['Transacted',fmt(txn)+(n?' ('+Math.round(txn/n*100)+'%)':'')],
+    ['Transaction value',money(val)],
+    ['Memberships',fmt(rec)],
+    ['In a pipeline',fmt(inPipe)],
+    ['Closed-won',fmt(won)]
+  ];
+  $('journeyCards').innerHTML=cards.map(function(c){return '<div class="jcard"><div class="lab">'+c[0]+'</div><div class="val">'+c[1]+'</div></div>';}).join('');
+  // stage distribution note
+  var byStage={};contacts.forEach(function(c){if(c.stage){var k=(c.pipeline?c.pipeline+' · ':'')+c.stage;byStage[k]=(byStage[k]||0)+1;}});
+  var top=Object.keys(byStage).map(function(k){return [k,byStage[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,4);
+  var note=top.length?('Current stages: '+top.map(function(t){return t[0]+' ('+t[1]+')';}).join(', ')+'.'):'';
+  if(DATA.ghl&&DATA.ghl.contactsCapped)note+=' Journey sampled from the most recent '+DATA.ghl.contactsCapped+' contacts.';
+  $('journeyNote').textContent=note;
+  // email block
+  var em=DATA.ghl&&DATA.ghl.email;
+  if(em&&em.totals){$('emailBlock').classList.remove('hide');var t=em.totals;$('emailBody').textContent='Sent '+fmt(t.sent)+', delivered '+fmt(t.delivered)+', opened '+fmt(t.opened)+' ('+Math.round((em.rates.open||0)*100)+'%), clicked '+fmt(t.clicked)+' ('+Math.round((em.rates.click||0)*100)+'%). Source: '+em.source+'.';}
+  else{$('emailBlock').classList.add('hide');}
+}
+function renderPipes(){
+  var pipes=(DATA.ghl&&DATA.ghl.pipelines)||[];
+  if(!pipes.length){$('pipes').innerHTML='<span class="muted">No pipeline data.</span>';return;}
+  var html=pipes.map(function(p){
+    var max=Math.max.apply(null,p.stages.map(function(s){return s.n;}).concat([1]));
+    var rows=p.stages.map(function(s){var w=Math.round(s.n/max*120);return '<div class="stage"><span class="nm">'+esc(s.name)+'</span><span class="bar" style="width:'+w+'px"></span><span class="ct">'+s.n+(s.value?' · '+money(s.value):'')+'</span></div>';}).join('');
+    return '<div class="pipe"><h4>'+esc(p.name)+'</h4>'+rows+'</div>';
+  }).join('');
+  $('pipes').innerHTML=html;
+}
+
+// ---------- KPIs ----------
+function renderKPIs(){
+  var win=windowMonths(),prev=prevMonths(win);
+  var sess=sumMetric(win,0),sessP=sumMetric(prev,0);
+  var users=sumMetric(win,1),usersP=sumMetric(prev,1);
+  var gadsCost=win.reduce(function(a,m){return a+gadsMonthAgg(m)[2];},0);
+  var gadsConv=win.reduce(function(a,m){return a+gadsMonthAgg(m)[3];},0);
+  var gscClicks=win.reduce(function(a,m){return a+((DATA.gsc&&DATA.gsc.data&&DATA.gsc.data[m]&&DATA.gsc.data[m][0])||0);},0);
+  var fills=win.reduce(function(a,m){var bm=(DATA.ghl&&DATA.ghl.byMonth&&DATA.ghl.byMonth[m])||{};return a+Object.keys(bm).reduce(function(s,k){return s+bm[k];},0);},0);
+  var pipeVal=(DATA.ghl&&DATA.ghl.summary&&DATA.ghl.summary.openValue)||0;
+  var won=(DATA.ghl&&DATA.ghl.summary&&DATA.ghl.summary.wonValue)||0;
+  var k=[
+    {lab:'Sessions',val:fmt(sess),chg:chgHtml(sess,sessP)},
+    {lab:'Users',val:fmt(users),chg:chgHtml(users,usersP)},
+    {lab:'Ad Spend',val:money(gadsCost),chg:'<span class="chg muted">'+fmt(gadsConv)+' conv</span>'},
+    {lab:'SEO Clicks',val:fmt(gscClicks),chg:'<span class="chg muted">organic</span>'},
+    {lab:'Form Fills',val:fmt(fills),chg:'<span class="chg muted">GoHighLevel</span>'},
+    {lab:'Open Pipeline',val:money(pipeVal),chg:'<span class="chg up">'+money(won)+' won</span>'}
+  ];
+  $('kpis').innerHTML=k.map(function(x){return '<div class="kpi"><div class="lab">'+x.lab+'</div><div class="val">'+x.val+'</div>'+x.chg+'</div>';}).join('');
+}
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+// ---------- analyst notes (per reporting window) ----------
+var LS='sicora_an_';
+var ALLK=['summary','ga4','gads','gsc','ghl'];
+var AN_IDS={ga4:'an_ga4',gads:'an_gads',gsc:'an_gsc',ghl:'an_ghl'};
+var anBusy=false;
+function bodyEl(k){return k==='summary'?$('execSum'):(function(){var s=$(AN_IDS[k]);return s?s.querySelector('.anote-b'):null;})();}
+function curSig(){return window.__ANSIG||'';}
+function lsGet(k){try{return localStorage.getItem(LS+curSig()+'_'+k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(LS+curSig()+'_'+k,v);}catch(e){}}
+function setText(k,t){var el=bodyEl(k);if(!el)return;el.textContent=t;if(t&&t!=='—')el.removeAttribute('data-empty');else el.setAttribute('data-empty','1');}
+function restoreSaved(){ALLK.forEach(function(k){var v=lsGet(k);if(v!=null)setText(k,v);});var a=lsGet('actions');if(a!=null)$('actionList').innerHTML=a;}
+function buildSnap(){
+  var win=windowMonths(),prev=prevMonths(win);
+  var L=mLabel(win[0])+(win.length>1?'–'+mLabel(win[win.length-1]):'');
+  var s='Sicora Consulting — '+L+' vs '+($('f_cmp').value==='year'?'previous year':'previous period')+'.\n';
+  s+='GA4: sessions '+fmt(sumMetric(win,0))+' vs '+fmt(sumMetric(prev,0))+'; users '+fmt(sumMetric(win,1))+'; key events '+fmt(sumMetric(win,4))+'.\n';
+  var gc=win.reduce(function(a,m){return a+gadsMonthAgg(m)[2];},0),gv=win.reduce(function(a,m){return a+gadsMonthAgg(m)[3];},0);
+  s+='Google Ads: spend '+money(gc)+', conversions '+fmt(gv)+', CPA '+(gv?money(gc/gv):'n/a')+'.\n';
+  var gcl=win.reduce(function(a,m){return a+((DATA.gsc&&DATA.gsc.data&&DATA.gsc.data[m]&&DATA.gsc.data[m][0])||0);},0);
+  s+='Search Console: clicks '+fmt(gcl)+'.\n';
+  var sm=(DATA.ghl&&DATA.ghl.summary)||{};var forms=(DATA.ghl&&DATA.ghl.forms)||[];
+  s+='GoHighLevel: '+fmt(sm.formFills||0)+' form fills across '+forms.length+' forms ('+forms.slice(0,4).map(function(f){return f.name+' '+f.total;}).join(', ')+'). Open pipeline '+money(sm.openValue||0)+', won '+money(sm.wonValue||0)+' ('+(sm.wonCount||0)+' deals), '+(sm.lostCount||0)+' lost. Sources: '+Object.keys(DATA.ghl&&DATA.ghl.sources||{}).slice(0,5).map(function(k){return prettySrc(k)+' '+DATA.ghl.sources[k];}).join(', ')+'.';
+  window.__SNAP=s;
+  window.__ANSIG=$('f_tf').value+'|'+$('f_cmp').value;
+}
+function renderActions(val){var el=$('actionList');if(Array.isArray(val)&&val.length){el.innerHTML='<ol style="margin:0;padding-left:18px">'+val.map(function(a){return '<li style="margin:0 0 6px">'+esc(a)+'</li>';}).join('')+'</ol>';el.removeAttribute('data-empty');lsSet('actions',el.innerHTML);}else if(typeof val==='string'){el.textContent=val;el.setAttribute('data-empty','1');}}
+function generateAnalysis(force){
+  if(anBusy)return;
+  if(!force){var any=ALLK.some(function(k){return lsGet(k)!=null;});if(any){restoreSaved();return;}}
+  anBusy=true;var btn=$('anBtn');if(btn){btn.disabled=true;btn.textContent='Analyzing…';}
+  ALLK.forEach(function(k){setText(k,'Analyzing…');});renderActions('Analyzing…');
+  fetch('/api/analyze',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({context:window.__SNAP||''})})
+  .then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j};});})
+  .then(function(x){if(!x.ok)throw new Error((x.j&&x.j.error)||'error');var j=x.j;
+    ALLK.forEach(function(k){var t=(k==='summary'?j.summary:j[k])||'No notable change in this view.';setText(k,t);lsSet(k,t);});
+    renderActions(Array.isArray(j.actions)?j.actions:null);
+  })
+  .catch(function(){var msg='Analysis runs on the live dashboard (needs the server connection).';ALLK.forEach(function(k){setText(k,msg);});renderActions(msg);})
+  .finally(function(){anBusy=false;if(btn){btn.disabled=false;btn.textContent='Regenerate analysis';}});
+}
+
+// ---------- Q&A ----------
+function ask(){var q=$('askQ').value.trim();if(!q)return;$('askAns').textContent='Thinking…';
+  fetch('/api/ask',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:window.__SNAP||''})})
+  .then(function(r){return r.json();}).then(function(j){$('askAns').textContent=j.answer||j.error||'No answer.';})
+  .catch(function(){$('askAns').textContent='Something went wrong.';});}
+
+// ---------- render orchestration ----------
+function render(){
+  buildSnap();
+  $('winLabel').textContent=window.__SNAP.split('\n')[0].replace('Sicora Consulting — ','');
+  renderKPIs();renderGA4();renderGads();renderGSC();renderFormFilter();renderGHLForms();renderJourney();renderPipes();
+  $('genAt').textContent=DATA.generatedAt?('Updated '+new Date(DATA.generatedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})):'';
+  $('buildNo').textContent='Build '+(DATA.build||'?');
+  $('liveLabel').textContent=(DATA.months&&DATA.months.length)?'Live data':'Sample data';
+  // analysis: regenerate on window change
+  if(window.__ANSIG!==window.__ANSIG_last){window.__ANSIG_last=window.__ANSIG;if(window.__anInit)generateAnalysis(false);}
+}
+$('f_tf').addEventListener('change',render);
+$('f_cmp').addEventListener('change',render);
+$('anBtn').addEventListener('click',function(){if(confirm('Regenerate all analysis from the live data? This replaces your edits for this view.'))generateAnalysis(true);});
+$('askGo').addEventListener('click',ask);
+$('askQ').addEventListener('keydown',function(e){if(e.key==='Enter')ask();});
+
+render();
+generateAnalysis(false);
+window.__anInit=true;
+
+// Chart.js fallback if the same-origin file missed
+if(typeof Chart==='undefined'){var cs=document.createElement('script');cs.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';cs.onload=function(){HASCHART=true;try{render();}catch(e){}};document.head.appendChild(cs);}
+</script>
+</body>
+</html>

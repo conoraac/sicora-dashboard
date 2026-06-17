@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BBZ Limousine — Performance Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/vendor/chart.js"></script>
+<style>
+  :root{
+    --black:#0d0d0f;--char:#161719;--ink:#24262b;--ink2:#585c64;--muted:#9a9ea6;--faint:#bcbfc5;
+    --gold:#c0a35e;--gold-lt:#dcc28d;--gold-dk:#a3884a;--paper:#fff;--bg:#eceae3;--line:#e7e3db;--line2:#f0ede7;
+    --pos:#3f9e74;--neg:#cf6b5f;--flatbg:#eceef0;--flat:#8b8f97;
+    --c1:#c0a35e;--c2:#2b2d33;--c3:#6e8298;--c4:#8a9b7e;--c5:#b5835f;--c6:#9a7e8d;--c7:#88939b;--c8:#d3c08f;--c9:#6f6280;
+    --serif:'Fraunces',Georgia,serif;--sans:'Hanken Grotesk',-apple-system,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px 70px}
+
+  /* header */
+  header{background:var(--black);color:#fff;margin-bottom:0}
+  .hd{max-width:1180px;margin:0 auto;padding:26px 24px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+  .bbzmark{text-align:left;line-height:1;color:#fff}
+  .bbzmark .est{font-size:7px;letter-spacing:.34em;color:var(--gold);margin-bottom:3px}
+  .bbzmark .w{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:.06em}
+  .bbzmark .rule{height:1px;background:var(--gold);margin:3px 0 4px;width:100%}
+  .bbzmark .sub{font-size:7.5px;letter-spacing:.26em;color:#cfd2d6}
+  .hd .r{text-align:right}
+  .hd .r .t{font-family:var(--serif);font-size:20px;color:#fff}
+  .hd .r .s{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-top:4px}
+  .hd .r .aac{font-size:8px;letter-spacing:.28em;color:#8a8d92;text-transform:uppercase;margin-top:8px}
+
+  /* filter bar */
+  .filters{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);box-shadow:0 2px 14px rgba(20,20,24,.06)}
+  .fb{max-width:1180px;margin:0 auto;padding:13px 24px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field label{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dk);font-weight:700}
+  select{font-family:var(--sans);font-size:12.5px;color:var(--ink);background:#fff;border:1px solid var(--line);
+    border-radius:7px;padding:7px 28px 7px 11px;font-weight:600;cursor:pointer;appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%23a3884a' stroke-width='1.5' fill='none'/></svg>");
+    background-repeat:no-repeat;background-position:right 10px center}
+  select:focus{outline:none;border-color:var(--gold)}
+  .mInput{font-family:var(--sans);font-size:12.5px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-weight:600;cursor:pointer}
+  .mInput:focus{outline:none;border-color:var(--gold)}
+
+  .ctx{max-width:1180px;margin:0 auto;padding:16px 24px 4px}
+  .ctx .lead{font-family:var(--serif);font-size:22px;color:var(--ink)}
+  .ctx .lead b{color:var(--gold-dk)}
+  .ctx .note{font-size:12px;color:var(--ink2);margin-top:3px}
+  .block .note{font-size:13px;color:var(--ink);font-weight:500;margin:0 0 16px;padding:9px 13px;background:#faf8f3;border:1px solid #efe9dc;border-left:3px solid var(--gold);border-radius:0 8px 8px 0}
+
+  .sechead{display:flex;align-items:center;gap:14px;margin:56px 0 18px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+  .secnum{width:30px;height:30px;border-radius:50%;background:var(--accent,var(--black));color:#fff;font-family:var(--serif);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:0 2px 8px -3px var(--accent,rgba(0,0,0,.4))}
+  .tt{font-family:var(--serif);font-size:23px;font-weight:600;color:var(--ink);line-height:1.05;letter-spacing:.005em}
+  .ss{font-size:10.5px;color:var(--gold-dk);letter-spacing:.16em;text-transform:uppercase;margin-top:5px;font-weight:700}
+  .subhead{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);font-weight:700;margin:30px 0 12px;display:flex;align-items:center;gap:10px}
+  .subhead::after{content:"";flex:1;height:1px;background:var(--line2)}
+  .block{background:#fff;border:1px solid #e4e0d7;border-top:3px solid var(--accent,var(--gold));border-radius:14px;padding:6px 24px 26px;margin:40px 0;box-shadow:0 1px 2px rgba(16,17,21,.04),0 24px 54px -36px rgba(16,17,21,.32)}
+  .block .sechead{margin:0 -24px 20px;padding:19px 24px;border-bottom:2px solid var(--line);background:#faf9f6;background:color-mix(in srgb,var(--accent,var(--gold)) 9%,#fff);border-bottom-color:color-mix(in srgb,var(--accent,var(--gold)) 38%,var(--line));border-radius:11px 11px 0 0}
+  .block .sechead .ss{color:var(--accent,var(--gold-dk))}
+  .block .card{box-shadow:none;border-color:#ece9e2;background:#fcfbf9}
+  .block .kpi{box-shadow:none;border-color:#ece9e2;background:#fcfbf9}
+  .block .subhead:first-of-type{margin-top:6px}
+  .exec{background:linear-gradient(180deg,#fbf7ee,#fff);border:1px solid #e7dcc1;border-radius:14px;padding:16px 20px;margin:24px 0 6px;box-shadow:0 1px 2px rgba(16,17,21,.04),0 20px 44px -34px rgba(16,17,21,.3)}
+  .exec-h{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+  .exec-h span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-dk);font-weight:700}
+  .exec-btn{font-family:var(--sans);font-size:11px;font-weight:700;color:#1a1208;background:var(--gold);border:none;border-radius:6px;padding:6px 13px;cursor:pointer}
+  .exec-btn:disabled{opacity:.5;cursor:default}
+  .exec-b{font-size:13.5px;color:var(--ink);line-height:1.6}
+  .anote{margin-top:16px;background:#fbf7ee;border:1px solid #ece0c6;border-left:3px solid var(--gold);border-radius:9px;padding:13px 15px}
+  .anote-h{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-dk);font-weight:700;margin-bottom:6px}
+  .anote-b{font-size:12.5px;color:var(--ink);line-height:1.6}
+  .anote-b[data-empty]{color:var(--muted)}
+  .anote-b[contenteditable]:hover,.exec-b[contenteditable]:hover{background:rgba(192,163,94,.06);cursor:text}
+  .anote-b[contenteditable]:focus,.exec-b[contenteditable]:focus{background:#fffdf8;box-shadow:inset 0 0 0 1px var(--gold-lt);border-radius:6px}
+  .edhint{font-size:9px;color:var(--muted);margin-left:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+  .qa{margin-top:4px}
+  .qa-row{display:flex;gap:8px}
+  .qa-in{flex:1;font-family:var(--sans);font-size:13px;padding:10px 13px;border:1px solid var(--line);border-radius:8px;color:var(--ink)}
+  .qa-in:focus{outline:none;border-color:var(--gold)}
+  .qa-btn{font-family:var(--sans);font-size:13px;font-weight:700;color:#fff;background:var(--black);border:none;border-radius:8px;padding:10px 22px;cursor:pointer}
+  .qa-ans{font-size:13px;color:var(--ink);line-height:1.65;margin-top:13px}
+  .qa-ans:empty{display:none}
+  .qa-ans p{margin:0 0 8px}.qa-ans p:last-child{margin-bottom:0}
+
+
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}
+  .card{background:#fff;border:1px solid #e6e2da;border-radius:10px;padding:18px;box-shadow:0 1px 2px rgba(16,17,21,.04),0 12px 28px -18px rgba(16,17,21,.20)}
+  .card h3{font-size:12px;color:var(--ink2);font-weight:600;margin-bottom:14px}
+
+  .kpi{background:#fff;border:1px solid #e6e2da;border-radius:10px;padding:15px 16px;border-top:2px solid var(--line);box-shadow:0 1px 2px rgba(16,17,21,.04),0 12px 28px -18px rgba(16,17,21,.18)}
+  .kpi.on{border-top-color:var(--gold);box-shadow:0 6px 20px -10px rgba(192,163,94,.5)}
+  .kpi .l{font-size:10.5px;color:var(--ink2);font-weight:600}
+  .kpi .v{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--ink);margin:7px 0 5px;letter-spacing:-.01em}
+  .kpi .d{font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px}
+  .kpi .d .vs{color:var(--muted);font-weight:500}
+  .up{color:var(--pos)}.dn{color:var(--neg)}.flat{color:var(--flat)}
+  .chg{font-size:9px;font-weight:700;margin-top:3px;line-height:1.1;letter-spacing:.01em}
+
+  .chartwrap{position:relative;width:100%}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .legend span{font-size:10px;color:var(--ink2);display:flex;align-items:center;gap:5px}
+  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+  table{width:100%;border-collapse:collapse}
+  th{font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:right;padding:7px 8px;border-bottom:1.5px solid var(--gold)}
+  th:first-child{text-align:left}
+  td{font-size:12px;padding:8px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums}
+  td:first-child{text-align:left;font-weight:600}
+  .barcell{position:relative}.minibar{height:4px;border-radius:3px;background:linear-gradient(90deg,var(--gold-dk),var(--gold));margin-top:4px}
+  tr.exp[data-haskids="1"]>td:first-child{cursor:pointer}
+  tr.exp:hover>td{background:#faf8f3}
+  .caret{display:inline-block;width:14px;color:var(--gold-dk);font-size:9px}
+  .tname{font-weight:600}
+  tr.exp[data-haskids="0"] .tname,#scQTable .tname{font-weight:500}
+  .thmb{width:30px;height:30px;border-radius:5px;object-fit:cover;vertical-align:middle;margin-right:8px;border:1px solid #e6e0d4}
+  img.thmb{cursor:zoom-in;transition:transform .08s,border-color .08s}
+  img.thmb:hover{transform:scale(1.12);border-color:var(--gold)}
+  .adname{cursor:zoom-in}
+  .adname:hover{text-decoration:underline}
+  .lightbox{position:fixed;inset:0;background:rgba(20,18,14,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:30px;cursor:zoom-out}
+  .lb-inner{position:relative;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;align-items:center;gap:12px}
+  .lb-inner img{max-width:90vw;max-height:80vh;border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.55);background:#fff;cursor:default}
+  .lb-cap{color:#f3f1ec;font-size:13px;font-weight:600;letter-spacing:.02em;text-align:center}
+  .lb-close{position:absolute;top:-16px;right:-16px;width:32px;height:32px;border-radius:50%;background:#fff;color:#1a1208;font-size:20px;line-height:32px;text-align:center;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.45);font-weight:700}
+  #scQTable tr.qrow{cursor:pointer}
+  .treetools{float:right;font-weight:400;text-transform:none;letter-spacing:0}
+  .tlink{color:var(--gold-dk);cursor:pointer;font-size:11px;font-weight:600}
+  .tlink:hover{text-decoration:underline}
+  .pager{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px}
+  .pgbtn{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:7px;padding:6px 14px;cursor:pointer}
+  .pgbtn:hover:not(:disabled){border-color:var(--gold);color:var(--gold-dk)}
+  .pgbtn:disabled{opacity:.4;cursor:default}
+  .pginfo{font-size:11.5px;color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
+
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6}
+  footer b{color:var(--ink2)}
+  @media(max-width:820px){.g4,.g5,.g3,.g2{grid-template-columns:1fr 1fr}.fb{gap:10px}}
+  .connect{background:#14151a;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 24px;font-size:11px;color:#e8e9ec;border-bottom:2px solid var(--gold)}
+  .connect .lab{color:var(--gold-lt);letter-spacing:.1em;font-weight:700;text-transform:uppercase;font-size:10px}
+  .connect input,.connect select{font-family:var(--sans);font-size:11px;padding:6px 10px;border:1px solid #3a3b40;border-radius:5px;background:#0d0d0f;color:#fff}
+  .connect input{min-width:240px}
+  .connect button{font-family:var(--sans);font-size:11px;font-weight:700;background:var(--gold);color:#1a1208;border:none;border-radius:5px;padding:6px 15px;cursor:pointer}
+  .connect .note{color:#8a8d92;font-size:9.5px;flex:1;min-width:200px}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <div class="bbzmark"><div class="w">BBZ</div><div class="rule"></div><div class="sub">LIMOUSINE &amp; LIVERY SERVICE</div></div>
+    <div class="r"><div class="t">Performance Dashboard</div><div class="aac">Astoria Advertising Company</div></div>
+  </div>
+</header>
+
+<div class="filters"><div class="fb">
+  <div class="field"><label>Time Frame</label><select id="f_tf">
+    <option value="this">This Month</option><option value="last" selected>Last Month</option>
+    <option value="3m">Last 3 Months</option><option value="6m">Last 6 Months</option>
+    <option value="12m">Last 12 Months</option><option value="ytd">Year to Date</option>
+    <option value="custom">Custom range…</option></select></div>
+  <div class="field" id="customWrap" style="display:none">
+    <label>Custom range</label>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="month" id="f_from" class="mInput">
+      <span style="color:var(--muted);font-size:11px">to</span>
+      <input type="month" id="f_to" class="mInput">
+    </div>
+  </div>
+  <div class="field"><label>Compare to</label><select id="f_cmp">
+    <option value="year" selected>Previous Year</option><option value="period">Previous Period</option></select></div>
+  <div class="field"><label>Metric</label><select id="f_metric">
+    <option value="0" selected>Sessions</option><option value="1">Total Users</option><option value="2">Views</option>
+    <option value="3">Events (Event Count)</option><option value="4">Key Events</option></select></div>
+  <div class="field"><label>Channel</label><select id="f_ch"></select></div>
+  <div class="field"><label>Region</label><select id="f_reg"></select></div>
+  <div class="field"><label>City</label><select id="f_city"></select></div>
+  <div class="field"><label>Key Event</label><select id="f_ke"></select></div>
+</div></div>
+
+<div class="ctx">
+  <div class="lead" id="ctxLead"></div>
+  <div class="note" id="ctxNote"></div>
+</div>
+
+<div class="wrap">
+  <div class="exec">
+    <div class="exec-h"><span>Executive Summary</span><button class="exec-btn" id="anBtn">Regenerate analysis</button></div>
+    <div class="exec-b" id="execSum" data-empty="1">A marketing summary of this view appears here on the live dashboard.</div>
+  </div>
+  <section class="block" style="--accent:#6e8298">
+  <div class="sechead"><div class="secnum">1</div><div><div class="tt">Google Analytics 4</div><div class="ss">Website Performance</div></div></div>
+  <div class="grid g5" id="kpis"></div>
+
+  <div class="subhead">Traffic Trend</div>
+  <div class="card"><h3 id="trendTitle"></h3><div class="chartwrap" style="height:280px"><canvas id="trend"></canvas></div>
+    <div class="legend" id="trendLeg"></div></div>
+
+  <div class="subhead">Acquisition by Channel</div>
+  <div class="grid g2">
+    <div class="card"><h3 id="chTitle"></h3><div class="chartwrap" style="height:260px"><canvas id="chBar"></canvas></div></div>
+    <div class="card"><h3>Channel detail</h3><table id="chTable"></table></div>
+  </div>
+
+  <div class="subhead">Geography</div>
+  <div class="grid g2">
+    <div class="card"><h3 id="regTitle">Sessions by Region</h3><div class="chartwrap" style="height:230px"><canvas id="regBar"></canvas></div></div>
+    <div class="card"><h3 id="cityTitle">Sessions by City</h3><div class="chartwrap" style="height:230px"><canvas id="cityBar"></canvas></div></div>
+  </div>
+
+  <div class="subhead">Key Events &amp; Conversions</div>
+  <div class="grid g4" id="keKpis" style="margin-bottom:14px"></div>
+  <div class="card"><h3>Key-event volume — trailing 12 months</h3><div class="chartwrap" style="height:240px"><canvas id="keBar"></canvas></div>
+    <div class="legend" id="keLeg"></div></div>
+
+  <div class="anote" id="anGa4"><div class="anote-h">Analyst's Note</div><div class="anote-b" data-empty="1">Analysis runs on the live dashboard.</div></div>
+  </section>
+  <section class="block" style="--accent:#8a9b7e">
+  <div class="sechead"><div class="secnum">2</div><div><div class="tt">Google Ads</div><div class="ss">Paid Search</div></div></div>
+  <div class="note" id="gadsNote"></div>
+  <div class="grid g4" id="gadsKpis" style="margin-bottom:14px"></div>
+  <div class="card"><h3 id="gadsTrendTitle">Spend &amp; conversions — trailing 12 months</h3><div class="chartwrap" style="height:250px"><canvas id="gadsTrend"></canvas></div><div class="legend" id="gadsLeg"></div></div>
+  <div class="card" style="margin-top:14px"><h3>Conversions by type</h3><table id="gadsConvTable"></table>
+  <div style="font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.5">Google Ads conversions split by the conversion action recorded in the account (calls, lead forms, bookings). The change is versus the comparison period set at the top.</div></div>
+  <div class="card" style="margin-top:14px"><h3>Campaign &#9656; ad group &#9656; keyword <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— click a row to expand</span><span class="treetools" id="gadsTools"></span></h3><table id="gadsTable"></table>
+  <div style="font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.5">Keyword rows show spend attributed to specific search terms. Campaign totals above can run higher, since some spend isn't tied to a single keyword (broad match, search partners). Impression Share is the percentage of available searches where your ad appeared. The small figure under each metric is its change versus the comparison period set at the top of the report — green is an improvement, red is worse (for cost metrics like CPC and CPA, down is green).</div></div>
+
+  <div class="anote" id="anGads"><div class="anote-h">Analyst's Note</div><div class="anote-b" data-empty="1">Analysis runs on the live dashboard.</div></div>
+  </section>
+  <section class="block" style="--accent:#9a7e8d">
+  <div class="sechead"><div class="secnum">3</div><div><div class="tt">Meta Ads</div><div class="ss">Paid Social</div></div></div>
+  <div class="note" id="metaNote"></div>
+  <div class="grid g4" id="metaKpis" style="margin-bottom:14px"></div>
+  <div class="grid g2">
+    <div class="card"><h3 id="metaTrendTitle">Spend &amp; leads — trailing 12 months</h3><div class="chartwrap" style="height:250px"><canvas id="metaTrend"></canvas></div><div class="legend" id="metaLeg"></div></div>
+    <div class="card"><h3>Clicks by placement <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— where your ads ran</span></h3><div class="chartwrap" style="height:250px"><canvas id="metaPlace"></canvas></div><div class="legend" id="metaPlaceLeg"></div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>Conversions and actions <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— what "Leads" includes</span></h3><table id="metaActTable"></table>
+  <div style="font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.5">Leads is the total Meta reports (lead forms plus Messenger plus off-Facebook). On-Facebook Leads is the subset submitted directly on Facebook or Instagram. Link Clicks, Landing Page Views, and Post Engagement show the rest of the action funnel.</div></div>
+  <div class="card" style="margin-top:14px"><h3>Campaign &#9656; ad set &#9656; ad <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— click a row to expand, ad level shows creative</span><span class="treetools" id="metaTools"></span></h3><table id="metaTable"></table></div>
+
+  <div class="anote" id="anMeta"><div class="anote-h">Analyst's Note</div><div class="anote-b" data-empty="1">Analysis runs on the live dashboard.</div></div>
+  </section>
+  <section class="block" style="--accent:#b5835f">
+  <div class="sechead"><div class="secnum">4</div><div><div class="tt">Google Business Profile</div><div class="ss">Local Presence</div></div></div>
+  <div class="note" id="gbpNote"></div>
+  <div class="grid g4" id="gbpKpis" style="margin-bottom:14px"></div>
+  <div class="card"><h3>Profile impressions — trailing 12 months</h3><div class="chartwrap" style="height:240px"><canvas id="gbpTrend"></canvas></div></div>
+
+  <div class="anote" id="anGbp"><div class="anote-h">Analyst's Note</div><div class="anote-b" data-empty="1">Analysis runs on the live dashboard.</div></div>
+  </section>
+  <section class="block" style="--accent:#6f6280">
+  <div class="sechead"><div class="secnum">5</div><div><div class="tt">Phone Calls</div><div class="ss">Call Tracking · CallRail</div></div></div>
+  <div class="note" id="crNote"></div>
+  <div class="grid g3" id="crKpis" style="margin-bottom:14px"></div>
+  <div class="card"><h3>Call volume by weekday <span id="crDayWin" style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0"></span></h3><div class="chartwrap" style="height:240px"><canvas id="crTrend"></canvas></div></div>
+  <div class="card" style="margin-top:14px"><h3>Call log <span id="crLogWin" style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0"></span></h3><table id="crLog"></table><div class="pager" id="crLogPager"></div></div>
+
+  <div class="anote" id="anCr"><div class="anote-h">Analyst's Note</div><div class="anote-b" data-empty="1">Analysis runs on the live dashboard.</div></div>
+  </section>
+  <section class="block" style="--accent:#88939b">
+  <div class="sechead"><div class="secnum">6</div><div><div class="tt">Search Console</div><div class="ss">Organic Search</div></div></div>
+  <div class="note" id="scNote"></div>
+  <div class="grid g4" id="scKpis" style="margin-bottom:14px"></div>
+  <div class="card"><h3>Organic clicks &amp; avg position — trailing 12 months</h3><div class="chartwrap" style="height:240px"><canvas id="scTrend"></canvas></div></div>
+  <div class="card" style="margin-top:14px"><h3>Top queries — current window <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">— click a query for its trend over time</span></h3>
+    <table id="scQTable"></table>
+    <div id="scQTrendWrap" style="display:none;margin-top:14px;border-top:1px solid var(--line2);padding-top:12px">
+      <h3 id="scQTrendTitle"></h3><div class="chartwrap" style="height:200px"><canvas id="scQTrend"></canvas></div>
+    </div>
+  </div>
+
+  <div class="anote" id="anSc"><div class="anote-h">Analyst's Note</div><div class="anote-b" data-empty="1">Analysis runs on the live dashboard.</div></div>
+  </section>
+
+  <section class="block" style="--accent:#7a8c6b">
+  <div class="sechead"><div class="secnum">7</div><div><div class="tt">Bookings &amp; Revenue</div><div class="ss">Sales Pipeline · IQ CRM</div></div></div>
+  <div class="note" id="iqNote"></div>
+  <div style="margin:2px 0 12px;display:flex;align-items:center;gap:8px"><label style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Source</label><select id="f_iqsrc" style="font-family:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--line2);border-radius:6px;background:#fff;color:var(--ink)"><option value="All">All sources</option></select></div>
+  <div class="grid g5" id="iqKpis" style="margin-bottom:14px"></div>
+  <div class="card"><h3>Quotes &amp; won revenue, trailing 12 months</h3><div class="chartwrap" style="height:250px"><canvas id="iqTrend"></canvas></div><div class="legend" id="iqLeg"></div></div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Won revenue by source, current window</h3><div class="chartwrap" style="height:260px"><canvas id="iqSrcBar"></canvas></div></div>
+    <div class="card"><h3>Source detail</h3><table id="iqSrcTable"></table></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>Top campaigns by won revenue, current window</h3><table id="iqCampTable"></table></div>
+  <div class="card" style="margin-top:14px"><h3>By brand, current window</h3><table id="iqBrandTable"></table></div>
+  <div id="iqFoot" style="font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.6"></div>
+
+  <div class="anote" id="anIq"><div class="anote-h">Analyst's Note</div><div class="anote-b" data-empty="1">Analysis runs on the live dashboard.</div></div>
+  </section>
+
+  <section class="block">
+  <div class="sechead"><div class="secnum" style="background:var(--gold);color:#1a1208">?</div><div><div class="tt">Ask this report</div><div class="ss">Free-form questions across every channel</div></div></div>
+  <div class="qa">
+    <div class="qa-row"><input class="qa-in" placeholder="e.g. Which channel improved most this period, and where should I shift budget?"><button class="qa-btn">Ask</button></div>
+    <div class="qa-ans"></div>
+  </div>
+  </section>
+
+  <div class="exec" style="margin-top:4px">
+    <div class="exec-h"><span>Action Items</span><span style="font-size:11px;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">Prioritized next steps · ✎ editable</span></div>
+    <div class="exec-b" id="actionList" data-empty="1">Prioritized action items across all channels appear here when analysis runs on the live dashboard.</div>
+  </div>
+
+  <div id="adLightbox" class="lightbox" style="display:none"><div class="lb-inner"><span class="lb-close">×</span><img id="adLightboxImg" src="" alt="Ad creative"><div id="adLightboxCap" class="lb-cap"></div></div></div>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/*__DATA__*/
+try{var __B='build 26';var __f=document.getElementById('foot');if(__f)__f.textContent='BBZ Performance Dashboard · '+__B+' · rendered '+new Date().toLocaleString();}catch(e){}
+const C=getComputedStyle(document.documentElement),col=n=>C.getPropertyValue('--'+n).trim();
+const PAL=['c1','c2','c3','c4','c5','c6','c7','c8','c9'].map(col);
+let HASCHART=typeof Chart!=='undefined';
+if(HASCHART){
+  Chart.defaults.font.family="'Hanken Grotesk',Arial,sans-serif";Chart.defaults.font.size=10;Chart.defaults.color='#9a9ea6';
+  Chart.defaults.plugins.legend.display=false;Chart.defaults.maintainAspectRatio=false;Chart.defaults.animation={duration:300};
+}else{
+  try{var cw=document.createElement('div');cw.style.cssText='background:#fff8e6;border:1px solid #f0e2b8;color:#7a6320;padding:10px 14px;border-radius:8px;margin:0 0 16px;font-size:13px;line-height:1.5';
+  cw.textContent='Graphs need an internet connection to draw and are hidden here. Every number, table, and drill-down below is complete. To see the graphs too, open this file in a web browser, or use the live dashboard link.';
+  var host=document.querySelector('.wrap')||document.body;host.insertBefore(cw,host.firstChild);}catch(e){}
+}
+
+const METRICS=[['Sessions',0],['Total Users',1],['Views',2],['Event Count',3],['Key Events',4]];
+const KE_LABELS=['Inbound Call','Lead Form','LiveryCoach Booked','Request a Quote'];
+const GADS_KPI=[['Cost',2,'$'],['Clicks',0,''],['Conversions',3,''],['CPA',-1,'$']];
+const META_KPI=[['Spend',2,'$'],['Leads',3,''],['Clicks',0,''],['CPL',-1,'$']];
+function money(n){n=n||0;return '$'+(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:n<100?2:0});}
+function pct(n){const v=(n||0)*100;return (v<10?v.toFixed(2):v.toFixed(1))+'%';}
+function sumPaid(src,win,idx){let t=0;win.forEach(ym=>{const d=src&&src.data[ym];if(!d)return;Object.values(d).forEach(a=>t+=(a[idx]||0));});return t;}
+function paidBreak(src,win){const m={};win.forEach(ym=>{const d=src&&src.data[ym];if(!d)return;Object.entries(d).forEach(([c,a])=>{const x=m[c]=m[c]||[0,0,0,0,0];for(let i=0;i<a.length;i++)x[i]+=(a[i]||0);});});return Object.entries(m).sort((p,q)=>q[1][2]-p[1][2]);}
+function sumArr(src,win,idx){let t=0;win.forEach(ym=>{const a=src&&src.data&&src.data[ym];if(a)t+=(a[idx]||0);});return t;}
+function hasData(src){return !!(src&&src.months&&src.months.length&&!src.empty);}
+function phState(noteId,kpiId,msg){const n=document.getElementById(noteId);if(n)n.textContent=msg;const k=document.getElementById(kpiId);if(k)k.innerHTML='<div class="kpi" style="grid-column:1/-1;opacity:.7"><div class="l">Updating</div><div class="v" style="font-size:15px;font-weight:600">\u2014</div><div class="d">Refreshing shortly</div></div>';}
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ANCHOR=DATA.current;
+function ymAdd(ym,d){let y=+ym.slice(0,4),m=+ym.slice(4)-1,t=y*12+m+d;return String(Math.floor(t/12)).padStart(4,'0')+String((t%12)+1).padStart(2,'0');}
+function ymLabel(ym){return MON[+ym.slice(4)-1]+" '"+ym.slice(2,4);}
+function rangeEnd(end,n){let a=[];for(let i=n-1;i>=0;i--)a.push(ymAdd(end,-i));return a;}
+function fmt(n){return Math.round(n).toLocaleString('en-US');}
+
+function windowMonths(tf){
+  if(tf==='this')return[ymAdd(ANCHOR,1)];
+  if(tf==='last')return[ANCHOR];
+  if(tf==='3m')return rangeEnd(ANCHOR,3);
+  if(tf==='6m')return rangeEnd(ANCHOR,6);
+  if(tf==='12m')return rangeEnd(ANCHOR,12);
+  if(tf==='ytd'){let y=ANCHOR.slice(0,4),mm=+ANCHOR.slice(4),a=[];for(let m=1;m<=mm;m++)a.push(y+String(m).padStart(2,'0'));return a;}
+  if(tf==='custom'){
+    let f=document.getElementById('f_from').value, t=document.getElementById('f_to').value;
+    if(!f||!t)return[ANCHOR];
+    let a=f.replace('-',''), b=t.replace('-','');
+    if(a>b){let x=a;a=b;b=x;}
+    let arr=[],cur=a,g=0;while(cur<=b&&g<240){arr.push(cur);cur=ymAdd(cur,1);g++;}
+    return arr.length?arr:[ANCHOR];
+  }
+}
+function compWindow(win,cmp){
+  if(cmp==='year')return win.map(m=>ymAdd(m,-12));
+  let n=win.length,st=ymAdd(win[0],-n),a=[];for(let i=0;i<n;i++)a.push(ymAdd(st,i));return a;
+}
+function sumCh(win,idx,chf){let t=0;win.forEach(ym=>{if(chf==='All'){const tt=DATA.totals&&DATA.totals[ym];if(tt){t+=(tt[idx]||0);return;}}let d=DATA.chm[ym];if(!d)return;if(chf==='All')Object.values(d).forEach(a=>t+=a[idx]);else if(d[chf])t+=d[chf][idx];});return t;}
+function sumKE(win,idx){let t=0;win.forEach(ym=>{let a=DATA.ke[ym];if(a)t+=a[idx];});return t;}
+function sumGeo(map,win,name){let s=0,k=0;win.forEach(ym=>{let d=map[ym];if(!d)return;if(name==='All')Object.values(d).forEach(a=>{s+=a[0];k+=a[1];});else if(d[name]){s+=d[name][0];k+=d[name][1];}});return[s,k];}
+function geoBreak(map,names,win){return names.map(n=>{let s=0;win.forEach(ym=>{let d=map[ym];if(d&&d[n])s+=d[n][0];});return[n,s];}).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);}
+
+function delta(cur,prev){if(prev===0)return cur>0?{t:'New',c:'up'}:{t:'—',c:'flat'};
+  let p=(cur-prev)/prev*100;return{t:(p>=0?'▲ ':'▼ ')+Math.abs(p).toFixed(p>=100||Math.abs(p)<10?0:0)+'%',c:p>=0?'up':'dn'};}
+
+// populate selects
+const fch=document.getElementById('f_ch');fch.innerHTML='<option value="All">All Channels</option>'+DATA.channels.map(c=>`<option>${c}</option>`).join('');
+const freg=document.getElementById('f_reg');freg.innerHTML='<option value="All">All Regions</option>'+DATA.regNames.filter(n=>n!=='Other').map(c=>`<option>${c}</option>`).join('');
+const fcity=document.getElementById('f_city');fcity.innerHTML='<option value="All">All Cities</option>'+DATA.cityNames.filter(n=>n!=='Other').map(c=>`<option>${c}</option>`).join('');
+const fke=document.getElementById('f_ke');fke.innerHTML='<option value="all">All Key Events</option>'+KE_LABELS.map((n,i)=>`<option value="${i}">${n}</option>`).join('');
+
+// ---------- drill-down engine (campaign > ad group/ad set > keyword/ad) ----------
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+const numv=v=>v.t?v.t:v;                       // group nodes carry {t,ch}; leaves are the array itself
+function trOpen(m){return `<tr class="exp" data-id="${m.id}" data-parent="${m.parentId}" data-haskids="${m.hasKids?1:0}"${m.depth>0?' style="display:none"':''}>`;}
+function nameCell(name,depth,hasKids){const pad=10+depth*18;const car=`<span class="caret"${hasKids?'':' style="visibility:hidden"'}>▸</span>`;return `<td class="tname" style="padding-left:${pad}px">${car}${esc(name)}</td>`;}
+function adNameCell(name,depth,thumb){const pad=10+depth*18;const safe=esc(name);
+  const img=thumb?`<img class="thmb" src="${thumb}" data-full="${thumb}" data-cap="${safe}" title="Click to enlarge" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">`:'';
+  const nm=thumb?`<span class="adname" data-full="${thumb}" data-cap="${safe}" title="Click to enlarge">${safe}</span>`:safe;
+  return `<td class="tname" style="padding-left:${pad}px"><span class="caret" style="visibility:hidden">▸</span>${img}${nm}</td>`;}
+function emitTree(node,depth,parentId,levels,state){
+  const ents=Object.entries(node).sort((a,b)=>levels[depth].sv(b[1])-levels[depth].sv(a[1]));
+  let h='';
+  for(const [name,val] of ents){
+    const id='r'+(state.uid++), leaf=depth===levels.length-1;
+    const hasKids=!leaf&&val&&val.ch&&Object.keys(val.ch).length>0;
+    h+=levels[depth].row(name,val,{id,parentId,depth,hasKids});
+    if(hasKids)h+=emitTree(val.ch,depth+1,id,levels,state);
+  }
+  return h;
+}
+function buildTree(tableId,head,levels,root){
+  const el=document.getElementById(tableId);if(!el)return;
+  const body=emitTree(root,0,'',levels,{uid:0});
+  el.innerHTML='<thead><tr>'+head.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+
+    (body||`<tr><td colspan="${head.length}" style="color:var(--muted);font-weight:400">No data in this window.</td></tr>`)+'</tbody>';
+  if(!el.__wired){el.__wired=true;el.addEventListener('click',treeToggle);}
+}
+function treeToggle(e){
+  const tr=e.target.closest('tr.exp');if(!tr||tr.dataset.haskids!=='1')return;
+  const tbl=tr.closest('table'),rows=[...tbl.querySelectorAll('tr.exp')],cz=tr.querySelector('.caret');
+  if(tr.classList.toggle('open')){const id=tr.dataset.id;rows.forEach(r=>{if(r.dataset.parent===id)r.style.display='';});if(cz)cz.textContent='▾';}
+  else{const kill=new Set([tr.dataset.id]);rows.forEach(r=>{if(kill.has(r.dataset.parent)){r.style.display='none';if(r.classList.contains('open')){r.classList.remove('open');const c=r.querySelector('.caret');if(c)c.textContent='▸';}kill.add(r.dataset.id);}});if(cz)cz.textContent='▸';}
+}
+function treeSetCaret(r,open){const c=r.querySelector('.caret');if(c&&r.dataset.haskids==='1')c.textContent=open?'▾':'▸';}
+function treeExpandAll(tableId){const t=document.getElementById(tableId);if(!t)return;t.querySelectorAll('tr.exp').forEach(r=>{r.style.display='';if(r.dataset.haskids==='1'){r.classList.add('open');treeSetCaret(r,true);}});}
+function treeCollapseAll(tableId){const t=document.getElementById(tableId);if(!t)return;t.querySelectorAll('tr.exp').forEach(r=>{if(r.dataset.parent!==''){r.style.display='none';}r.classList.remove('open');treeSetCaret(r,false);});}
+function treeExpandTop(tableId){const t=document.getElementById(tableId);if(!t)return;const rows=[...t.querySelectorAll('tr.exp')],top=new Set();
+  rows.forEach(r=>{if(r.dataset.parent===''){top.add(r.dataset.id);if(r.dataset.haskids==='1'){r.classList.add('open');treeSetCaret(r,true);}}});
+  rows.forEach(r=>{if(top.has(r.dataset.parent))r.style.display='';});}
+function treeTools(toolsId,tableId){const tt=document.getElementById(toolsId);if(!tt)return;
+  tt.innerHTML='<span class="tlink" data-act="expand">Expand all</span> · <span class="tlink" data-act="collapse">Collapse all</span>';
+  if(!tt.__wired){tt.__wired=true;tt.addEventListener('click',e=>{const a=e.target.closest('.tlink');if(!a)return;if(a.dataset.act==='expand')treeExpandAll(tableId);else treeCollapseAll(tableId);});}}
+// Ad-creative lightbox: click an ad row's thumbnail or name to view the full creative.
+function openAdLightbox(url,cap){const lb=document.getElementById('adLightbox');if(!lb)return;document.getElementById('adLightboxImg').src=url;document.getElementById('adLightboxCap').textContent=cap||'';lb.style.display='flex';}
+function closeAdLightbox(){const lb=document.getElementById('adLightbox');if(!lb)return;lb.style.display='none';document.getElementById('adLightboxImg').src='';}
+document.addEventListener('click',function(e){
+  const z=e.target.closest('[data-full]');
+  if(z){e.preventDefault();e.stopPropagation();openAdLightbox(z.getAttribute('data-full'),z.getAttribute('data-cap')||'');return;}
+  const lb=document.getElementById('adLightbox');
+  if(lb&&lb.style.display!=='none'&&(e.target===lb||e.target.classList.contains('lb-close')))closeAdLightbox();
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAdLightbox();});
+// Google Ads: leaf [clicks,impr,cost,conv,eligImpr,imprWithIS]; sort by cost
+// Per-metric change vs the comparison window. goodUp: true=higher is better, false=lower is better (cost), null=neutral.
+function chg(cur,prev,goodUp){
+  if(!prev&&!cur)return{t:'',c:'flat'};
+  if(!prev)return{t:'new',c:'flat'};
+  const p=(cur-prev)/prev*100, rose=cur>=prev;
+  return{t:(rose?'▲':'▼')+' '+Math.abs(p).toFixed(0)+'%', c:goodUp===null?'flat':((rose===goodUp)?'up':'dn')};
+}
+function dcell(v,d){return `<td>${v}${d.t?`<div class="chg ${d.c}">${d.t}</div>`:''}</td>`;}
+function gadsRow(name,val,m){const a=numv(val),p=val.p||[0,0,0,0,0,0];
+  const ctr=a[1]?a[0]/a[1]:0,cpc=a[0]?a[2]/a[0]:0,cpa=a[3]?a[2]/a[3]:0,is=a[4]>0?a[5]/a[4]:null;
+  const pctr=p[1]?p[0]/p[1]:0,pcpc=p[0]?p[2]/p[0]:0,pcpa=p[3]?p[2]/p[3]:0,pis=p[4]>0?p[5]/p[4]:null;
+  return trOpen(m)+nameCell(name,m.depth,m.hasKids)
+    +dcell(money(a[2]),chg(a[2],p[2],null))
+    +dcell(fmt(a[0]),chg(a[0],p[0],true))
+    +dcell(a[1]?pct(ctr):'—',chg(ctr,pctr,true))
+    +dcell(a[0]?money(cpc):'—',chg(cpc,pcpc,false))
+    +dcell(fmt(a[3]),chg(a[3],p[3],true))
+    +dcell(a[3]?money(cpa):'—',chg(cpa,pcpa,false))
+    +dcell(is!=null?pct(Math.min(is,1)):'—',chg(is||0,pis||0,true))
+    +'</tr>';}
+const gadsLevels=[{sv:v=>numv(v)[2],row:gadsRow},{sv:v=>numv(v)[2],row:gadsRow},{sv:v=>numv(v)[2],row:gadsRow}];
+function aggGads(detail,win,comp){
+  const root={}, node=()=>({t:[0,0,0,0,0,0],p:[0,0,0,0,0,0],ch:{}});
+  const add=(months,slot)=>{(months||[]).forEach(ym=>{const M=detail&&detail[ym];if(!M)return;
+    for(const c in M){const co=root[c]||(root[c]=node()),A=M[c];
+      for(const g in A){const go=co.ch[g]||(co.ch[g]=node()),K=A[g];
+        for(const k in K){const v=K[k],lo=go.ch[k]||(go.ch[k]=node());
+          for(let i=0;i<6;i++){const n=+v[i]||0;lo[slot][i]+=n;go[slot][i]+=n;co[slot][i]+=n;}}}}});};
+  add(win,'t'); add(comp,'p'); return root;}
+// Meta: leaf [spend,leads,clicks,impr,thumb]; sort by spend
+function metaGrp(name,val,m){const a=numv(val),cpl=a[1]?a[0]/a[1]:0,ctr=a[3]?a[2]/a[3]:0,cpc=a[2]?a[0]/a[2]:0;return trOpen(m)+nameCell(name,m.depth,m.hasKids)+`<td>${money(a[0])}</td><td>${fmt(a[1])}</td><td>${fmt(a[2])}</td><td>${a[3]?pct(ctr):'—'}</td><td>${a[2]?money(cpc):'—'}</td><td>${a[1]?money(cpl):'—'}</td></tr>`;}
+function metaAd(name,val,m){const a=val,cpl=a[1]?a[0]/a[1]:0,ctr=a[3]?a[2]/a[3]:0,cpc=a[2]?a[0]/a[2]:0;return trOpen(m)+adNameCell(name,m.depth,a[4])+`<td>${money(a[0])}</td><td>${fmt(a[1])}</td><td>${fmt(a[2])}</td><td>${a[3]?pct(ctr):'—'}</td><td>${a[2]?money(cpc):'—'}</td><td>${a[1]?money(cpl):'—'}</td></tr>`;}
+const metaLevels=[{sv:v=>numv(v)[0],row:metaGrp},{sv:v=>numv(v)[0],row:metaGrp},{sv:v=>numv(v)[0],row:metaAd}];
+function metaPlace(placements,win){const a={};win.forEach(ym=>{const M=placements&&placements[ym];if(!M)return;for(const p in M){const v=M[p],o=a[p]||(a[p]=[0,0,0]);o[0]+=v[0]||0;o[1]+=v[1]||0;o[2]+=v[2]||0;}});return a;}
+function placeLabel(p){return ({facebook:'Facebook',instagram:'Instagram',audience_network:'Audience Network',messenger:'Messenger',unknown:'Unknown'})[p]||String(p).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+function aggMeta(detail,win){const root={};win.forEach(ym=>{const M=detail&&detail[ym];if(!M)return;
+  for(const c in M){const co=root[c]||(root[c]={t:[0,0,0,0],ch:{}}),A=M[c];
+    for(const s in A){const so=co.ch[s]||(co.ch[s]={t:[0,0,0,0],ch:{}}),D=A[s];
+      for(const ad in D){const v=D[ad],lo=so.ch[ad]||(so.ch[ad]=[0,0,0,0,'']);
+        for(let i=0;i<4;i++){const n=+v[i]||0;lo[i]+=n;so.t[i]+=n;co.t[i]+=n;}
+        if(v[4])lo[4]=v[4];}}}});return root;}
+// Search Console queries
+let SCQ=null;
+function scqAgg(queries,win){const a={};win.forEach(ym=>{const Q=queries&&queries[ym];if(!Q)return;for(const q in Q){const v=Q[q],o=a[q]||(a[q]=[0,0,0]);o[0]+=v[0];o[1]+=v[1];o[2]+=(v[2]||0)*v[1];}});return a;}
+function scqTrendShow(q){if(!SCQ)return;const wrap=document.getElementById('scQTrendWrap'),months=SCQ.months;
+  const clk=months.map(ym=>{const Q=SCQ.queries[ym];return Q&&Q[q]?Q[q][0]:0;});
+  const imp=months.map(ym=>{const Q=SCQ.queries[ym];return Q&&Q[q]?Q[q][1]:0;});
+  document.getElementById('scQTrendTitle').textContent=`\u201c${q}\u201d \u2014 clicks & impressions, trailing ${months.length} months`;
+  wrap.style.display='';
+  mkChart('scQTrend',{type:'bar',data:{labels:months.map(ymLabel),datasets:[
+    {type:'bar',label:'Clicks',data:clk,backgroundColor:col('c5'),borderRadius:3,yAxisID:'y'},
+    {type:'line',label:'Impressions',data:imp,borderColor:col('gold-dk'),borderWidth:2,tension:.35,pointRadius:0,yAxisID:'y1'}
+  ]},options:{interaction:{mode:'index',intersect:false},plugins:{tooltip:{enabled:true}},scales:{x:{grid:{display:false}},y:{position:'left',grid:{color:'#f1efe9'},beginAtZero:true},y1:{position:'right',grid:{display:false},beginAtZero:true}}}});
+  wrap.scrollIntoView({behavior:'smooth',block:'nearest'});}
+
+let charts={};
+function mkChart(id,cfg){if(typeof Chart==='undefined')return;const el=document.getElementById(id);if(!el)return;
+  try{ if(charts[id]){try{charts[id].destroy();}catch(_){}} const ex=(typeof Chart!=='undefined'&&Chart.getChart)?Chart.getChart(el):null; if(ex){try{ex.destroy();}catch(_){}} charts[id]=new Chart(el,cfg); }
+  catch(e){ charts[id]=null; try{console.warn('mkChart '+id+' failed:',e&&e.message);}catch(_){} }}
+
+function render(){
+  const tf=document.getElementById('f_tf').value, cmp=document.getElementById('f_cmp').value,
+        mIdx=+document.getElementById('f_metric').value, chf=document.getElementById('f_ch').value,
+        regf=document.getElementById('f_reg').value, cityf=document.getElementById('f_city').value;
+  const kef=document.getElementById('f_ke').value, keSel=kef==='all'?null:+kef;
+  const cw=document.getElementById('customWrap');
+  if(cw)cw.style.display=tf==='custom'?'':'none';
+  if(tf==='custom'){const ff=document.getElementById('f_from'),tt=document.getElementById('f_to');
+    const toI=ym=>ym.slice(0,4)+'-'+ym.slice(4);
+    if(!ff.value||!tt.value){ff.value=toI(ymAdd(ANCHOR,-2));tt.value=toI(ANCHOR);}}
+  const win=windowMonths(tf), comp=compWindow(win,cmp);
+  const mName=METRICS[mIdx][0];
+  const tfLabel={this:'This Month',last:'Last Month','3m':'Last 3 Months','6m':'Last 6 Months','12m':'Last 12 Months',ytd:'Year to Date',custom:'Custom range'}[tf];
+  const winLab=win.length===1?ymLabel(win[0]):ymLabel(win[0])+' – '+ymLabel(win[win.length-1]);
+  const compLab=comp.length===1?ymLabel(comp[0]):ymLabel(comp[0])+' – '+ymLabel(comp[comp.length-1]);
+
+  document.getElementById('ctxLead').innerHTML=`${tfLabel}: <b>${winLab}</b> &nbsp;vs&nbsp; ${cmp==='year'?'Previous Year':'Previous Period'}: <b>${compLab}</b>`;
+  const partialNote = win.some(ym => ym > ANCHOR) ? ' \u00b7 The current month is still in progress, so its totals are partial and will look low against a full prior period.' : '';
+  document.getElementById('ctxNote').textContent=`Showing ${(mIdx===4&&keSel!==null)?KE_LABELS[keSel]:mName}${chf!=='All'?' · '+chf:''}. Deltas compare the two windows above.${partialNote}`;
+
+  // KPI row
+  document.getElementById('kpis').innerHTML=METRICS.map(([nm,ix])=>{
+    let cur,prev,label=nm;
+    if(ix===4&&keSel!==null){cur=sumKE(win,keSel);prev=sumKE(comp,keSel);label=KE_LABELS[keSel];}
+    else{cur=sumCh(win,ix,chf);prev=sumCh(comp,ix,chf);}
+    let d=delta(cur,prev);
+    return `<div class="kpi ${ix===mIdx?'on':''}"><div class="l">${label}</div><div class="v">${fmt(cur)}</div>
+      <div class="d ${d.c}">${d.t} <span class="vs">vs ${fmt(prev)}</span></div></div>`;}).join('');
+
+  // Trend: trailing up to 12 months ending at window end
+  const endM=win[win.length-1], span=Math.max(12,win.length), tMonths=rangeEnd(endM,span);
+  const isKE=mIdx===4&&keSel!==null;
+  const curSeries=tMonths.map(ym=>isKE?sumKE([ym],keSel):sumCh([ym],mIdx,chf));
+  const cmpSeries=tMonths.map(ym=>{const pm=cmp==='year'?ymAdd(ym,-12):ymAdd(ym,-span);return isKE?sumKE([pm],keSel):sumCh([pm],mIdx,chf);});
+  const trendName=isKE?KE_LABELS[keSel]:mName;
+  document.getElementById('trendTitle').textContent=`${trendName}${(!isKE&&chf!=='All')?' · '+chf:''} — trailing ${span} months`;
+  mkChart('trend',{type:'line',data:{labels:tMonths.map(ymLabel),datasets:[
+    {data:curSeries,borderColor:col('gold-dk'),backgroundColor:'rgba(192,163,94,.12)',fill:true,borderWidth:2,tension:.35,pointRadius:0,pointHoverRadius:4},
+    {data:cmpSeries,borderColor:'#c4c8cd',borderWidth:1.5,borderDash:[4,3],tension:.35,pointRadius:0}
+  ]},options:{interaction:{mode:'index',intersect:false},plugins:{tooltip:{enabled:true,backgroundColor:'#1c1c22'}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:'#f1efe9'},beginAtZero:true}}}});
+  document.getElementById('trendLeg').innerHTML=`<span><i style="background:${col('gold-dk')}"></i>Current window basis</span><span><i style="background:#c4c8cd"></i>${cmp==='year'?'Previous year':'Previous period'}</span>`;
+
+  // Channel breakdown (selected metric over window)
+  const chBreak=DATA.channels.map(c=>[c,sumCh(win,mIdx,c)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('chTitle').textContent=`${mName} by Channel — ${winLab}`;
+  mkChart('chBar',{type:'bar',data:{labels:chBreak.map(x=>x[0]),datasets:[{data:chBreak.map(x=>x[1]),
+    backgroundColor:chBreak.map(x=>x[0]===chf?col('gold'):col('c2')),borderRadius:4,barThickness:15}]},
+    options:{indexAxis:'y',plugins:{tooltip:{enabled:true}},scales:{x:{grid:{color:'#f1efe9'},beginAtZero:true},y:{grid:{display:false}}}}});
+  const chTot=chBreak.reduce((a,x)=>a+x[1],0)||1;
+  document.getElementById('chTable').innerHTML='<thead><tr><th>Channel</th><th>'+mName+'</th><th>Share</th><th>vs Comp</th></tr></thead><tbody>'+
+    chBreak.map(([c,v])=>{let pv=sumCh(comp,mIdx,c),d=delta(v,pv);
+      return `<tr><td>${c}</td><td>${fmt(v)}</td><td>${(v/chTot*100).toFixed(1)}%</td><td class="${d.c}">${d.t}</td></tr>`;}).join('')+'</tbody>';
+
+  // Geography
+  const regB=geoBreak(DATA.reg,DATA.regNames,win), cityB=geoBreak(DATA.city,DATA.cityNames,win);
+  document.getElementById('regTitle').textContent=regf==='All'?`Sessions by Region — ${winLab}`:`Region: ${regf}`;
+  mkChart('regBar',{type:'bar',data:{labels:regB.map(x=>x[0]),datasets:[{data:regB.map(x=>x[1]),
+    backgroundColor:regB.map(x=>x[0]===regf?col('gold'):col('c3')),borderRadius:4,barThickness:14}]},
+    options:{indexAxis:'y',plugins:{tooltip:{enabled:true}},scales:{x:{grid:{color:'#f1efe9'},beginAtZero:true},y:{grid:{display:false}}}}});
+  document.getElementById('cityTitle').textContent=cityf==='All'?`Sessions by City — ${winLab}`:`City: ${cityf}`;
+  mkChart('cityBar',{type:'bar',data:{labels:cityB.map(x=>x[0]),datasets:[{data:cityB.map(x=>x[1]),
+    backgroundColor:cityB.map(x=>x[0]===cityf?col('gold'):col('c4')),borderRadius:4,barThickness:14}]},
+    options:{indexAxis:'y',plugins:{tooltip:{enabled:true}},scales:{x:{grid:{color:'#f1efe9'},beginAtZero:true},y:{grid:{display:false}}}}});
+
+  // Key events
+  document.getElementById('keKpis').innerHTML=KE_LABELS.map((nm,ix)=>{
+    let cur=sumKE(win,ix),prev=sumKE(comp,ix),d=delta(cur,prev);
+    return `<div class="kpi ${keSel===ix?'on':''}"><div class="l">${nm}</div><div class="v">${fmt(cur)}</div><div class="d ${d.c}">${d.t} <span class="vs">vs ${fmt(prev)}</span></div></div>`;}).join('');
+  const keMonths=rangeEnd(endM,12);
+  const keSet=keSel===null?KE_LABELS.map((nm,ix)=>({nm,ix})):[{nm:KE_LABELS[keSel],ix:keSel}];
+  mkChart('keBar',{type:'bar',data:{labels:keMonths.map(ymLabel),datasets:keSet.map(({nm,ix})=>({
+    label:nm,data:keMonths.map(ym=>sumKE([ym],ix)),backgroundColor:keSel===null?PAL[ix]:col('gold'),stack:'s',borderRadius:2}))},
+    options:{plugins:{tooltip:{enabled:true}},scales:{x:{grid:{display:false},stacked:true},y:{grid:{color:'#f1efe9'},stacked:true,beginAtZero:true}}}});
+  document.getElementById('keLeg').innerHTML=keSet.map(({nm,ix})=>`<span><i style="background:${keSel===null?PAL[ix]:col('gold')}"></i>${nm}</span>`).join('');
+
+  // geo KPI note when filtered
+  if(regf!=='All'||cityf!=='All'){
+    let parts=[];
+    if(regf!=='All'){let[s,k]=sumGeo(DATA.reg,win,regf),[ps,pk]=sumGeo(DATA.reg,comp,regf);parts.push(`<b>${regf}</b>: ${fmt(s)} sessions (${delta(s,ps).t}), ${fmt(k)} key events`);}
+    if(cityf!=='All'){let[s,k]=sumGeo(DATA.city,win,cityf),[ps,pk]=sumGeo(DATA.city,comp,cityf);parts.push(`<b>${cityf}</b>: ${fmt(s)} sessions (${delta(s,ps).t}), ${fmt(k)} key events`);}
+    document.getElementById('ctxNote').innerHTML=`Showing ${mName}${chf!=='All'?' · '+chf:''}. &nbsp;|&nbsp; ${parts.join(' &nbsp;·&nbsp; ')}${partialNote}`;
+  }
+  // ---- Paid platforms (Google Ads + Meta) — same window/comparison as above ----
+  function paidSection(src,ids,kpis,barCol,lineLab,perLab,kind){
+    const now={}, prev={};
+    [0,2,3].forEach(ix=>{now[ix]=sumPaid(src,win,ix);prev[ix]=sumPaid(src,comp,ix);});
+    now[-1]=now[3]?now[2]/now[3]:0; prev[-1]=prev[3]?prev[2]/prev[3]:0;
+    document.getElementById(ids.kpis).innerHTML=kpis.map(([nm,ix,pre])=>{
+      const cur=now[ix],pv=prev[ix];let d=delta(cur,pv);
+      if(ix===-1)d={t:d.t,c:(cur<=pv?'up':'dn')};
+      const cv=pre==='$'?money(cur):fmt(cur),pp=pre==='$'?money(pv):fmt(pv);
+      return `<div class="kpi"><div class="l">${nm}</div><div class="v">${cv}</div><div class="d ${d.c}">${d.t} <span class="vs">vs ${pp}</span></div></div>`;}).join('');
+    const endM=win[win.length-1],tM=rangeEnd(endM,12);
+    mkChart(ids.trend,{type:'bar',data:{labels:tM.map(ymLabel),datasets:[
+      {type:'bar',label:'Spend',data:tM.map(ym=>sumPaid(src,[ym],2)),backgroundColor:col(barCol),borderRadius:3,yAxisID:'y'},
+      {type:'line',label:lineLab,data:tM.map(ym=>sumPaid(src,[ym],3)),borderColor:col('gold-dk'),borderWidth:2,tension:.35,pointRadius:0,yAxisID:'y1'}
+    ]},options:{interaction:{mode:'index',intersect:false},plugins:{tooltip:{enabled:true}},
+      scales:{x:{grid:{display:false}},y:{position:'left',grid:{color:'#f1efe9'},beginAtZero:true},y1:{position:'right',grid:{display:false},beginAtZero:true}}}});
+    document.getElementById(ids.leg).innerHTML=`<span><i style="background:${col(barCol)}"></i>Spend ($)</span><span><i style="background:${col('gold-dk')}"></i>${lineLab}</span>`;
+    if(kind==='meta'&&ids.place&&src.placements){
+      const pl=metaPlace(src.placements,win),pe=Object.entries(pl).filter(x=>x[1][0]>0).sort((a,b)=>b[1][0]-a[1][0]);
+      const pcol=['c6','c3','c4','c8','c5','c9','c7'].map(col),ptot=pe.reduce((s,x)=>s+x[1][0],0)||1;
+      mkChart(ids.place,{type:'doughnut',data:{labels:pe.map(x=>placeLabel(x[0])),datasets:[{data:pe.map(x=>x[1][0]),backgroundColor:pe.map((_,i)=>pcol[i%pcol.length]),borderWidth:0}]},options:{cutout:'62%',plugins:{tooltip:{enabled:true}}}});
+      const pleg=document.getElementById(ids.placeLeg);if(pleg)pleg.innerHTML=pe.map((x,i)=>`<span><i style="background:${pcol[i%pcol.length]}"></i>${placeLabel(x[0])} ${fmt(x[1][0])} (${(x[1][0]/ptot*100).toFixed(0)}%)</span>`).join('');
+    }
+    const br=paidBreak(src,win);
+    if(src.detail&&Object.keys(src.detail).length){
+      if(kind==='meta') buildTree(ids.table,['Campaign / Ad set / Ad','Spend','Leads','Clicks','CTR','Avg CPC','CPL'],metaLevels,aggMeta(src.detail,win));
+      else buildTree(ids.table,['Campaign / Ad group / Keyword','Spend','Clicks','CTR','Avg CPC','Conv.','CPA','Impr. Share'],gadsLevels,aggGads(src.detail,win,comp));
+      treeExpandTop(ids.table);                 // default: show campaigns and their ad groups/ad sets
+      if(ids.tools)treeTools(ids.tools,ids.table);
+    }else{
+      document.getElementById(ids.table).innerHTML='<thead><tr><th>Campaign</th><th>Spend</th><th>Clicks</th><th>'+lineLab+'</th><th>'+perLab+'</th></tr></thead><tbody>'+
+        br.map(([c,a])=>{const cp=a[3]?a[2]/a[3]:0;return `<tr><td>${c}</td><td>${money(a[2])}</td><td>${fmt(a[0])}</td><td>${fmt(a[3])}</td><td>${a[3]?money(cp):'—'}</td></tr>`;}).join('')+'</tbody>';
+    }
+    return {now,prev,br};
+  }
+  const gA=paidSection(DATA.gads,{kpis:'gadsKpis',trend:'gadsTrend',leg:'gadsLeg',table:'gadsTable',tools:'gadsTools'},GADS_KPI,'c2','Conversions','CPA','gads');
+  const mA=paidSection(DATA.meta,{kpis:'metaKpis',trend:'metaTrend',leg:'metaLeg',table:'metaTable',place:'metaPlace',placeLeg:'metaPlaceLeg',tools:'metaTools'},META_KPI,'c6','Leads','CPL','meta');
+  (function(){const c=DATA.gads&&DATA.gads.conv,el=document.getElementById('gadsConvTable');if(!el)return;
+    if(!c||!c.byMonth||!Object.keys(c.byMonth).length){el.innerHTML='<tbody><tr><td style="color:var(--muted);font-weight:400">Conversion type data updates automatically and will appear here shortly.</td></tr></tbody>';return;}
+    const sum=w=>{const o={};w.forEach(ym=>{const m=c.byMonth[ym];if(!m)return;for(const k in m)o[k]=(o[k]||0)+(m[k]||0);});return o;};
+    const cur=sum(win),prev=sum(comp),names=Object.keys(cur).sort((a,b)=>cur[b]-cur[a]),tot=names.reduce((s,n)=>s+cur[n],0)||1;
+    el.innerHTML='<thead><tr><th>Conversion type</th><th>Conversions</th><th>Share</th><th>vs prev</th></tr></thead><tbody>'+
+      (names.length?names.map(n=>{const v=cur[n],p=prev[n]||0,d=delta(v,p);return `<tr><td class="tname">${esc(n)}</td><td>${fmt(Math.round(v))}</td><td>${(v/tot*100).toFixed(1)}%</td><td class="${d.c}">${d.t}</td></tr>`;}).join(''):'<tr><td colspan="4" style="color:var(--muted);font-weight:400">No conversions in this window.</td></tr>')+'</tbody>';})();
+  (function(){const a=DATA.meta&&DATA.meta.actions,el=document.getElementById('metaActTable');if(!el)return;
+    if(!a||!a.byMonth||!Object.keys(a.byMonth).length){el.innerHTML='<tbody><tr><td style="color:var(--muted);font-weight:400">Action data updates automatically and will appear here shortly.</td></tr></tbody>';return;}
+    const sum=(w,k)=>{let t=0;w.forEach(ym=>{const m=a.byMonth[ym];if(m)t+=(m[k]||0);});return t;};
+    const defs=[['Leads (total)','lead'],['On-Facebook Leads','onsiteLead'],['Link Clicks','linkClick'],['Landing Page Views','lpv'],['Post Engagement','postEng']];
+    el.innerHTML='<thead><tr><th>Action</th><th>Count</th><th>vs prev</th></tr></thead><tbody>'+
+      defs.map(([nm,k])=>{const v=sum(win,k),p=sum(comp,k),d=delta(v,p);return `<tr><td class="tname">${esc(nm)}</td><td>${fmt(Math.round(v))}</td><td class="${d.c}">${d.t}</td></tr>`;}).join('')+'</tbody>';})();
+  document.getElementById('gadsNote').textContent=`Google Ads · BBZ Limo account · ${winLab}. Lower CPA is better. (Channel/Region/City filters apply to GA4 only.)`;
+  document.getElementById('metaNote').textContent=`Meta — Facebook & Instagram · BBZ Limo account · ${winLab}. Lower CPL is better.`;
+  const paidSnap=`Google Ads (current vs comparison): Cost ${money(gA.now[2])} vs ${money(gA.prev[2])}; Conversions ${fmt(gA.now[3])} vs ${fmt(gA.prev[3])}; CPA ${money(gA.now[-1])}. Top campaigns by spend: `+gA.br.slice(0,6).map(x=>`${x[0]} ${money(x[1][2])}/${fmt(x[1][3])} conv`).join(', ')+`.\n`+
+    `Meta (current vs comparison): Spend ${money(mA.now[2])} vs ${money(mA.prev[2])}; Leads ${fmt(mA.now[3])} vs ${fmt(mA.prev[3])}; CPL ${money(mA.now[-1])}. Campaigns: `+mA.br.slice(0,6).map(x=>`${x[0]} ${money(x[1][2])}/${fmt(x[1][3])} leads`).join(', ')+`.`;
+  // ---- Google Business Profile ----
+  (function(){const src=DATA.gbp;
+    if(!hasData(src)){phState('gbpNote','gbpKpis','Google Business Profile data updates automatically and will appear here shortly.');if(charts.gbpTrend)charts.gbpTrend.destroy();return;}
+    const defs=[['Impressions',0],['Calls',1],['Direction Requests',3],['Website Clicks',2]];
+    document.getElementById('gbpKpis').innerHTML=defs.map(([nm,ix])=>{const c=sumArr(src,win,ix),pv=sumArr(src,comp,ix),d=delta(c,pv);return `<div class="kpi"><div class="l">${nm}</div><div class="v">${fmt(c)}</div><div class="d ${d.c}">${d.t} <span class="vs">vs ${fmt(pv)}</span></div></div>`;}).join('');
+    const tM=rangeEnd(win[win.length-1],12);
+    mkChart('gbpTrend',{type:'line',data:{labels:tM.map(ymLabel),datasets:[{label:'Impressions',data:tM.map(ym=>sumArr(src,[ym],0)),borderColor:col('c3'),borderWidth:2,tension:.35,pointRadius:0}]},options:{plugins:{tooltip:{enabled:true}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f1efe9'},beginAtZero:true}}}});
+    document.getElementById('gbpNote').innerHTML=`Google Business Profile \u00b7 BBZ Limo Service NJ \u00b7 ${winLab}. &nbsp;\u2605 ${src.rating?src.rating.toFixed(1):'\u2014'} rating \u00b7 ${fmt(src.reviews||0)} reviews.`;})();
+  // ---- CallRail ----
+  (function(){const src=DATA.callrail;
+    if(!hasData(src)){phState('crNote','crKpis','Call tracking data updates automatically and will appear here shortly.');if(charts.crTrend)charts.crTrend.destroy();const el0=document.getElementById('crLog');if(el0)el0.innerHTML='';return;}
+    const tot=sumArr(src,win,0),ans=sumArr(src,win,1),fst=sumArr(src,win,2),leads=sumArr(src,win,3),dur=sumArr(src,win,4);
+    let crComp=comp, crCmpLbl=(cmp==='year'?'prev year':'prev period');
+    const crHas=w=>w.some(ym=>src.data[ym]);
+    if(!crHas(crComp)){ crComp=compWindow(win,'period'); crCmpLbl='prev period'; }  // limited CallRail history: fall back to MoM
+    const ptot=sumArr(src,crComp,0),pans=sumArr(src,crComp,1),pfst=sumArr(src,crComp,2),pleads=sumArr(src,crComp,3),pdur=sumArr(src,crComp,4);
+    const miss=Math.max(0,tot-ans),pmiss=Math.max(0,ptot-pans),avg=tot?dur/tot:0,pavg=ptot?pdur/ptot:0,rate=tot?Math.round(ans/tot*100):0;
+    const durFmt=s=>{s=Math.round(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+    let dMiss=delta(miss,pmiss);dMiss={t:dMiss.t,c:(miss<=pmiss?'up':'dn')};
+    const rows=[['Total Calls',fmt(tot),delta(tot,ptot),fmt(ptot)],['Answered',fmt(ans),delta(ans,pans),fmt(pans)],['Missed',fmt(miss),dMiss,fmt(pmiss)],['First-Time',fmt(fst),delta(fst,pfst),fmt(pfst)],['Leads',fmt(leads),delta(leads,pleads),fmt(pleads)],['Avg Duration',durFmt(avg),delta(Math.round(avg),Math.round(pavg)),durFmt(pavg)]];
+    document.getElementById('crKpis').innerHTML=rows.map(([nm,v,d,pv])=>`<div class="kpi"><div class="l">${nm}</div><div class="v">${v}</div><div class="d ${d.c}">${d.t} <span class="vs">vs ${pv}</span></div></div>`).join('');
+    // ---- day enumeration for the selected window (clamped to today) ----
+    const f=win[0],l=win[win.length-1];
+    const start=new Date(+f.slice(0,4),+f.slice(4)-1,1), end=new Date(+l.slice(0,4),+l.slice(4),0), today=new Date();
+    if(end>today)end.setTime(today.getTime());
+    const days=[];for(let dt=new Date(start);dt<=end;dt.setDate(dt.getDate()+1))days.push(dt.toISOString().slice(0,10));
+    const dayLabel=d=>{const p=d.split('-');return MON[+p[1]-1]+' '+(+p[2]);};
+    const dow=document.getElementById('crDayWin');
+    if(src.daily){
+      if(dow)dow.textContent='— '+winLab+', totals by weekday';
+      const order=[1,2,3,4,5,6,0], lab=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const ans=[0,0,0,0,0,0,0], mis=[0,0,0,0,0,0,0];
+      days.forEach(d=>{const a=src.daily[d];if(!a)return;const wd=new Date(d+'T00:00:00').getDay();ans[wd]+=a[1]||0;mis[wd]+=Math.max(0,(a[0]||0)-(a[1]||0));});
+      const aD=order.map(i=>ans[i]), mD=order.map(i=>mis[i]);
+      mkChart('crTrend',{type:'bar',data:{labels:lab,datasets:[
+        {label:'Answered',data:aD,backgroundColor:col('c1'),borderRadius:3,stack:'s'},
+        {label:'Missed',data:mD,backgroundColor:'#d9d2c4',borderRadius:3,stack:'s'}
+      ]},options:{interaction:{mode:'index',intersect:false},plugins:{tooltip:{enabled:true}},scales:{x:{grid:{display:false},stacked:true,ticks:{maxRotation:0}},y:{grid:{color:'#f1efe9'},stacked:true,beginAtZero:true}}}});
+    }else{
+      if(dow)dow.textContent='— trailing 12 months';
+      const tM=rangeEnd(l,12);
+      mkChart('crTrend',{type:'bar',data:{labels:tM.map(ymLabel),datasets:[{label:'Calls',data:tM.map(ym=>sumArr(src,[ym],0)),backgroundColor:col('c1'),borderRadius:3}]},options:{plugins:{tooltip:{enabled:true}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f1efe9'},beginAtZero:true}}}});
+    }
+    // ---- call log ----
+    const lg=document.getElementById('crLog');
+    if(lg){
+      const winStart=days[0]||f.slice(0,4)+'-'+f.slice(4)+'-01', winEnd=days[days.length-1]||winStart;
+      const fmtDur=s=>{s=Math.round(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+      const badge='display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;background:var(--gold);color:#1a1208;border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:middle';
+      const leadBadge='display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;background:var(--pos);color:#fff;border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:middle';
+      const logRow=c=>{const dt=new Date(c.t);const when=isNaN(dt)?esc(c.t):`${MON[dt.getMonth()]} ${dt.getDate()}, ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`;
+        const status=c.a?'<span class="up">Answered</span>':'<span class="dn">Missed</span>';
+        const caller=`${c.n?esc(c.n):'Unknown caller'}${c.ls==='good_lead'?`<span style="${leadBadge}">LEAD</span>`:''}${c.p?`<div style="font-size:10px;color:var(--muted);font-weight:400">${esc(c.p)}</div>`:''}`;
+        return `<tr><td class="tname">${when}${c.f?`<span style="${badge}">NEW</span>`:''}</td><td class="tname">${caller}</td><td class="tname">${esc(c.s)}</td><td class="tname" style="font-weight:400">${c.kw?esc(c.kw):'—'}</td><td>${c.a?fmtDur(c.d):'—'}</td><td>${status}</td></tr>`;};
+      let L=(src.log||[]).filter(c=>{const d=(c.t||'').slice(0,10);return d>=winStart&&d<=winEnd;}),basis='— '+winLab;
+      if(!L.length){L=(src.log||[]).slice(0,60);basis='— most recent (last 30 days)';}else L=L.slice(0,300);
+      const lw=document.getElementById('crLogWin');if(lw)lw.textContent=basis+(L.length?` · ${L.length} calls`:'');
+      const head='<thead><tr><th>When</th><th>Caller</th><th>Source</th><th>Keywords</th><th>Duration</th><th>Status</th></tr></thead>';
+      const empty='<tr><td colspan="6" style="color:var(--muted);font-weight:400">No calls in this window. The log covers the most recent 30 days.</td></tr>';
+      const PER=15, pages=Math.max(1,Math.ceil(L.length/PER)); let page=0;
+      const pager=document.getElementById('crLogPager');
+      function drawPage(){
+        const s=page*PER, slice=L.slice(s,s+PER);
+        lg.innerHTML=head+'<tbody>'+(slice.length?slice.map(logRow).join(''):empty)+'</tbody>';
+        if(!pager)return;
+        if(L.length<=PER){pager.innerHTML='';return;}
+        const from=s+1,to=Math.min(s+PER,L.length);
+        pager.innerHTML=`<button class="pgbtn" id="crPrev" ${page===0?'disabled':''}>\u2039 Prev</button>`
+          +`<span class="pginfo">${from}\u2013${to} of ${L.length}</span>`
+          +`<button class="pgbtn" id="crNext" ${page>=pages-1?'disabled':''}>Next \u203a</button>`;
+        const pv=document.getElementById('crPrev'),nx=document.getElementById('crNext');
+        if(pv)pv.onclick=()=>{if(page>0){page--;drawPage();}};
+        if(nx)nx.onclick=()=>{if(page<pages-1){page++;drawPage();}};
+      }
+      drawPage();
+    }
+    document.getElementById('crNote').textContent=`CallRail \u00b7 BBZ \u00b7 ${winLab}. KPIs compared vs ${crCmpLbl}. Answered vs missed totaled by weekday; log lists recent individual calls.`;})();
+  // ---- Search Console ----
+  (function(){const src=DATA.searchconsole;
+    if(!hasData(src)){phState('scNote','scKpis','Search Console data updates automatically and will appear here shortly.');if(charts.scTrend)charts.scTrend.destroy();return;}
+    function wpos(w){let n=0,d=0;w.forEach(ym=>{const a=src.data[ym];if(a){n+=a[2]*a[1];d+=a[1];}});return d?n/d:0;}
+    let scComp=comp, scCmpLbl=(cmp==='year'?'vs prev year':'vs prev period');
+    const scHas=w=>w.some(ym=>src.data[ym]);
+    if(!scHas(scComp)){ scComp=compWindow(win,'period'); scCmpLbl='vs prev period'; }  // limited SC history: fall back to MoM so a real comparison always shows
+    const clk=sumArr(src,win,0),imp=sumArr(src,win,1),pclk=sumArr(src,scComp,0),pimp=sumArr(src,scComp,1);
+    const pos=wpos(win),ppos=wpos(scComp),ctr=imp?clk/imp*100:0,pctr=pimp?pclk/pimp*100:0;
+    const rows=[['Clicks',fmt(clk),delta(clk,pclk)],['Impressions',fmt(imp),delta(imp,pimp)],['CTR',ctr.toFixed(1)+'%',delta(ctr,pctr)],['Avg Position',pos?pos.toFixed(1):'—',{t:delta(pos,ppos).t,c:(pos<=ppos?'up':'dn')}]];
+    document.getElementById('scKpis').innerHTML=rows.map(([nm,v,d])=>`<div class="kpi"><div class="l">${nm}</div><div class="v">${v}</div><div class="d ${d.c}">${d.t} <span class="vs">${scCmpLbl}</span></div></div>`).join('');
+    const tM=rangeEnd(win[win.length-1],12);
+    mkChart('scTrend',{type:'bar',data:{labels:tM.map(ymLabel),datasets:[
+      {type:'bar',label:'Clicks',data:tM.map(ym=>sumArr(src,[ym],0)),backgroundColor:col('c5'),borderRadius:3,yAxisID:'y'},
+      {type:'line',label:'Avg position',data:tM.map(ym=>{const a=src.data[ym];return a?a[2]:null;}),borderColor:col('gold-dk'),borderWidth:2,tension:.35,pointRadius:0,yAxisID:'y1'}
+    ]},options:{interaction:{mode:'index',intersect:false},plugins:{tooltip:{enabled:true}},scales:{x:{grid:{display:false}},y:{position:'left',grid:{color:'#f1efe9'},beginAtZero:true},y1:{position:'right',reverse:true,grid:{display:false}}}}});
+    document.getElementById('scNote').innerHTML=`Search Console · bbzlimo.com · ${winLab}. Position axis inverted — lower is better. Google limits history to ~16 months.`;
+    (function(){const el=document.getElementById('scQTable');if(!el)return;
+      const tw=document.getElementById('scQTrendWrap');
+      if(!src.queries||!Object.keys(src.queries).length){el.innerHTML='<tbody><tr><td style="color:var(--muted)">Query-level data updates automatically and will appear here shortly.</td></tr></tbody>';if(tw)tw.style.display='none';return;}
+      const months=Object.keys(src.queries).sort();
+      SCQ={queries:src.queries,months};
+      const agg=scqAgg(src.queries,win);
+      let scComp=comp, aggP=scqAgg(src.queries,scComp), compLbl='vs Comp';
+      // The bbzlimo.com property has limited history, so a year-ago window can be empty.
+      // If the chosen comparison has no query data, fall back to the previous period so the change is still meaningful.
+      if(!Object.values(aggP).some(o=>o[0]>0)){scComp=compWindow(win,'period');aggP=scqAgg(src.queries,scComp);compLbl='vs prev period';}
+      const list=Object.entries(agg).map(([q,o])=>({q,clk:o[0],imp:o[1],pos:o[1]?o[2]/o[1]:0,pclk:aggP[q]?aggP[q][0]:0})).sort((a,b)=>b.clk-a.clk).slice(0,20);
+      SCQ.list=list;
+      el.innerHTML=`<thead><tr><th>Query</th><th>Clicks</th><th>Impr.</th><th>CTR</th><th>Avg Pos</th><th>Clicks ${compLbl}</th></tr></thead><tbody>`+
+        (list.length?list.map((x,i)=>{const d=delta(x.clk,x.pclk),ctr=x.imp?(x.clk/x.imp*100).toFixed(1)+'%':'—';
+          return `<tr class="qrow" data-i="${i}"><td class="tname">${esc(x.q)}</td><td>${fmt(x.clk)}</td><td>${fmt(x.imp)}</td><td>${ctr}</td><td>${x.pos?x.pos.toFixed(1):'—'}</td><td class="${d.c}">${d.t}</td></tr>`;}).join('')
+         :'<tr><td colspan="6" style="color:var(--muted);font-weight:400">No query data in this window.</td></tr>')+'</tbody>';
+      if(tw)tw.style.display='none';
+      if(!el.__wired){el.__wired=true;el.addEventListener('click',e=>{const tr=e.target.closest('tr.qrow');if(!tr)return;const x=SCQ.list[+tr.dataset.i];if(x)scqTrendShow(x.q);});}
+    })();})();
+  // ---- Bookings & Revenue (IQ CRM) ----
+  let iqSnap='IQ bookings data updating.';
+  (function(){const src=DATA.iq;
+    if(!src||!src.months||!src.months.length){phState('iqNote','iqKpis','Bookings and revenue data will appear after the first IQ sync.');
+      ['iqTrend','iqSrcBar'].forEach(id=>{if(charts[id])charts[id].destroy();});
+      ['iqSrcTable','iqCampTable','iqBrandTable'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='';});
+      const f=document.getElementById('iqFoot');if(f)f.innerHTML='';return;}
+    const sel=document.getElementById('f_iqsrc');
+    if(sel&&!sel.__filled){const set=new Set();Object.values(src.bySourceMonth||{}).forEach(M=>Object.keys(M).forEach(k=>set.add(k)));
+      sel.innerHTML='<option value="All">All sources</option>'+[...set].sort((a,b)=>String(a).localeCompare(String(b))).map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('');sel.__filled=true;}
+    const iqSrc=(sel&&sel.value)||'All', useSrc=iqSrc!=='All';
+    const sumBM=(w,k)=>{let t=0;w.forEach(ym=>{const m=src.byMonth[ym];if(m)t+=(m[k]||0);});return t;};
+    const sumSR=(w,k)=>{let t=0;w.forEach(ym=>{const M=src.bySourceMonth[ym],b=M&&M[iqSrc];if(b)t+=(b[k]||0);});return t;};
+    const S=(w,k)=>useSrc?sumSR(w,k):sumBM(w,k);
+    const aggMap=(mbm,w)=>{const o={};w.forEach(ym=>{const M=mbm&&mbm[ym];if(!M)return;for(const k in M){const v=M[k],x=o[k]||(o[k]={quotes:0,won:0,wonRevenue:0,pipeline:0});x.quotes+=v.quotes||0;x.won+=v.won||0;x.wonRevenue+=v.wonRevenue||0;x.pipeline+=v.pipeline||0;}});return o;};
+    const quotes=S(win,'quotes'),pq=S(comp,'quotes');
+    const wonR=S(win,'wonRevenue'),pWonR=S(comp,'wonRevenue');
+    const pipe=S(win,'pipeline'),pPipe=S(comp,'pipeline');
+    const won=S(win,'won'),lost=S(win,'lost'),pwon=S(comp,'won'),plost=S(comp,'lost');
+    const attr=S(win,'attributed');
+    const winRate=(won+lost)?won/(won+lost):0,pWinRate=(pwon+plost)?pwon/(pwon+plost):0;
+    const cov=quotes?attr/quotes:0;
+    const kpi=(l,v,d)=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d ${d.c}">${d.t} <span class="vs">vs ${d.p}</span></div></div>`;
+    const dQ=delta(quotes,pq),dWon=delta(wonR,pWonR),dPipe=delta(pipe,pPipe),dWR=delta(winRate*100,pWinRate*100);
+    document.getElementById('iqKpis').innerHTML=
+      kpi('Quotes',fmt(quotes),Object.assign({},dQ,{p:fmt(pq)}))+
+      kpi('Won Revenue',money(wonR),Object.assign({},dWon,{p:money(pWonR)}))+
+      kpi('Open Pipeline',money(pipe),Object.assign({},dPipe,{p:money(pPipe)}))+
+      kpi('Win Rate',pct(winRate),Object.assign({},dWR,{p:pct(pWinRate)}))+
+      `<div class="kpi"><div class="l">Attribution Coverage</div><div class="v">${pct(cov)}</div><div class="d">${fmt(attr)} of ${fmt(quotes)} quotes</div></div>`;
+    const tM=rangeEnd(win[win.length-1],12);
+    const qOf=ym=>{const m=useSrc?(src.bySourceMonth[ym]&&src.bySourceMonth[ym][iqSrc]):src.byMonth[ym];return m?(m.quotes||0):0;};
+    const rOf=ym=>{const m=useSrc?(src.bySourceMonth[ym]&&src.bySourceMonth[ym][iqSrc]):src.byMonth[ym];return m?(m.wonRevenue||0):0;};
+    mkChart('iqTrend',{type:'bar',data:{labels:tM.map(ymLabel),datasets:[
+      {type:'bar',label:'Quotes',data:tM.map(qOf),backgroundColor:col('c2'),borderRadius:3,yAxisID:'y'},
+      {type:'line',label:'Won revenue',data:tM.map(rOf),borderColor:col('gold-dk'),borderWidth:2,tension:.35,pointRadius:0,yAxisID:'y1'}
+    ]},options:{interaction:{mode:'index',intersect:false},plugins:{tooltip:{enabled:true}},scales:{x:{grid:{display:false}},y:{position:'left',grid:{color:'#f1efe9'},beginAtZero:true},y1:{position:'right',grid:{display:false},beginAtZero:true}}}});
+    document.getElementById('iqLeg').innerHTML=`<span><i style="background:${col('c2')}"></i>Quotes</span><span><i style="background:${col('gold-dk')}"></i>Won revenue</span>`;
+    const srcAgg=aggMap(src.bySourceMonth,win),srcList=Object.entries(srcAgg).sort((a,b)=>b[1].wonRevenue-a[1].wonRevenue);
+    const srcTot=srcList.reduce((s,x)=>s+x[1].wonRevenue,0)||1;
+    mkChart('iqSrcBar',{type:'bar',data:{labels:srcList.map(x=>x[0]),datasets:[{data:srcList.map(x=>x[1].wonRevenue),backgroundColor:srcList.map(x=>x[0]===iqSrc?col('gold-dk'):col('c2')),borderRadius:3}]},options:{indexAxis:'y',plugins:{tooltip:{enabled:true}},scales:{x:{grid:{color:'#f1efe9'},beginAtZero:true},y:{grid:{display:false}}}}});
+    document.getElementById('iqSrcTable').innerHTML='<thead><tr><th>Source</th><th>Quotes</th><th>Won</th><th>Won Revenue</th><th>Share</th></tr></thead><tbody>'+
+      (srcList.length?srcList.map(([s,a])=>`<tr${s===iqSrc?' style="font-weight:700"':''}><td class="tname">${esc(s)}</td><td>${fmt(a.quotes)}</td><td>${fmt(a.won)}</td><td>${money(a.wonRevenue)}</td><td>${(a.wonRevenue/srcTot*100).toFixed(1)}%</td></tr>`).join(''):'<tr><td colspan="5" style="color:var(--muted);font-weight:400">No source data in this window.</td></tr>')+'</tbody>';
+    const campAgg=aggMap(src.byCampaignMonth,win),campList=Object.entries(campAgg).map(([c,a])=>[c==='(none)'?'Untagged':c,a]).sort((a,b)=>b[1].wonRevenue-a[1].wonRevenue).slice(0,10);
+    document.getElementById('iqCampTable').innerHTML='<thead><tr><th>Campaign</th><th>Quotes</th><th>Won</th><th>Won Revenue</th></tr></thead><tbody>'+
+      (campList.length?campList.map(([c,a])=>`<tr><td class="tname">${esc(c)}</td><td>${fmt(a.quotes)}</td><td>${fmt(a.won)}</td><td>${money(a.wonRevenue)}</td></tr>`).join(''):'<tr><td colspan="4" style="color:var(--muted);font-weight:400">No campaign data in this window.</td></tr>')+'</tbody>';
+    const brandAgg=aggMap(src.byBrandMonth,win),brandList=Object.entries(brandAgg).sort((a,b)=>b[1].wonRevenue-a[1].wonRevenue);
+    document.getElementById('iqBrandTable').innerHTML='<thead><tr><th>Brand</th><th>Quotes</th><th>Won Revenue</th></tr></thead><tbody>'+
+      (brandList.length?brandList.map(([b,a])=>`<tr><td class="tname">${esc(b)}</td><td>${fmt(a.quotes)}</td><td>${money(a.wonRevenue)}</td></tr>`).join(''):'<tr><td colspan="3" style="color:var(--muted);font-weight:400">No brand data in this window.</td></tr>')+'</tbody>';
+    const samp=src.sample?'<div style="color:#7a6320;font-weight:600;margin-bottom:4px">Sample figures shown until IQ is connected with a live key.</div>':'';
+    document.getElementById('iqFoot').innerHTML=samp+
+      `Source uses the IQ lead source; web quotes with no recorded source are classified by UTM and click ids (Google Ads from paid clicks, etc.). Phone-in and manual quotes without tracking fall under Direct / Unattributed. Attributed coverage this period: ${pct(cov)}.<br>`+
+      `Revenue is the quoted amount. Won Revenue counts closed-won quotes only.<br>`+
+      `Dates use the quote created date (UTC).`;
+    document.getElementById('iqNote').textContent=`Bookings and Revenue · IQ CRM · ${winLab}.`+(useSrc?` Source: ${iqSrc}.`:'')+((useSrc&&quotes===0)?` No ${iqSrc} quotes in this window — widen the time frame to see its history.`:'')+(src.sample?' Sample data.':'');
+    iqSnap=`IQ Bookings and Revenue${useSrc?' [Source: '+iqSrc+']':''} (current vs comparison): Quotes ${fmt(quotes)} vs ${fmt(pq)}; Won Revenue ${money(wonR)} vs ${money(pWonR)}; Open Pipeline ${money(pipe)} vs ${money(pPipe)}; Win Rate ${pct(winRate)} vs ${pct(pWinRate)}; Attribution coverage ${pct(cov)} (${fmt(attr)} of ${fmt(quotes)} quotes attributed).\n`+
+      `Top revenue sources: `+srcList.slice(0,8).map(([s,a])=>`${s} ${money(a.wonRevenue)} (${fmt(a.won)} won)`).join(', ')+`.\n`+
+      `Top revenue campaigns: `+campList.slice(0,6).map(([c,a])=>`${c} ${money(a.wonRevenue)}`).join(', ')+`.\n`+
+      `By brand: `+brandList.map(([b,a])=>`${b} ${money(a.wonRevenue)}`).join(', ')+`.`;
+  })();
+  const otherSnap=(hasData(DATA.gbp)?`GBP (current vs comparison): Impressions ${fmt(sumArr(DATA.gbp,win,0))} vs ${fmt(sumArr(DATA.gbp,comp,0))}; Calls ${fmt(sumArr(DATA.gbp,win,1))}; Direction requests ${fmt(sumArr(DATA.gbp,win,3))}; Rating ${DATA.gbp.rating||'n/a'} (${DATA.gbp.reviews||0} reviews).`:'Google Business Profile data updating.')+'\n'+(hasData(DATA.callrail)?`CallRail: ${fmt(sumArr(DATA.callrail,win,0))} calls, ${fmt(sumArr(DATA.callrail,win,1))} answered this window.`:'Call tracking data updating.')+'\n'+(hasData(DATA.searchconsole)?`Search Console: ${fmt(sumArr(DATA.searchconsole,win,0))} clicks, ${fmt(sumArr(DATA.searchconsole,win,1))} impressions.`:'Search Console data updating.');
+  window.__SNAP=`Current view — ${tfLabel} (${winLab}) vs ${cmp==='year'?'Previous Year':'Previous Period'} (${compLab}). Metric focus: ${mName}. Filters: Channel=${chf}, Region=${regf}, City=${cityf}.\n`+
+    `KPIs (current vs comparison): `+METRICS.map(([nm,ix])=>`${nm} ${fmt(sumCh(win,ix,chf))} vs ${fmt(sumCh(comp,ix,chf))}`).join('; ')+`.\n`+
+    `${mName} by channel (current window): `+chBreak.map(x=>`${x[0]} ${fmt(x[1])}`).join(', ')+`.\n`+
+    `Top regions by sessions: `+regB.slice(0,7).map(x=>`${x[0]} ${fmt(x[1])}`).join(', ')+`.\n`+
+    `Top cities by sessions: `+cityB.slice(0,7).map(x=>`${x[0]} ${fmt(x[1])}`).join(', ')+`.\n`+
+    `Key events (current vs comparison): `+KE_LABELS.map((nm,ix)=>`${nm} ${fmt(sumKE(win,ix))} vs ${fmt(sumKE(comp,ix))}`).join('; ')+`.
+`+paidSnap+'\n'+otherSnap+'\n'+iqSnap;
+  window.__ANSIG = tf+'|'+cmp+(tf==='custom'?('|'+((document.getElementById('f_from')||{}).value||'')+'|'+((document.getElementById('f_to')||{}).value||'')):'');
+  if(window.__ANSIG!==window.__ANSIG_last){window.__ANSIG_last=window.__ANSIG; if(window.__anInit){try{generateAnalysis(false);}catch(e){}}}
+}
+
+document.querySelectorAll('select').forEach(s=>s.addEventListener('change',render));
+(function(){const k=Object.keys(DATA.chm||{}).sort();const toI=ym=>ym.slice(0,4)+'-'+ym.slice(4);
+  const lo=k.length?k[0]:ymAdd(ANCHOR,-23),hi=ymAdd(ANCHOR,1);
+  const f=document.getElementById('f_from'),t=document.getElementById('f_to');
+  if(f&&t){f.min=t.min=toI(lo);f.max=t.max=toI(hi);
+    f.addEventListener('change',render);t.addEventListener('change',render);}})();
+render();
+if(typeof Chart==='undefined'){var __cs=document.createElement('script');__cs.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';__cs.onload=function(){HASCHART=true;try{Chart.defaults.font.family="'Hanken Grotesk',Arial,sans-serif";Chart.defaults.font.size=10;Chart.defaults.color='#9a9ea6';Chart.defaults.plugins.legend.display=false;Chart.defaults.maintainAspectRatio=false;Chart.defaults.animation={duration:300};}catch(e){}try{render();}catch(e){}};__cs.onerror=function(){};document.head.appendChild(__cs);}
+
+// ---- AI marketing analysis (auto on load; editable; saved in browser; regenerate on demand) ----
+const AN_IDS={ga4:'anGa4',gads:'anGads',meta:'anMeta',gbp:'anGbp',callrail:'anCr',searchconsole:'anSc',iq:'anIq'};
+const ALLK=['summary','ga4','gads','meta','gbp','callrail','searchconsole','iq'];
+const LS='bbz_an_';
+let anBusy=false;
+function curSig(){return window.__ANSIG||'';}
+function lsGet(k){try{return localStorage.getItem(LS+curSig()+'_'+k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(LS+curSig()+'_'+k,v);}catch(e){}}
+function bodyEl(k){return k==='summary'?document.getElementById('execSum'):document.querySelector('#'+AN_IDS[k]+' .anote-b');}
+function makeEditable(k){const el=bodyEl(k);if(!el||el.dataset.ed)return;el.dataset.ed='1';el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');el.title='Click to edit';el.addEventListener('input',()=>{el.removeAttribute('data-empty');lsSet(k,el.innerHTML);});}
+function setText(k,txt,empty){const el=bodyEl(k);if(!el)return;el.textContent=txt;if(empty)el.setAttribute('data-empty','1');else el.removeAttribute('data-empty');makeEditable(k);}
+function hints(){document.querySelectorAll('.anote-h').forEach(h=>{if(!h.querySelector('.edhint')){const s=document.createElement('span');s.className='edhint';s.textContent='✎ editable';h.appendChild(s);}});}
+function restoreSaved(){ALLK.forEach(k=>{const el=bodyEl(k),v=lsGet(k);if(el&&v!=null){el.innerHTML=v;el.removeAttribute('data-empty');}makeEditable(k);});const ae=document.getElementById('actionList'),av=lsGet('actions');if(ae&&av!=null){ae.innerHTML=av;ae.removeAttribute('data-empty');}wireActions();}
+function wireActions(){const el=document.getElementById('actionList');if(!el||el.dataset.ed)return;el.dataset.ed='1';el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');el.title='Click to edit';el.addEventListener('input',()=>{el.removeAttribute('data-empty');lsSet('actions',el.innerHTML);});}
+function renderActions(val){const el=document.getElementById('actionList');if(!el)return;
+  if(Array.isArray(val)&&val.length){el.innerHTML='<ol style="margin:0;padding-left:20px">'+val.map(a=>`<li style="margin:0 0 7px">${esc(String(a))}</li>`).join('')+'</ol>';el.removeAttribute('data-empty');}
+  else if(typeof val==='string'&&val.trim()){el.textContent=val;el.setAttribute('data-empty','1');}
+  else{el.textContent='No action items for this view.';el.setAttribute('data-empty','1');}
+  wireActions();}
+async function generateAnalysis(force){
+  if(anBusy)return;
+  if(!force && ALLK.some(k=>lsGet(k)!=null)){restoreSaved();hints();return;}  // keep your edits; no API call
+  anBusy=true;
+  const btn=document.getElementById('anBtn'); if(btn){btn.disabled=true;btn.textContent='Analyzing…';}
+  ALLK.forEach(k=>setText(k,'Analyzing…',false));
+  renderActions('Analyzing…');
+  try{
+    const r=await fetch('/api/analyze',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({context:window.__SNAP||''})});
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error?JSON.stringify(j.error).slice(0,200):r.status);
+    ALLK.forEach(k=>{const t=(k==='summary'?j.summary:j[k])||'No notable change in this view.';setText(k,t,false);lsSet(k,t);});
+    const acts=(Array.isArray(j.actions)&&j.actions.length)?j.actions:(DATA.actionsSample||null);
+    renderActions(acts); const ae=document.getElementById('actionList'); if(ae)lsSet('actions',ae.innerHTML);
+  }catch(e){
+    const msg='Analysis runs on the live dashboard (needs the server connection).';
+    ALLK.forEach(k=>setText(k,msg,true));
+    renderActions((DATA.actionsSample&&DATA.actionsSample.length)?DATA.actionsSample:msg);
+  }finally{anBusy=false; if(btn){btn.disabled=false;btn.textContent='Regenerate analysis';} hints();}
+}
+const anBtnEl=document.getElementById('anBtn'); if(anBtnEl)anBtnEl.onclick=()=>{if(confirm('Regenerate all analysis from the live data? This replaces your edits for the current view.'))generateAnalysis(true);};
+(function(){try{var ae=document.getElementById('actionList');if(ae&&lsGet('actions')==null&&DATA.actionsSample&&DATA.actionsSample.length)renderActions(DATA.actionsSample);}catch(e){}})();
+generateAnalysis(false); window.__anInit=true;
+
+
+// ---- single Ask box (free-form Q&A across the whole view) ----
+(function(){const box=document.querySelector('.qa');if(!box)return;const inp=box.querySelector('.qa-in'),ans=box.querySelector('.qa-ans');
+  const qb=box.querySelector('.qa-btn');if(qb)qb.onclick=()=>askView(inp,ans);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')askView(inp,ans);});})();
+async function askView(inp,ans){const q=inp.value.trim();if(!q)return;ans.textContent='Thinking…';
+  try{const r=await fetch('/api/ask',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:window.__SNAP})});const j=await r.json();
+    if(r.ok){ans.innerHTML=mdLite(j.text||'No answer returned.');}
+    else{ans.textContent='Error: '+(j.error?JSON.stringify(j.error).slice(0,200):r.status);}
+  }catch(e){ans.textContent='Could not reach the server ('+e.message+').';}}
+// Render a safe subset of Markdown to HTML so answers look clean even if the model formats them.
+function mdLite(src){
+  let t=String(src).replace(/\s*[\u2014\u2013]\s*/g,' - ');                 // em/en dash -> hyphen
+  const escH=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const inl=s=>escH(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'$1');
+  const lines=t.split(/\r?\n/); let html='',para=[],i=0;
+  const flush=()=>{if(para.length){html+='<p>'+inl(para.join(' '))+'</p>';para=[];}};
+  const cells=r=>r.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(c=>c.trim());
+  while(i<lines.length){const ln=lines[i];
+    if(/\|/.test(ln)&&i+1<lines.length&&/-/.test(lines[i+1])&&/^[\s:|\-]+$/.test(lines[i+1])){
+      flush();const hc=cells(ln);i+=2;const rows=[];
+      while(i<lines.length&&/\|/.test(lines[i])){rows.push(lines[i]);i++;}
+      html+='<table style="width:100%;border-collapse:collapse;margin:6px 0 10px;font-size:12px"><thead><tr>'
+        +hc.map(c=>'<th style="text-align:left;padding:5px 8px;border-bottom:1.5px solid var(--gold);color:var(--ink2);font-size:10px;text-transform:uppercase;letter-spacing:.04em">'+inl(c)+'</th>').join('')
+        +'</tr></thead><tbody>'
+        +rows.map(r=>'<tr>'+cells(r).map((x,ix)=>'<td style="padding:5px 8px;border-bottom:1px solid var(--line2)'+(ix?';text-align:right;font-variant-numeric:tabular-nums':'')+'">'+inl(x)+'</td>').join('')+'</tr>').join('')
+        +'</tbody></table>';continue;}
+    const hm=ln.match(/^\s*#{1,6}\s+(.*)$/);
+    if(hm){flush();html+='<div style="font-weight:700;margin:10px 0 4px">'+inl(hm[1])+'</div>';i++;continue;}
+    const bm=ln.match(/^\s*[-*]\s+(.*)$/);
+    if(bm){flush();const items=[];while(i<lines.length){const m=lines[i].match(/^\s*[-*]\s+(.*)$/);if(!m)break;items.push(m[1]);i++;}
+      html+='<ul style="margin:4px 0 8px;padding-left:18px">'+items.map(x=>'<li style="margin:2px 0">'+inl(x)+'</li>').join('')+'</ul>';continue;}
+    if(/^\s*-{3,}\s*$/.test(ln)){flush();i++;continue;}
+    if(/^\s*$/.test(ln)){flush();i++;continue;}
+    para.push(ln.trim());i++;}
+  flush();return html||'<p>No answer returned.</p>';}
+
+
+document.getElementById('foot').innerHTML='';
+</script>
+<script>
+/* After a cold start the page shows snapshot data; poll until live data is warm, then refresh once. */
+(function () {
+  if (typeof window.__STALE__ === 'undefined' || !window.__STALE__) return;
+  var interacted = false;  // never auto-reload out from under an active user
+  document.addEventListener('change', function(){ interacted = true; }, true);
+  document.addEventListener('click', function(e){ if (e.target && e.target.closest && e.target.closest('select,button,table,.treetools,.qrow,.exp')) interacted = true; }, true);
+  var bar = document.createElement('div');
+  bar.textContent = 'Loading live data\u2026';
+  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#15110b;color:#d8b46a;'
+    + 'font:600 12.5px/2.6 \'Hanken Grotesk\',system-ui,sans-serif;text-align:center;letter-spacing:.06em;'
+    + 'border-bottom:1px solid rgba(216,180,106,.25)';
+  document.body.appendChild(bar);
+  var n = 0, iv = setInterval(function () {
+    n++;
+    fetch('/api/ready', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j && j.ready) { clearInterval(iv); bar.textContent = 'Live data is ready \u2014 click here to refresh.'; bar.style.cursor = 'pointer'; bar.onclick = function(){ location.reload(); }; setTimeout(function(){ try{ bar.style.display='none'; }catch(_){} }, 15000); }
+      })
+      .catch(function () {});
+    if (n > 48) { clearInterval(iv); bar.style.display = 'none'; } // stop after ~4 min
+  }, 5000);
+})();
+</script>
+</body>
+</html>
