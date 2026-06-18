@@ -531,14 +531,23 @@ function renderGHLForms(){
   var labels=win.map(mLabel);
   var ds=forms.map(function(f,i){return {label:f,data:win.map(function(m){return (byMonth[m]&&byMonth[m][f])||0;}),backgroundColor:PALETTE[i%PALETTE.length]};});
   mkChart('ghlForms',{type:'bar',data:{labels:labels,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}},title:{display:true,text:'Form submissions by month',font:{size:11}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}},y:{stacked:true,beginAtZero:true,ticks:{font:{size:10}}}}}});
-  // Marketing source = GA4 channel attribution of key events (GHL form contacts carry no source/UTM).
-  var swin=windowMonths().filter(function(m){return DATA.chm&&DATA.chm[m];});
-  if(!swin.length)swin=allMonths().slice(-3);
-  var srcAgg={};
-  swin.forEach(function(m){var chm=DATA.chm[m]||{};Object.keys(chm).forEach(function(ch){srcAgg[ch]=(srcAgg[ch]||0)+(+chm[ch][4]||0);});});
-  // fall back to GHL contact_original_source if GA4 has no key events at all
-  var ents=Object.keys(srcAgg).map(function(k){return [k,srcAgg[k]];}).filter(function(e){return e[1]>0;}).sort(function(a,b){return b[1]-a[1];});
-  var srcTitle='Marketing source · GA4 key events by channel';
+  // Marketing source priority: direct GHL API attribution (per selected form) -> GA4 channel -> GHL Windsor.
+  var ents=[], srcTitle='';
+  var fsrc=DATA.ghl&&DATA.ghl.formSources;
+  if(fsrc&&fsrc.byForm&&fsrc.withAttribution>0){
+    var agg={};
+    forms.forEach(function(fm){var bf=fsrc.byForm[fm];if(!bf)return;Object.keys(bf).forEach(function(s){agg[s]=(agg[s]||0)+bf[s];});});
+    ents=Object.keys(agg).map(function(k){return [k,agg[k]];}).filter(function(e){return e[1]>0;}).sort(function(a,b){return b[1]-a[1];});
+    srcTitle='Marketing source · GHL attribution (UTM)';
+  }
+  if(!ents.length){
+    var swin=windowMonths().filter(function(m){return DATA.chm&&DATA.chm[m];});
+    if(!swin.length)swin=allMonths().slice(-3);
+    var srcAgg={};
+    swin.forEach(function(m){var chm=DATA.chm[m]||{};Object.keys(chm).forEach(function(ch){srcAgg[ch]=(srcAgg[ch]||0)+(+chm[ch][4]||0);});});
+    ents=Object.keys(srcAgg).map(function(k){return [k,srcAgg[k]];}).filter(function(e){return e[1]>0;}).sort(function(a,b){return b[1]-a[1];});
+    srcTitle='Marketing source · GA4 key events by channel';
+  }
   if(!ents.length){
     var g={};ghlForms().forEach(function(f){if(forms.indexOf(f.name)<0)return;Object.keys(f.channels||{}).forEach(function(ch){g[ch]=(g[ch]||0)+f.channels[ch];});});
     ents=Object.keys(g).map(function(k){return [prettySrc(k),g[k]];}).sort(function(a,b){return b[1]-a[1];});

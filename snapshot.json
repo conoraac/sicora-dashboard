@@ -1313,8 +1313,47 @@
           }
         }
       }
+    },
+    "formSources": {
+      "source": "ghl-api-attribution",
+      "contacts": 420,
+      "withAttribution": 312,
+      "byForm": {
+        "Contact Us": {
+          "Google": 40,
+          "Direct": 25,
+          "Bing": 12,
+          "LinkedIn": 9
+        },
+        "4 Colors of Insights Contact": {
+          "Google": 38,
+          "Bing": 14,
+          "Direct": 12
+        },
+        "PPC - Insights Discovery Landing Page": {
+          "Google": 49,
+          "Bing": 3
+        },
+        "membership": {
+          "Direct": 16,
+          "Google": 8,
+          "Email": 4
+        },
+        "Calendly": {
+          "LinkedIn": 9,
+          "Direct": 7,
+          "Google": 3
+        }
+      },
+      "overall": {
+        "Google": 138,
+        "Direct": 60,
+        "Bing": 29,
+        "LinkedIn": 18,
+        "Email": 4
+      }
     }
   },
   "generatedAt": "2026-06-17T00:00:00.000Z",
-  "build": 6
+  "build": 7
 }

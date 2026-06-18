@@ -82,4 +82,63 @@ export async function buildEmail(_ctx = {}) {
   }
 }
 
-export { normalizeAggregate };
+// ---- Marketing source via direct GHL API attribution ----
+// Windsor's GHL feed nulls out original_source/UTMs for native form fills. The LeadConnector API,
+// however, carries per-contact attribution (utmSource / sessionSource / medium / referrer). We page
+// the contacts endpoint (recent first, capped + time-budgeted) and aggregate source counts per form
+// (contact.source == form/source label) so the dashboard can show a real, form-filterable source mix.
+function sourceLabel(a) {
+  if (!a || typeof a !== 'object') return 'Direct';
+  let s = a.utmSource || a.utm_source || a.sessionSource || a.medium || a.utmMedium || a.referrer || '';
+  s = String(s || '').trim();
+  if (!s || /^(null|undefined|direct|\(direct\)|none)$/i.test(s)) return 'Direct';
+  s = s.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split(/[\/?#]/)[0]; // referrer URL -> domain
+  // tidy common values
+  const map = { google: 'Google', 'google.com': 'Google', bing: 'Bing', facebook: 'Facebook', 'facebook.com': 'Facebook',
+    fb: 'Facebook', instagram: 'Instagram', linkedin: 'LinkedIn', 'linkedin.com': 'LinkedIn', 'lnkd.in': 'LinkedIn',
+    youtube: 'YouTube', 't.co': 'X/Twitter', twitter: 'X/Twitter', 'chatgpt.com': 'ChatGPT', 'duckduckgo.com': 'DuckDuckGo' };
+  const k = s.toLowerCase();
+  return map[k] || s.replace(/\b\w/g, c => c.toUpperCase());
+}
+function attrOf(c) {
+  return c.attributionSource || c.attribution_source
+    || (Array.isArray(c.attributions) && c.attributions[0])
+    || c.lastAttributionSource || c.last_attribution_source || null;
+}
+export async function buildContactSources({ cap = 4000, budgetMs = 25000 } = {}) {
+  if (!GHL_KEY) return null;
+  const started = Date.now();
+  const byForm = {}, overall = {};
+  let url = `${PUBLIC_BASE}/contacts/?locationId=${encodeURIComponent(GHL_LOCATION)}&limit=100`;
+  let fetched = 0, withAttr = 0, pages = 0;
+  try {
+    while (url && fetched < cap && (Date.now() - started) < budgetMs) {
+      const j = await getJSON(url);
+      const contacts = j.contacts || j.data || [];
+      if (!Array.isArray(contacts) || !contacts.length) break;
+      for (const c of contacts) {
+        fetched++;
+        const form = c.source || '(none)';
+        const a = attrOf(c);
+        if (a && (a.utmSource || a.sessionSource || a.medium || a.referrer)) withAttr++;
+        const src = sourceLabel(a);
+        (byForm[form] || (byForm[form] = {}))[src] = (byForm[form][src] || 0) + 1;
+        overall[src] = (overall[src] || 0) + 1;
+      }
+      pages++;
+      const meta = j.meta || j.pagination || {};
+      const next = meta.nextPageUrl || meta.next_page_url || null;
+      if (next) { url = next; }
+      else if (meta.startAfterId || meta.startAfter) {
+        url = `${PUBLIC_BASE}/contacts/?locationId=${encodeURIComponent(GHL_LOCATION)}&limit=100`
+          + (meta.startAfter ? `&startAfter=${encodeURIComponent(meta.startAfter)}` : '')
+          + (meta.startAfterId ? `&startAfterId=${encodeURIComponent(meta.startAfterId)}` : '');
+      } else { url = null; }
+    }
+  } catch (e) {
+    if (!Object.keys(overall).length) return null; // nothing usable
+  }
+  return { byForm, overall, contacts: fetched, withAttribution: withAttr, source: 'ghl-api-attribution' };
+}
+
+export { normalizeAggregate, sourceLabel };
