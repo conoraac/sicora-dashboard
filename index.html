@@ -324,14 +324,17 @@ function renderGA4(){
   var kef=$('f_ke')?$('f_ke').value:'all',keSel=kef==='all'?null:+kef;
   var isKE=(mIdx===4&&keSel!==null);
   var mName=isKE?keNames()[keSel]:METRICS[mIdx][0];
-  // trend: selected metric (or specific key event) for the window, with the comparison series
-  var labels=win.map(mLabel);
-  var cur=win.map(function(m){return isKE?sumKE([m],keSel):sumCh([m],mIdx,chf);});
-  var ds=[{label:mName+(!isKE&&chf!=='All'?' · '+chf:''),data:cur,borderColor:PALETTE[0],backgroundColor:'rgba(245,132,89,.12)',fill:true,tension:.3}];
-  if(prev.length){
-    var cmpS=win.map(function(m,i){var pm=prev[i];return isKE?sumKE([pm],keSel):sumCh([pm],mIdx,chf);});
-    if(cmpS.some(function(v){return v>0;}))ds.push({label:($('f_cmp').value==='year'?'Prev year':'Prev period'),data:cmpS,borderColor:'#c4c8cd',borderWidth:1.5,borderDash:[4,3],backgroundColor:'transparent',tension:.3,pointRadius:0});
-  }
+  // trend: always a trailing multi-month line so short windows (This/Last Month) still show context
+  var endM=win[win.length-1];
+  var tMonths=rangeEnd(endM,Math.max(win.length,6)).filter(function(m){return allMonths().indexOf(m)>=0;});
+  if(tMonths.length<2)tMonths=allMonths().filter(function(m){return m<=endM;}).slice(-6);
+  if(!tMonths.length)tMonths=win;
+  var cmpMode=$('f_cmp').value, off=cmpMode==='year'?12:tMonths.length;
+  var labels=tMonths.map(mLabel);
+  var cur=tMonths.map(function(m){return isKE?sumKE([m],keSel):sumCh([m],mIdx,chf);});
+  var cmpS=tMonths.map(function(m){var pm=ymAdd(m,-off);return isKE?sumKE([pm],keSel):sumCh([pm],mIdx,chf);});
+  var ds=[{label:mName+(!isKE&&chf!=='All'?' · '+chf:''),data:cur,borderColor:PALETTE[0],backgroundColor:'rgba(245,132,89,.12)',fill:true,tension:.3,pointRadius:2}];
+  if(cmpS.some(function(v){return v>0;}))ds.push({label:(cmpMode==='year'?'Prev year':'Prev period'),data:cmpS,borderColor:'#c4c8cd',borderWidth:1.5,borderDash:[4,3],backgroundColor:'transparent',tension:.3,pointRadius:0});
   mkChart('ga4Trend',{type:'line',data:{labels:labels,datasets:ds},options:baseOpts(true)});
   // channel mix for the selected metric, last month in window
   var last=win[win.length-1];var chm=(DATA.chm&&DATA.chm[last])||{};
@@ -404,8 +407,11 @@ function renderGads(){
     {lab:'CPA',val:cur.tot[3]?money(cpa):'—',chg:adsDelta(cpa,pcpa,false)}
   ];
   $('gadsKpis').innerHTML=k.map(function(x){return '<div class="kpi"><div class="lab">'+x.lab+'</div><div class="val">'+x.val+'</div>'+x.chg+'</div>';}).join('');
-  // trend: clicks + conversions as lines (#3)
-  var wm=win.filter(function(m){return (DATA.gads&&DATA.gads.data&&DATA.gads.data[m])||(DATA.gads&&DATA.gads.detail&&DATA.gads.detail[m]);});
+  // trend: clicks + conversions as lines (#3), trailing so short windows still show a line
+  var endM=win[win.length-1];
+  var gadsAvail=function(m){return (DATA.gads&&((DATA.gads.detail&&DATA.gads.detail[m])||(DATA.gads.data&&DATA.gads.data[m])));};
+  var wm=rangeEnd(endM,Math.max(win.length,6)).filter(gadsAvail);
+  if(wm.length<2)wm=(DATA.gads&&DATA.gads.months||[]).filter(function(m){return m<=endM;}).slice(-6);
   if(!wm.length)wm=win;
   var labels=wm.map(mLabel);
   var clicks=wm.map(function(m){return gadsAgg([m]).tot[0];});
@@ -455,9 +461,13 @@ function gscQueryAgg(win){
 function renderGSC(){
   var win=windowMonths().filter(function(m){return DATA.gsc&&DATA.gsc.data&&DATA.gsc.data[m];});
   if(!win.length)win=(DATA.gsc&&DATA.gsc.months||[]).slice(-6);
-  var labels=win.map(mLabel);
-  var clicks=win.map(function(m){return (DATA.gsc.data[m]||[0,0,0])[0];});
-  var pos=win.map(function(m){return (DATA.gsc.data[m]||[0,0,0])[2];});
+  var endM=win[win.length-1];
+  var tMonths=rangeEnd(endM,Math.max(win.length,6)).filter(function(m){return DATA.gsc&&DATA.gsc.data&&DATA.gsc.data[m];});
+  if(tMonths.length<2)tMonths=(DATA.gsc&&DATA.gsc.months||[]).filter(function(m){return m<=endM;}).slice(-6);
+  if(!tMonths.length)tMonths=win;
+  var labels=tMonths.map(mLabel);
+  var clicks=tMonths.map(function(m){return (DATA.gsc.data[m]||[0,0,0])[0];});
+  var pos=tMonths.map(function(m){return (DATA.gsc.data[m]||[0,0,0])[2];});
   // line graph (#7): clicks + avg position, dual axis
   mkChart('gscTrend',{type:'line',data:{labels:labels,datasets:[
     {label:'Clicks',data:clicks,borderColor:PALETTE[1],backgroundColor:'rgba(64,91,164,.12)',fill:true,yAxisID:'y',tension:.3},
@@ -521,11 +531,20 @@ function renderGHLForms(){
   var labels=win.map(mLabel);
   var ds=forms.map(function(f,i){return {label:f,data:win.map(function(m){return (byMonth[m]&&byMonth[m][f])||0;}),backgroundColor:PALETTE[i%PALETTE.length]};});
   mkChart('ghlForms',{type:'bar',data:{labels:labels,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}},title:{display:true,text:'Form submissions by month',font:{size:11}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}},y:{stacked:true,beginAtZero:true,ticks:{font:{size:10}}}}}});
-  // sources: aggregate marketing channels across selected forms
+  // Marketing source = GA4 channel attribution of key events (GHL form contacts carry no source/UTM).
+  var swin=windowMonths().filter(function(m){return DATA.chm&&DATA.chm[m];});
+  if(!swin.length)swin=allMonths().slice(-3);
   var srcAgg={};
-  ghlForms().forEach(function(f){if(forms.indexOf(f.name)<0)return;Object.keys(f.channels||{}).forEach(function(ch){srcAgg[ch]=(srcAgg[ch]||0)+f.channels[ch];});});
-  var ents=Object.keys(srcAgg).map(function(k){return [k,srcAgg[k]];}).sort(function(a,b){return b[1]-a[1];});
-  mkChart('ghlSources',{type:'doughnut',data:{labels:ents.map(function(e){return prettySrc(e[0]);}),datasets:[{data:ents.map(function(e){return e[1];}),backgroundColor:PALETTE}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10}}},title:{display:true,text:'Marketing source of fills',font:{size:11}}}}});
+  swin.forEach(function(m){var chm=DATA.chm[m]||{};Object.keys(chm).forEach(function(ch){srcAgg[ch]=(srcAgg[ch]||0)+(+chm[ch][4]||0);});});
+  // fall back to GHL contact_original_source if GA4 has no key events at all
+  var ents=Object.keys(srcAgg).map(function(k){return [k,srcAgg[k]];}).filter(function(e){return e[1]>0;}).sort(function(a,b){return b[1]-a[1];});
+  var srcTitle='Marketing source · GA4 key events by channel';
+  if(!ents.length){
+    var g={};ghlForms().forEach(function(f){if(forms.indexOf(f.name)<0)return;Object.keys(f.channels||{}).forEach(function(ch){g[ch]=(g[ch]||0)+f.channels[ch];});});
+    ents=Object.keys(g).map(function(k){return [prettySrc(k),g[k]];}).sort(function(a,b){return b[1]-a[1];});
+    srcTitle='Marketing source of fills (GHL)';
+  }
+  mkChart('ghlSources',{type:'doughnut',data:{labels:ents.map(function(e){return e[0];}),datasets:[{data:ents.map(function(e){return e[1];}),backgroundColor:PALETTE}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10}}},title:{display:true,text:srcTitle,font:{size:11}}}}});
 }
 function prettySrc(s){return String(s||'').replace(/_/g,' ').toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase();});}
 function renderJourney(){
