@@ -17,6 +17,14 @@
   "city": {
     "202605": {"Minneapolis": [280, 7], "Chicago": [190, 3], "New York": [170, 2], "Other": [2220, 37]}
   },
+  "keNames": ["contact_form_submission", "ghl_form_submit", "checklist_download", "whitepaper_form_submission", "grab_the_helm_course_registration_form", "grab_the_helm_book_preview_form"],
+  "ke": {
+    "202601": [22, 18, 7, 3, 2, 2],
+    "202602": [26, 20, 8, 4, 3, 2],
+    "202603": [30, 24, 9, 5, 3, 3],
+    "202604": [31, 26, 10, 5, 4, 3],
+    "202605": [31, 29, 10, 5, 5, 3]
+  },
   "gads": {
     "months": ["202603", "202604", "202605"],
     "campaigns": ["Search - Insights Discovery", "Search - Leadership Training", "PMax - Brand"],

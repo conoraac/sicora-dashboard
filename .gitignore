@@ -1,3 +1,4 @@
 node_modules/
 .env
 _pagecheck.js
+.claude/
