@@ -22,9 +22,13 @@ header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap
 .brand .w{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:.05em;color:var(--ink)}
 .brand .sub{font-size:9px;letter-spacing:.26em;color:var(--muted);margin-top:2px}
 .brand .rule{height:1px;background:var(--gold);width:120px;margin:6px 0 5px}
-.hmeta{text-align:right;font-size:11px;color:var(--muted)}
+.hmeta{text-align:right}
+.hmeta .htitle{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.1;color:var(--ink)}
+.hmeta .hagency{font-size:10px;font-weight:600;letter-spacing:.28em;margin-top:7px;background:linear-gradient(90deg,var(--orange),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--blue)}
+.hmeta .hstatus{font-size:10.5px;color:var(--muted);margin-top:9px;display:flex;gap:10px;justify-content:flex-end;align-items:center}
 .hmeta .live{display:inline-flex;align-items:center;gap:5px;color:var(--pos);font-weight:600}
 .hmeta .dot{width:7px;height:7px;border-radius:50%;background:var(--pos);display:inline-block}
+@media(max-width:560px){.hmeta{text-align:left}.hmeta .hstatus{justify-content:flex-start}}
 .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:18px 0 6px}
 .controls label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .controls .fld{display:flex;flex-direction:column;gap:3px}
@@ -116,12 +120,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <header>
     <div class="brand">
       <div class="w">SICORA CONSULTING</div><div class="rule"></div>
-      <div class="sub">PERFORMANCE DASHBOARD</div>
     </div>
     <div class="hmeta">
-      <div class="live"><span class="dot"></span><span id="liveLabel">Live data</span></div>
-      <div id="genAt"></div>
-      <div>Astoria Advertising Company</div>
+      <div class="htitle">Performance Dashboard</div>
+      <div class="hagency">ASTORIA ADVERTISING COMPANY</div>
+      <div class="hstatus"><span class="live"><span class="dot"></span><span id="liveLabel">Live data</span></span><span id="genAt"></span></div>
     </div>
   </header>
 
