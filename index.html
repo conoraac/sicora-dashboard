@@ -134,6 +134,17 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
 .block .kpi.on{border-color:var(--orange);box-shadow:0 6px 18px -10px rgba(233,138,94,.45)}
 .mt14{margin-top:14px}
+/* ---- plain-language help for non-technical readers ---- */
+.help{background:#f4f7fc;border:1px solid #dbe4f5;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:11px 14px;margin:0 0 16px;font-size:12.5px;line-height:1.55;color:var(--ink)}
+.help .hl{display:block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:4px}
+.help b{color:var(--ink)}
+.help.tip{border-left-color:var(--orange);background:#fdf4ee;border-color:#f4ddcd}
+.help.tip .hl{color:var(--orange)}
+.intro{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:18px 0}
+.intro h2{font-family:var(--serif);font-size:18px;color:var(--ink);margin-bottom:8px}
+.intro p{font-size:13.5px;line-height:1.6;color:var(--ink);margin:0 0 8px}
+.intro .leglist{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:6px;font-size:12.5px;color:var(--ink)}
+.controls-help{font-size:11.5px;color:var(--muted);margin:2px 0 6px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -148,6 +159,19 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       <div class="hstatus"><span class="live"><span class="dot"></span><span id="liveLabel">Live data</span></span><span id="genAt"></span></div>
     </div>
   </header>
+
+  <div class="intro">
+    <h2>How to read this report</h2>
+    <p>This dashboard shows, in one place, how people find Sicora online, what they do on your website, and how that marketing turns into leads and clients. Each numbered section below covers one part of that story, and every section starts with a short <b>“What this shows”</b> note in plain English.</p>
+    <p>Use the dropdowns at the very top to choose a <b>time period</b> (e.g. Last 3 Months) and what to look at — the whole report updates automatically. Green numbers are improvements versus the comparison period; red are declines. The <b>Executive Summary</b> just below is a plain-language written read of the most important takeaways and what to do next.</p>
+    <div class="leglist">
+      <span><b>Sessions</b> = website visits</span>
+      <span><b>Key events / conversions</b> = valuable actions like a form fill</span>
+      <span><b>Organic</b> = free Google results</span>
+      <span><b>Paid</b> = Google Ads</span>
+      <span><b>Pipeline</b> = deals in progress</span>
+    </div>
+  </div>
 
   <div class="controls">
     <div class="fld"><label for="f_tf">Time Frame</label>
@@ -185,11 +209,13 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     <div class="fld"><label for="f_ke">Key Event</label><select id="f_ke"></select></div>
     <button class="btn ghost" id="anBtn" style="margin-left:auto">Regenerate analysis</button>
   </div>
+  <div class="controls-help"><b>Tip:</b> change <b>Time Frame</b> to compare periods. <b>Metric</b> and <b>Channel</b> change what the Google Analytics charts show; <b>Region</b>, <b>City</b> and <b>Key Event</b> narrow it further. You can leave these on the defaults — the report works as-is.</div>
 
   <div class="kpis" id="kpis"></div>
 
   <section class="block exec">
     <div class="sec-h"><h2>Executive Summary</h2><span class="sec-sub" id="winLabel"></span></div>
+    <div class="help tip"><span class="hl">Start here</span>A plain-English read of the most important takeaways across every section, plus a short list of recommended next actions. If you only read one thing, read this. It updates with the time period you choose at the top.</div>
     <div id="execSum" data-empty="1">Analysis runs on the live dashboard.</div>
     <div class="actions"><h3>Priority Actions</h3><div id="actionList" data-empty="1" class="muted">No action items for this view.</div></div>
   </section>
@@ -197,6 +223,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- 1 · Google Analytics -->
   <section class="block">
     <div class="sechead"><span class="secnum">1</span><h2>Google Analytics &middot; GA4</h2><span class="ss">Traffic, channels, geography &amp; key events</span></div>
+    <div class="help"><span class="hl">What this shows</span>Your website traffic: how many people visit, which <b>channels</b> bring them (Google search, ads, direct, referrals), where they're located, and how often they take a <b>key event</b> — a valuable action like submitting a form. Use it to see whether visits and form actions are growing over time.</div>
     <div class="ga4ctx" id="ga4Ctx"></div>
     <div class="card"><h3 id="ga4TrendTitle">Metric trend</h3><div class="chartwrap" style="height:280px"><canvas id="ga4Trend"></canvas></div></div>
     <div class="grid g2 mt14">
@@ -214,6 +241,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- 2 · Google Ads -->
   <section class="block">
     <div class="sechead"><span class="secnum">2</span><h2>Google Ads</h2><span class="ss">Spend, clicks &amp; conversions vs comparison</span></div>
+    <div class="help"><span class="hl">What this shows</span>Your paid advertising on Google: what you <b>spent</b>, the <b>clicks</b> and <b>conversions</b> (leads) it produced, and which campaigns, ad groups and keywords drive results. <b>CPA</b> means cost per conversion — lower is better. Click any campaign row to open its ad groups.</div>
     <div class="kpis sub" id="gadsKpis"></div>
     <div class="card mt14"><h3>Clicks &amp; conversions <span class="h3sub">— trailing months</span></h3><div class="chartwrap" style="height:250px"><canvas id="gadsTrend"></canvas></div></div>
     <div class="card mt14"><h3>Conversions by type <span class="h3sub">— current window</span></h3><div class="tbl-wrap"><table id="gadsConvTable"></table></div></div>
@@ -225,6 +253,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- 3 · Search Console -->
   <section class="block">
     <div class="sechead"><span class="secnum">3</span><h2>Search Console &middot; SEO</h2><span class="ss">Organic clicks, position &amp; top queries</span></div>
+    <div class="help"><span class="hl">What this shows</span>How your site performs in Google's <b>free</b> (unpaid) search results. <b>Clicks</b> are visits from Google; <b>avg position</b> is your average ranking — 1 is the top of page one, so a <b>lower number is better</b>. The table lists the actual phrases people typed to find you; click one to see how it's trended.</div>
     <div class="card"><h3>Organic clicks &amp; avg position <span class="h3sub">— trailing months</span></h3><div class="chartwrap" style="height:240px"><canvas id="gscTrend"></canvas></div></div>
     <div class="card mt14"><h3>Top queries <span class="h3sub">— click a query for its trend</span></h3>
       <div class="tbl-wrap"><table id="gscQueries"></table></div>
@@ -237,6 +266,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- 4 · Ahrefs -->
   <section class="block">
     <div class="sechead"><span class="secnum">4</span><h2>Ahrefs &middot; SEO Authority</h2><span class="ss" id="ahScope">Domain rating, backlinks, keywords &amp; pages</span></div>
+    <div class="help"><span class="hl">What this shows</span>Your website's long-term SEO strength. <b>Domain Rating</b> (0–100) is how trustworthy Google sees your site; <b>referring domains</b> are other websites that link to you (more, from quality sites, is better); <b>organic keywords</b> are the searches you rank for. This moves slowly — it's the foundation that earns the free Google traffic in section 3.</div>
     <div class="kpis sub" id="ahKpis"></div>
     <div class="grid g2 mt14">
       <div class="card"><h3>Estimated organic traffic <span class="h3sub">— trailing 12 months</span></h3><div class="chartwrap" style="height:230px"><canvas id="ahTraffic"></canvas></div></div>
@@ -252,6 +282,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- 5 · GoHighLevel -->
   <section class="block">
     <div class="sechead"><span class="secnum">5</span><h2>GoHighLevel &middot; CRM</h2><span class="ss">Form submissions, journey &amp; pipelines</span></div>
+    <div class="help"><span class="hl">What this shows</span>Your leads and clients. Which <b>forms</b> people submit, the <b>marketing source</b> that brought them, what happens next (did they pay or become a member), and where deals sit across your three sales <b>pipelines</b>. Use the <b>form dropdown</b> below to focus on one form — the journey and pipeline update to match.</div>
     <div class="forms-filter"><div class="dropdown" id="formFilter"></div></div>
     <div class="grid g2 mt14">
       <div class="card"><h3>Form submissions by month</h3><div class="chartwrap" style="height:250px"><canvas id="ghlForms"></canvas></div></div>
@@ -272,6 +303,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- Q&A -->
   <section class="block">
     <div class="sechead"><span class="secnum">?</span><h2>Ask the data</h2><span class="ss">Answered from this report only</span></div>
+    <div class="help"><span class="hl">What this shows</span>Type a question in plain English — for example, <i>“Which form drives the most won revenue?”</i> or <i>“How is organic traffic trending?”</i> — and get an answer based only on the numbers in this report. No spreadsheets required.</div>
     <div class="ask"><input id="askQ" placeholder="e.g. Which form drives the most won revenue?"><button id="askGo">Ask</button></div>
     <div id="askAns"></div>
   </section>
