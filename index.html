@@ -145,6 +145,10 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .intro p{font-size:13.5px;line-height:1.6;color:var(--ink);margin:0 0 8px}
 .intro .leglist{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:6px;font-size:12.5px;color:var(--ink)}
 .controls-help{font-size:11.5px;color:var(--muted);margin:2px 0 6px;line-height:1.5}
+.divlabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.kpi.click{cursor:pointer}.kpi.click:hover{border-color:var(--blue)}
+.kpi .tag{font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.kpi.on .tag{color:var(--orange)}
 </style>
 </head>
 <body>
@@ -211,8 +215,6 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   </div>
   <div class="controls-help"><b>Tip:</b> change <b>Time Frame</b> to compare periods. <b>Metric</b> and <b>Channel</b> change what the Google Analytics charts show; <b>Region</b>, <b>City</b> and <b>Key Event</b> narrow it further. You can leave these on the defaults — the report works as-is.</div>
 
-  <div class="kpis" id="kpis"></div>
-
   <section class="block exec">
     <div class="sec-h"><h2>Executive Summary</h2><span class="sec-sub" id="winLabel"></span></div>
     <div class="help tip"><span class="hl">Start here</span>A plain-English read of the most important takeaways across every section, plus a short list of recommended next actions. If you only read one thing, read this. It updates with the time period you choose at the top.</div>
@@ -223,17 +225,22 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- 1 · Google Analytics -->
   <section class="block">
     <div class="sechead"><span class="secnum">1</span><h2>Google Analytics &middot; GA4</h2><span class="ss">Traffic, channels, geography &amp; key events</span></div>
-    <div class="help"><span class="hl">What this shows</span>Your website traffic: how many people visit, which <b>channels</b> bring them (Google search, ads, direct, referrals), where they're located, and how often they take a <b>key event</b> — a valuable action like submitting a form. Use it to see whether visits and form actions are growing over time.</div>
-    <div class="ga4ctx" id="ga4Ctx"></div>
+    <div class="help"><span class="hl">What this shows</span>Your website traffic: how many people visit, which <b>channels</b> bring them (Google search, ads, direct, referrals), where they're located, and how often they take a <b>key event</b> — a valuable action like submitting a form. The cards below are clickable — tap one to chart that metric.</div>
+    <div class="kpis sub" id="ga4Kpis"></div>
+    <div class="divlabel">Traffic Trend</div>
     <div class="card"><h3 id="ga4TrendTitle">Metric trend</h3><div class="chartwrap" style="height:280px"><canvas id="ga4Trend"></canvas></div></div>
-    <div class="grid g2 mt14">
-      <div class="card"><h3 id="ga4ChTitle">Channel mix</h3><div class="chartwrap" style="height:240px"><canvas id="ga4Channels"></canvas></div></div>
+    <div class="divlabel">Acquisition by Channel</div>
+    <div class="grid g14">
+      <div class="card"><h3 id="ga4ChTitle">Sessions by channel</h3><div class="chartwrap" style="height:260px"><canvas id="ga4Channels"></canvas></div></div>
       <div class="card"><h3>Channel detail</h3><div class="tbl-wrap"><table id="ga4ChTable"></table></div></div>
     </div>
-    <div class="grid g2 mt14">
+    <div class="divlabel">Geography</div>
+    <div class="grid g2">
       <div class="card"><h3 id="ga4RegTitle">Sessions by region</h3><div class="chartwrap" style="height:230px"><canvas id="ga4Reg"></canvas></div></div>
       <div class="card"><h3 id="ga4CityTitle">Sessions by city</h3><div class="chartwrap" style="height:230px"><canvas id="ga4City"></canvas></div></div>
     </div>
+    <div class="divlabel">Key Events &amp; Conversions</div>
+    <div class="kpis sub" id="ga4KECards"></div>
     <div class="card mt14"><h3>Key-event volume <span class="h3sub">— trailing 12 months</span></h3><div class="chartwrap" style="height:240px"><canvas id="ga4KE"></canvas></div><div class="legend" id="ga4KELeg"></div></div>
     <div id="an_ga4" class="anote"><div class="anote-h">GA4 Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
@@ -400,6 +407,15 @@ function renderGA4(){
   var kef=$('f_ke')?$('f_ke').value:'all',keSel=kef==='all'?null:+kef;
   var isKE=(mIdx===4&&keSel!==null);
   var mName=isKE?keNames()[keSel]:METRICS[mIdx][0];
+  // GA4 KPI row — 5 metrics with channel/geo applied, active metric highlighted, clickable to chart it
+  var regf=$('f_reg')?$('f_reg').value:'All',cityf=$('f_city')?$('f_city').value:'All';
+  var geoActive=(regf!=='All'||cityf!=='All'),geoName=regf!=='All'?regf:(cityf!=='All'?cityf:null),geoMap=regf!=='All'?DATA.reg:DATA.city;
+  function ga4KV(ix,wn){if((ix===0||ix===4)&&geoActive){var g=sumGeo(geoMap,wn,geoName);return ix===0?g[0]:g[1];}return sumCh(wn,ix,chf);}
+  if($('ga4Kpis'))$('ga4Kpis').innerHTML=METRICS.map(function(mm){var ix=mm[1],c=ga4KV(ix,win),p=ga4KV(ix,prev);
+    var tag=((ix===0||ix===4)&&geoActive)?geoName:(geoActive?'account-wide':(chf!=='All'?chf:'all channels'));
+    return '<div class="kpi click'+(ix===mIdx?' on':'')+'" data-m="'+ix+'"><div class="lab">'+esc(mm[0])+'</div><div class="val">'+fmt(c)+'</div>'+chgHtml(c,p)+'<div class="tag">'+esc(tag)+'</div></div>';
+  }).join('');
+  var gk=$('ga4Kpis');if(gk&&!gk.__wired){gk.__wired=true;gk.addEventListener('click',function(e){var c=e.target.closest('.kpi[data-m]');if(!c)return;$('f_metric').value=c.getAttribute('data-m');renderDebounced();});}
   // trend: always a trailing multi-month line so short windows (This/Last Month) still show context
   var endM=win[win.length-1];
   var tMonths=rangeEnd(endM,Math.max(win.length,6)).filter(function(m){return allMonths().indexOf(m)>=0;});
@@ -413,14 +429,11 @@ function renderGA4(){
   if(cmpS.some(function(v){return v>0;}))ds.push({label:(cmpMode==='year'?'Prev year':'Prev period'),data:cmpS,borderColor:'#c4c8cd',borderWidth:1.5,borderDash:[4,3],backgroundColor:'transparent',tension:.3,pointRadius:0});
   mkChart('ga4Trend',{type:'line',data:{labels:labels,datasets:ds},options:baseOpts(true)});
   if($('ga4TrendTitle'))$('ga4TrendTitle').textContent=mName+(!isKE&&chf!=='All'?' · '+chf:'')+' — trailing '+tMonths.length+' months';
-  // channel mix doughnut for the selected metric, last month in window
-  var last=win[win.length-1];var chm=(DATA.chm&&DATA.chm[last])||{};
+  // sessions/metric by channel — horizontal bar (BBZ style), selected channel highlighted
   var dMetric=isKE?0:mIdx; // key-event view falls back to sessions mix (no per-channel key-event split)
-  if($('ga4ChTitle'))$('ga4ChTitle').textContent=METRICS[dMetric][0]+' by channel — '+mLabel(last);
-  var entries=Object.keys(chm).map(function(c){return [c,+chm[c][dMetric]||0];}).filter(function(e){return e[1]>0;}).sort(function(a,b){return b[1]-a[1];});
-  mkChart('ga4Channels',{type:'doughnut',data:{labels:entries.map(function(e){return e[0];}),datasets:[{data:entries.map(function(e){return e[1];}),
-    backgroundColor:entries.map(function(e,i){return chf!=='All'?(e[0]===chf?PALETTE[0]:'#d9dee8'):PALETTE[i%PALETTE.length];})}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10}}}}}});
+  if($('ga4ChTitle'))$('ga4ChTitle').textContent=METRICS[dMetric][0]+' by channel';
+  var chBar=(DATA.channels||[]).map(function(c){return [c,sumCh(win,dMetric,c)];}).filter(function(x){return x[1]>0;}).sort(function(a,b){return b[1]-a[1];});
+  mkChart('ga4Channels',{type:'bar',data:{labels:chBar.map(function(x){return x[0];}),datasets:[{data:chBar.map(function(x){return x[1];}),backgroundColor:chBar.map(function(x){return x[0]===chf?PALETTE[0]:PALETTE[1];}),borderRadius:4,barThickness:15}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#f1f3f8'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
   // channel detail table (selected metric over window, share + vs comparison)
   var chRows=(DATA.channels||[]).map(function(c){return [c,sumCh(win,mIdx,c)];}).filter(function(x){return x[1]>0;}).sort(function(a,b){return b[1]-a[1];});
   var chTot=chRows.reduce(function(a,x){return a+x[1];},0)||1;
@@ -442,6 +455,11 @@ function renderGA4(){
   var keSet=keSel===null?keLabels.map(function(nm,ix){return {nm:nm,ix:ix};}):[{nm:keLabels[keSel],ix:keSel}];
   mkChart('ga4KE',{type:'bar',data:{labels:keMonths.map(mLabel),datasets:keSet.map(function(s){return {label:s.nm,data:keMonths.map(function(m){return sumKE([m],s.ix);}),backgroundColor:keSel===null?PALETTE[s.ix%PALETTE.length]:PALETTE[0],stack:'s',borderRadius:2};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}},y:{stacked:true,beginAtZero:true,ticks:{font:{size:10}}}}}});
   if($('ga4KELeg'))$('ga4KELeg').innerHTML=keSet.map(function(s){return '<span><i style="background:'+(keSel===null?PALETTE[s.ix%PALETTE.length]:PALETTE[0])+'"></i>'+esc(s.nm)+'</span>';}).join('');
+  // Key Events & Conversions KPI cards (named events), clickable to chart that event
+  if($('ga4KECards'))$('ga4KECards').innerHTML=keNames().map(function(nm,ix){var c=sumKE(win,ix),p=sumKE(prev,ix);
+    return '<div class="kpi click'+(keSel===ix?' on':'')+'" data-ke="'+ix+'"><div class="lab">'+esc(nm)+'</div><div class="val">'+fmt(c)+'</div>'+chgHtml(c,p)+'</div>';
+  }).join('');
+  var kc=$('ga4KECards');if(kc&&!kc.__wired){kc.__wired=true;kc.addEventListener('click',function(e){var c=e.target.closest('.kpi[data-ke]');if(!c)return;if($('f_ke'))$('f_ke').value=c.getAttribute('data-ke');if($('f_metric'))$('f_metric').value='4';renderDebounced();});}
   renderGA4Ctx(win,prev,mIdx,chf,keSel);
 }
 function geoBreak(map,names,win){return (names||[]).map(function(n){var s=0;win.forEach(function(ym){var d=map&&map[ym];if(d&&d[n])s+=+d[n][0]||0;});return [n,s];}).filter(function(x){return x[1]>0;}).sort(function(a,b){return b[1]-a[1];});}
@@ -885,7 +903,7 @@ function render(){
   populateFilters();syncCustomRange();
   buildSnap();
   $('winLabel').textContent=window.__SNAP.split('\n')[0].replace('Sicora Consulting — ','');
-  [renderKPIs,renderGA4,renderGads,renderGSC,renderAhrefs,renderFormFilter,renderGHLForms,renderJourney,renderPipes].forEach(function(fn){
+  [renderGA4,renderGads,renderGSC,renderAhrefs,renderFormFilter,renderGHLForms,renderJourney,renderPipes].forEach(function(fn){
     try{fn();}catch(e){try{console.warn(fn.name+' failed:',e&&e.message);}catch(_){}}
   });
   $('genAt').textContent=DATA.generatedAt?('Updated '+new Date(DATA.generatedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})):'';
