@@ -11,8 +11,8 @@
 <style>
 :root{
   --black:#2c3f6b;--char:#243154;--ink:#24262b;--muted:#9a9ea6;--faint:#bcbfc5;
-  --gold:#f58459;--gold-lt:#f79a76;--paper:#fff;--bg:#ffffff;--line:#e6eaf2;
-  --pos:#3f9e74;--neg:#cf6b5f;--c1:#f58459;--c2:#405ba4;--c3:#6e8298;--c4:#8a9b7e;--c5:#b5835f;--c6:#9a7e8d;--c7:#88939b;--c8:#d3c08f;--c9:#6f6280;
+  --blue:#405ba4;--orange:#e98a5e;--gold:#e98a5e;--gold-lt:#e98a5e;--paper:#ffffff;--bg:#ffffff;--line:#e6eaf2;
+  --pos:#3f9e74;--neg:#cf6b5f;--c1:#e98a5e;--c2:#405ba4;--c3:#6e8298;--c4:#7e9bd9;--c5:#c2795a;--c6:#5d6f93;--c7:#a9b6d4;--c8:#8893a8;--c9:#2e4374;
   --serif:'Fraunces',Georgia,serif;--sans:'Hanken Grotesk',-apple-system,Arial,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -45,10 +45,10 @@ select{font-family:inherit;font-size:13px;color:var(--ink);background:var(--pape
 .subhead{font-size:12px;font-family:var(--serif);font-weight:600;color:var(--ink);margin:18px 0 4px}
 .subhint{font-weight:400;font-size:10.5px;color:var(--muted)}
 .tbl-wrap{overflow-x:auto}
-tr.exp{cursor:pointer}tr.exp:hover{background:#fbf9f4}
+tr.exp{cursor:pointer}tr.exp:hover{background:#f4f7fc}
 .caret{display:inline-block;width:12px;color:var(--gold);font-size:9px;margin-right:5px}
 td.tname{font-weight:500}
-tr.child td{background:#fbfaf7;font-size:12px;color:var(--ink)}
+tr.child td{background:#f4f7fc;font-size:12px;color:var(--ink)}
 .pager{display:flex;gap:10px;align-items:center;margin-top:8px;font-size:11.5px;color:var(--muted)}
 .pager .pg{font-family:inherit;font-size:11.5px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer;color:var(--ink)}
 .pager .pg:hover{border-color:var(--gold)}.pager .pg:disabled{opacity:.45;cursor:default}
@@ -58,7 +58,7 @@ tr.child td{background:#fbfaf7;font-size:12px;color:var(--ink)}
 .dd-panel{position:absolute;z-index:30;top:calc(100% + 4px);left:0;background:var(--paper);border:1px solid var(--line);border-radius:9px;box-shadow:0 8px 24px rgba(40,40,60,.12);padding:6px;min-width:260px;max-height:300px;overflow-y:auto}
 .dd-panel[hidden]{display:none}
 .dd-opt{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:6px 8px;border-radius:6px;cursor:pointer;white-space:nowrap}
-.dd-opt:hover{background:#f6efde}.dd-opt input{margin:0}
+.dd-opt:hover{background:#eef2fb}.dd-opt input{margin:0}
 .dd-opt.all{border-bottom:1px solid var(--line);border-radius:0;margin-bottom:4px;font-weight:600}
 .pipe-ctrl{display:flex;align-items:center;gap:8px;margin:12px 0 4px}
 .pipe-ctrl label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
@@ -80,8 +80,8 @@ table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
 th{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-.exec{background:linear-gradient(180deg,#fff, #fbf9f4);border:1px solid var(--gold-lt)}
-.exec h2{color:var(--gold-dk,#a3884a)}
+.exec{background:var(--paper);border:1px solid var(--line)}
+.exec h2{color:var(--blue)}
 #execSum{font-size:15px;line-height:1.6;color:var(--ink);white-space:pre-wrap}
 #execSum[data-empty]{color:var(--muted);font-style:italic}
 .actions{margin-top:14px}
@@ -90,7 +90,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .forms-filter{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:5px 11px;cursor:pointer;user-select:none}
 .chip input{margin:0}
-.chip.on{background:#f6efde;border-color:var(--gold)}
+.chip.on{background:#eef2fb;border-color:var(--gold)}
 .jrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:8px}
 .jcard{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:12px}
 .jcard .lab{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
@@ -104,7 +104,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .stage .ct{color:var(--muted);font-variant-numeric:tabular-nums}
 .ask{margin-top:18px;display:flex;gap:8px}
 .ask input{flex:1;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--paper)}
-.ask button,.btn{font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.05em;color:#1a1208;background:var(--gold);border:0;border-radius:8px;padding:9px 14px;cursor:pointer}
+.ask button,.btn{font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.05em;color:#fff;background:var(--blue);border:0;border-radius:8px;padding:9px 14px;cursor:pointer}
 .btn.ghost{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
 #askAns{margin-top:10px;font-size:13px;white-space:pre-wrap;color:var(--ink)}
 .foot{text-align:center;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:30px}
@@ -302,13 +302,21 @@ function sumKE(win,idx){var t=0;win.forEach(function(ym){var a=DATA.ke&&DATA.ke[
 function sumGeo(map,win,name){var s=0,k=0;win.forEach(function(ym){var d=map&&map[ym];if(!d)return;if(name==='All'){Object.keys(d).forEach(function(n){s+=+d[n][0]||0;k+=+d[n][1]||0;});}else if(d[name]){s+=+d[name][0]||0;k+=+d[name][1]||0;}});return [s,k];}
 function geoDelta(cur,prev){var p=pct(cur,prev);if(p===null)return cur>0?'new':'—';return (p>=0?'▲ ':'▼ ')+Math.abs(p).toFixed(0)+'%';}
 
-var PALETTE=['#f58459','#405ba4','#6e8298','#8a9b7e','#b5835f','#9a7e8d','#88939b','#d3c08f','#6f6280'];
+var PALETTE=['#e98a5e','#405ba4','#7e9bd9','#f3a982','#5d6f93','#a9b6d4','#2e4374','#c2795a','#8893a8'];
 function mkChart(id,cfg){if(!HASCHART)return;var el=$(id);if(!el)return;
-  try{
+  // animation off → no destroy-during-animation race (a common cause of blank canvases on rapid filter changes)
+  if(typeof Chart!=='undefined'&&!Chart.__noanim){try{Chart.defaults.animation=false;Chart.defaults.animations=false;}catch(_){}Chart.__noanim=1;}
+  function build(){
     if(charts[id]){try{charts[id].destroy();}catch(_){}}
     var ex=(typeof Chart!=='undefined'&&Chart.getChart)?Chart.getChart(el):null;if(ex){try{ex.destroy();}catch(_){}}
     charts[id]=new Chart(el.getContext('2d'),cfg);
-  }catch(e){charts[id]=null;try{console.warn('mkChart '+id+' failed:',e&&e.message);}catch(_){}}
+  }
+  try{ build(); }
+  catch(e){
+    charts[id]=null;
+    // retry shortly after so the chart shows instead of nothing (transient canvas/reflow failure)
+    setTimeout(function(){try{build();}catch(e2){try{console.warn('mkChart '+id+' failed twice:',e2&&e2.message);}catch(_){}}},150);
+  }
 }
 function lineCfg(labels,datasets){return {type:'line',data:{labels:labels,datasets:datasets},options:baseOpts(true)};}
 function baseOpts(legend){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:!!legend,position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{font:{size:10}}}}};}
@@ -333,7 +341,7 @@ function renderGA4(){
   var labels=tMonths.map(mLabel);
   var cur=tMonths.map(function(m){return isKE?sumKE([m],keSel):sumCh([m],mIdx,chf);});
   var cmpS=tMonths.map(function(m){var pm=ymAdd(m,-off);return isKE?sumKE([pm],keSel):sumCh([pm],mIdx,chf);});
-  var ds=[{label:mName+(!isKE&&chf!=='All'?' · '+chf:''),data:cur,borderColor:PALETTE[0],backgroundColor:'rgba(245,132,89,.12)',fill:true,tension:.3,pointRadius:2}];
+  var ds=[{label:mName+(!isKE&&chf!=='All'?' · '+chf:''),data:cur,borderColor:PALETTE[0],backgroundColor:'rgba(233,138,94,.14)',fill:true,tension:.3,pointRadius:2}];
   if(cmpS.some(function(v){return v>0;}))ds.push({label:(cmpMode==='year'?'Prev year':'Prev period'),data:cmpS,borderColor:'#c4c8cd',borderWidth:1.5,borderDash:[4,3],backgroundColor:'transparent',tension:.3,pointRadius:0});
   mkChart('ga4Trend',{type:'line',data:{labels:labels,datasets:ds},options:baseOpts(true)});
   // channel mix for the selected metric, last month in window
@@ -418,7 +426,7 @@ function renderGads(){
   var conv=wm.map(function(m){return gadsAgg([m]).tot[3];});
   mkChart('gadsTrend',{type:'line',data:{labels:labels,datasets:[
     {label:'Clicks',data:clicks,borderColor:PALETTE[1],backgroundColor:'transparent',yAxisID:'y',tension:.3},
-    {label:'Conversions',data:conv,borderColor:PALETTE[0],backgroundColor:'rgba(245,132,89,.12)',fill:true,yAxisID:'y1',tension:.3}
+    {label:'Conversions',data:conv,borderColor:PALETTE[0],backgroundColor:'rgba(233,138,94,.14)',fill:true,yAxisID:'y1',tension:.3}
   ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,position:'left',ticks:{font:{size:10}},title:{display:true,text:'Clicks',font:{size:9}}},y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{font:{size:10}},title:{display:true,text:'Conversions',font:{size:9}}}}}});
   // campaign > ad group drill table (#4)
   var rows=Object.keys(cur.camps).map(function(c){return [c,cur.camps[c]];}).sort(function(a,b){return b[1].tot[2]-a[1].tot[2];});
@@ -724,7 +732,9 @@ function render(){
   // analysis: regenerate on window change
   if(window.__ANSIG!==window.__ANSIG_last){window.__ANSIG_last=window.__ANSIG;if(window.__anInit)generateAnalysis(false);}
 }
-['f_tf','f_cmp','f_metric','f_ch','f_reg','f_city','f_ke','f_from','f_to'].forEach(function(id){var el=$(id);if(el)el.addEventListener('change',render);});
+var _renderT;
+function renderDebounced(){clearTimeout(_renderT);_renderT=setTimeout(function(){try{render();}catch(e){try{console.warn('render failed:',e&&e.message);}catch(_){}}},60);}
+['f_tf','f_cmp','f_metric','f_ch','f_reg','f_city','f_ke','f_from','f_to'].forEach(function(id){var el=$(id);if(el)el.addEventListener('change',renderDebounced);});
 (function(){var pp=$('f_pipe');if(pp)pp.addEventListener('change',function(){try{renderPipes();}catch(e){}});})();
 $('anBtn').addEventListener('click',function(){if(confirm('Regenerate all analysis from the live data? This replaces your edits for this view.'))generateAnalysis(true);});
 $('askGo').addEventListener('click',ask);

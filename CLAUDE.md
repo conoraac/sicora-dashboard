@@ -41,7 +41,7 @@ Env-only, fails closed (no hardcoded fallbacks). `USERS` in server.js → env va
 
 ## Theme
 
-Orange accent `#f58459`, blue secondary `#405ba4`, white background.
+Brand palette (3 colors): white `#ffffff` background, blue `#405ba4`, orange accent `#e98a5e`. No gold/tan; executive summary box is plain white.
 
 ## Current state
 
