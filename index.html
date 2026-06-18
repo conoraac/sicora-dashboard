@@ -167,7 +167,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <div class="intro">
     <h2>How to read this report</h2>
     <p>This dashboard shows, in one place, how people find Sicora online, what they do on your website, and how that marketing turns into leads and clients. Each numbered section below covers one part of that story, and every section starts with a short <b>“What this shows”</b> note in plain English.</p>
-    <p>Use the dropdowns at the very top to choose a <b>time period</b> (e.g. Last 3 Months) and what to look at — the whole report updates automatically. Green numbers are improvements versus the comparison period; red are declines. The <b>Executive Summary</b> just below is a plain-language written read of the most important takeaways and what to do next.</p>
+    <p>Start with the <b>Executive Summary</b> just below for the headline takeaways and what to do next. Under it you'll find the <b>filters</b> — use them to choose a <b>time period</b> (e.g. Last 3 Months) and slice the data; everything below them updates automatically. Green numbers are improvements versus the comparison period; red are declines.</p>
     <div class="leglist">
       <span><b>Sessions</b> = website visits</span>
       <span><b>Key events / conversions</b> = valuable actions like a form fill</span>
@@ -177,6 +177,14 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     </div>
   </div>
 
+  <section class="block exec">
+    <div class="sec-h"><h2>Executive Summary</h2><span class="sec-sub" id="winLabel"></span></div>
+    <div class="help tip"><span class="hl">Start here</span>A plain-English read of the most important takeaways across every section, plus a short list of recommended next actions. If you only read one thing, read this. It updates with the time period you choose in the filters just below.</div>
+    <div id="execSum" data-empty="1">Analysis runs on the live dashboard.</div>
+    <div class="actions"><h3>Priority Actions</h3><div id="actionList" data-empty="1" class="muted">No action items for this view.</div></div>
+  </section>
+
+  <div class="controls-help" style="margin-top:18px"><b>Filters</b> — these control the report below. Change <b>Time Frame</b> to compare periods. <b>Metric</b> and <b>Channel</b> change what the Google Analytics charts show; <b>Region</b>, <b>City</b> and <b>Key Event</b> narrow it further. You can leave these on the defaults — the report works as-is.</div>
   <div class="controls">
     <div class="fld"><label for="f_tf">Time Frame</label>
       <select id="f_tf">
@@ -213,14 +221,6 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     <div class="fld"><label for="f_ke">Key Event</label><select id="f_ke"></select></div>
     <button class="btn ghost" id="anBtn" style="margin-left:auto">Regenerate analysis</button>
   </div>
-  <div class="controls-help"><b>Tip:</b> change <b>Time Frame</b> to compare periods. <b>Metric</b> and <b>Channel</b> change what the Google Analytics charts show; <b>Region</b>, <b>City</b> and <b>Key Event</b> narrow it further. You can leave these on the defaults — the report works as-is.</div>
-
-  <section class="block exec">
-    <div class="sec-h"><h2>Executive Summary</h2><span class="sec-sub" id="winLabel"></span></div>
-    <div class="help tip"><span class="hl">Start here</span>A plain-English read of the most important takeaways across every section, plus a short list of recommended next actions. If you only read one thing, read this. It updates with the time period you choose at the top.</div>
-    <div id="execSum" data-empty="1">Analysis runs on the live dashboard.</div>
-    <div class="actions"><h3>Priority Actions</h3><div id="actionList" data-empty="1" class="muted">No action items for this view.</div></div>
-  </section>
 
   <!-- 1 · Google Analytics -->
   <section class="block">
