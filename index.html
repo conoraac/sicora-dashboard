@@ -113,6 +113,27 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 #askAns{margin-top:10px;font-size:13px;white-space:pre-wrap;color:var(--ink)}
 .foot{text-align:center;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:30px}
 .muted{color:var(--muted)}.hide{display:none}
+/* ---- BBZ-style block/card/grid layout (strict 3-color: white / blue / orange) ---- */
+.block{background:#fff;border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:14px;padding:6px 22px 24px;margin:22px 0;box-shadow:0 1px 2px rgba(16,17,21,.04),0 18px 44px -34px rgba(16,17,21,.28)}
+.block.exec{border-top-color:var(--orange)}
+.block .sechead{display:flex;align-items:center;gap:12px;margin:0 -22px 18px;padding:16px 22px;border-bottom:1px solid var(--line);background:#f4f7fc;border-radius:11px 11px 0 0}
+.block .secnum{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--serif);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.block .sechead h2{margin:0}
+.block .sechead .ss{font-size:11.5px;color:var(--muted);margin-left:auto;text-align:right}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}
+.g14{grid-template-columns:1.4fr 1fr}
+@media(max-width:820px){.g2,.g3,.g4,.g5,.g14{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.g2,.g3,.g4,.g5,.g14{grid-template-columns:1fr}}
+.card{background:#fcfdff;border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h3{font-size:12px;color:var(--ink);font-weight:600;margin-bottom:12px}
+.card h3 .h3sub{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px}
+.chartwrap{position:relative;width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.legend span{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+.block .kpi.on{border-color:var(--orange);box-shadow:0 6px 18px -10px rgba(233,138,94,.45)}
+.mt14{margin-top:14px}
 </style>
 </head>
 <body>
@@ -167,78 +188,90 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
   <div class="kpis" id="kpis"></div>
 
-  <section class="exec">
+  <section class="block exec">
     <div class="sec-h"><h2>Executive Summary</h2><span class="sec-sub" id="winLabel"></span></div>
     <div id="execSum" data-empty="1">Analysis runs on the live dashboard.</div>
     <div class="actions"><h3>Priority Actions</h3><div id="actionList" data-empty="1" class="muted">No action items for this view.</div></div>
   </section>
 
-  <!-- GA4 -->
-  <section>
-    <div class="sec-h"><h2>Website Traffic &middot; GA4</h2><span class="sec-sub">Metric trend and channel mix &middot; filtered above</span></div>
+  <!-- 1 · Google Analytics -->
+  <section class="block">
+    <div class="sechead"><span class="secnum">1</span><h2>Google Analytics &middot; GA4</h2><span class="ss">Traffic, channels, geography &amp; key events</span></div>
     <div class="ga4ctx" id="ga4Ctx"></div>
-    <div class="grid2">
-      <div class="chartbox"><canvas id="ga4Trend"></canvas></div>
-      <div class="chartbox"><canvas id="ga4Channels"></canvas></div>
+    <div class="card"><h3 id="ga4TrendTitle">Metric trend</h3><div class="chartwrap" style="height:280px"><canvas id="ga4Trend"></canvas></div></div>
+    <div class="grid g2 mt14">
+      <div class="card"><h3 id="ga4ChTitle">Channel mix</h3><div class="chartwrap" style="height:240px"><canvas id="ga4Channels"></canvas></div></div>
+      <div class="card"><h3>Channel detail</h3><div class="tbl-wrap"><table id="ga4ChTable"></table></div></div>
     </div>
+    <div class="grid g2 mt14">
+      <div class="card"><h3 id="ga4RegTitle">Sessions by region</h3><div class="chartwrap" style="height:230px"><canvas id="ga4Reg"></canvas></div></div>
+      <div class="card"><h3 id="ga4CityTitle">Sessions by city</h3><div class="chartwrap" style="height:230px"><canvas id="ga4City"></canvas></div></div>
+    </div>
+    <div class="card mt14"><h3>Key-event volume <span class="h3sub">— trailing 12 months</span></h3><div class="chartwrap" style="height:240px"><canvas id="ga4KE"></canvas></div><div class="legend" id="ga4KELeg"></div></div>
     <div id="an_ga4" class="anote"><div class="anote-h">GA4 Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
 
-  <!-- Google Ads -->
-  <section>
-    <div class="sec-h"><h2>Google Ads</h2><span class="sec-sub" id="gadsScope">Spend, clicks &amp; conversions vs comparison</span></div>
+  <!-- 2 · Google Ads -->
+  <section class="block">
+    <div class="sechead"><span class="secnum">2</span><h2>Google Ads</h2><span class="ss">Spend, clicks &amp; conversions vs comparison</span></div>
     <div class="kpis sub" id="gadsKpis"></div>
-    <div class="chartbox" style="height:240px;margin-top:6px"><canvas id="gadsTrend"></canvas></div>
-    <h3 class="subhead">Campaigns <span class="subhint">— click a row to drill into ad groups</span></h3>
-    <div class="tbl-wrap"><table id="gadsCamps"></table></div>
-    <h3 class="subhead">Top Keywords</h3>
-    <div class="tbl-wrap"><table id="gadsKw"></table></div>
-    <div class="pager" id="gadsKwPager"></div>
+    <div class="card mt14"><h3>Clicks &amp; conversions <span class="h3sub">— trailing months</span></h3><div class="chartwrap" style="height:250px"><canvas id="gadsTrend"></canvas></div></div>
+    <div class="card mt14"><h3>Conversions by type <span class="h3sub">— current window</span></h3><div class="tbl-wrap"><table id="gadsConvTable"></table></div></div>
+    <div class="card mt14"><h3>Campaign &#9656; ad group <span class="h3sub">— click a row to expand</span></h3><div class="tbl-wrap"><table id="gadsCamps"></table></div></div>
+    <div class="card mt14"><h3>Top keywords</h3><div class="tbl-wrap"><table id="gadsKw"></table></div><div class="pager" id="gadsKwPager"></div></div>
     <div id="an_gads" class="anote"><div class="anote-h">Google Ads Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
 
-  <!-- Search Console -->
-  <section>
-    <div class="sec-h"><h2>Search Console &middot; SEO</h2><span class="sec-sub">Clicks, impressions, position &amp; top queries</span></div>
-    <div class="grid2">
-      <div class="chartbox"><canvas id="gscTrend"></canvas></div>
-      <div>
-        <div class="tbl-wrap"><table id="gscQueries"></table></div>
-        <div class="pager" id="gscQueriesPager"></div>
-      </div>
+  <!-- 3 · Search Console -->
+  <section class="block">
+    <div class="sechead"><span class="secnum">3</span><h2>Search Console &middot; SEO</h2><span class="ss">Organic clicks, position &amp; top queries</span></div>
+    <div class="card"><h3>Organic clicks &amp; avg position <span class="h3sub">— trailing months</span></h3><div class="chartwrap" style="height:240px"><canvas id="gscTrend"></canvas></div></div>
+    <div class="card mt14"><h3>Top queries <span class="h3sub">— click a query for its trend</span></h3>
+      <div class="tbl-wrap"><table id="gscQueries"></table></div>
+      <div class="pager" id="gscQueriesPager"></div>
+      <div id="scQTrendWrap" class="mt14" style="display:none"><h3 id="scQTrendTitle"></h3><div class="chartwrap" style="height:200px"><canvas id="scQTrend"></canvas></div></div>
     </div>
     <div id="an_gsc" class="anote"><div class="anote-h">Search Console Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
 
-  <!-- GHL: Forms & Sources -->
-  <section>
-    <div class="sec-h"><h2>Form Submissions &middot; GoHighLevel</h2><span class="sec-sub">Filter by form — select one or many</span></div>
-    <div class="forms-filter"><div class="dropdown" id="formFilter"></div></div>
-    <div class="grid2 even">
-      <div class="chartbox"><canvas id="ghlForms"></canvas></div>
-      <div class="chartbox"><canvas id="ghlSources"></canvas></div>
+  <!-- 4 · Ahrefs -->
+  <section class="block">
+    <div class="sechead"><span class="secnum">4</span><h2>Ahrefs &middot; SEO Authority</h2><span class="ss" id="ahScope">Domain rating, backlinks, keywords &amp; pages</span></div>
+    <div class="kpis sub" id="ahKpis"></div>
+    <div class="grid g2 mt14">
+      <div class="card"><h3>Estimated organic traffic <span class="h3sub">— trailing 12 months</span></h3><div class="chartwrap" style="height:230px"><canvas id="ahTraffic"></canvas></div></div>
+      <div class="card"><h3>Referring domains <span class="h3sub">— trailing 12 months</span></h3><div class="chartwrap" style="height:230px"><canvas id="ahRefdomains"></canvas></div></div>
     </div>
+    <div class="grid g2 mt14">
+      <div class="card"><h3>Top organic keywords</h3><div class="tbl-wrap"><table id="ahKeywords"></table></div><div class="pager" id="ahKwPager"></div></div>
+      <div class="card"><h3>Top pages <span class="h3sub">— by organic traffic</span></h3><div class="tbl-wrap"><table id="ahPages"></table></div><div class="pager" id="ahPagesPager"></div></div>
+    </div>
+    <div id="an_ahrefs" class="anote"><div class="anote-h">Ahrefs Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
 
-  <!-- GHL: Journey -->
-  <section>
-    <div class="sec-h"><h2>Form-Filler Journey</h2><span class="sec-sub" id="jrnScope">All forms</span></div>
-    <div class="jrow" id="journeyCards"></div>
-    <div id="emailBlock" class="anote hide"><div class="anote-h">Email Engagement</div><div class="anote-b" id="emailBody"></div></div>
-    <div class="muted" id="journeyNote" style="font-size:11px;margin-top:10px"></div>
-  </section>
-
-  <!-- GHL: Pipelines -->
-  <section>
-    <div class="sec-h"><h2>Pipeline Visibility</h2><span class="sec-sub">Open opportunities by pipeline &amp; stage — reflects the form filter</span></div>
-    <div class="pipe-ctrl"><label for="f_pipe">Pipeline</label><select id="f_pipe"><option value="all">All Pipelines</option></select></div>
-    <div class="pipes" id="pipes"></div>
+  <!-- 5 · GoHighLevel -->
+  <section class="block">
+    <div class="sechead"><span class="secnum">5</span><h2>GoHighLevel &middot; CRM</h2><span class="ss">Form submissions, journey &amp; pipelines</span></div>
+    <div class="forms-filter"><div class="dropdown" id="formFilter"></div></div>
+    <div class="grid g2 mt14">
+      <div class="card"><h3>Form submissions by month</h3><div class="chartwrap" style="height:250px"><canvas id="ghlForms"></canvas></div></div>
+      <div class="card"><h3>Marketing source</h3><div class="chartwrap" style="height:250px"><canvas id="ghlSources"></canvas></div></div>
+    </div>
+    <div class="card mt14"><h3>Form-filler journey <span class="h3sub" id="jrnScope">All forms</span></h3>
+      <div class="jrow" id="journeyCards"></div>
+      <div id="emailBlock" class="anote hide"><div class="anote-h">Email Engagement</div><div class="anote-b" id="emailBody"></div></div>
+      <div class="muted" id="journeyNote" style="font-size:11px;margin-top:10px"></div>
+    </div>
+    <div class="card mt14"><h3>Pipeline visibility <span class="h3sub">— open opportunities, reflects the form filter</span></h3>
+      <div class="pipe-ctrl"><label for="f_pipe">Pipeline</label><select id="f_pipe"><option value="all">All Pipelines</option></select></div>
+      <div class="pipes" id="pipes"></div>
+    </div>
     <div id="an_ghl" class="anote"><div class="anote-h">GoHighLevel Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
 
   <!-- Q&A -->
-  <section>
-    <div class="sec-h"><h2>Ask the data</h2><span class="sec-sub">Questions answered from this report only</span></div>
+  <section class="block">
+    <div class="sechead"><span class="secnum">?</span><h2>Ask the data</h2><span class="ss">Answered from this report only</span></div>
     <div class="ask"><input id="askQ" placeholder="e.g. Which form drives the most won revenue?"><button id="askGo">Ask</button></div>
     <div id="askAns"></div>
   </section>
@@ -347,15 +380,39 @@ function renderGA4(){
   var ds=[{label:mName+(!isKE&&chf!=='All'?' · '+chf:''),data:cur,borderColor:PALETTE[0],backgroundColor:'rgba(233,138,94,.14)',fill:true,tension:.3,pointRadius:2}];
   if(cmpS.some(function(v){return v>0;}))ds.push({label:(cmpMode==='year'?'Prev year':'Prev period'),data:cmpS,borderColor:'#c4c8cd',borderWidth:1.5,borderDash:[4,3],backgroundColor:'transparent',tension:.3,pointRadius:0});
   mkChart('ga4Trend',{type:'line',data:{labels:labels,datasets:ds},options:baseOpts(true)});
-  // channel mix for the selected metric, last month in window
+  if($('ga4TrendTitle'))$('ga4TrendTitle').textContent=mName+(!isKE&&chf!=='All'?' · '+chf:'')+' — trailing '+tMonths.length+' months';
+  // channel mix doughnut for the selected metric, last month in window
   var last=win[win.length-1];var chm=(DATA.chm&&DATA.chm[last])||{};
   var dMetric=isKE?0:mIdx; // key-event view falls back to sessions mix (no per-channel key-event split)
+  if($('ga4ChTitle'))$('ga4ChTitle').textContent=METRICS[dMetric][0]+' by channel — '+mLabel(last);
   var entries=Object.keys(chm).map(function(c){return [c,+chm[c][dMetric]||0];}).filter(function(e){return e[1]>0;}).sort(function(a,b){return b[1]-a[1];});
   mkChart('ga4Channels',{type:'doughnut',data:{labels:entries.map(function(e){return e[0];}),datasets:[{data:entries.map(function(e){return e[1];}),
     backgroundColor:entries.map(function(e,i){return chf!=='All'?(e[0]===chf?PALETTE[0]:'#d9dee8'):PALETTE[i%PALETTE.length];})}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10}}},title:{display:true,text:METRICS[dMetric][0]+' by channel — '+mLabel(last),font:{size:11}}}}});
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10}}}}}});
+  // channel detail table (selected metric over window, share + vs comparison)
+  var chRows=(DATA.channels||[]).map(function(c){return [c,sumCh(win,mIdx,c)];}).filter(function(x){return x[1]>0;}).sort(function(a,b){return b[1]-a[1];});
+  var chTot=chRows.reduce(function(a,x){return a+x[1];},0)||1;
+  var cth='<thead><tr><th>Channel</th><th class="num">'+esc(METRICS[mIdx][0])+'</th><th class="num">Share</th><th class="num">vs comp</th></tr></thead><tbody>';
+  if(!chRows.length)cth+='<tr><td class="muted" colspan="4">No data.</td></tr>';
+  chRows.forEach(function(r){var pv=sumCh(prev,mIdx,r[0]);cth+='<tr><td>'+esc(r[0])+'</td><td class="num">'+fmt(r[1])+'</td><td class="num">'+(r[1]/chTot*100).toFixed(1)+'%</td><td class="num">'+geoDelta(r[1],pv)+'</td></tr>';});
+  cth+='</tbody>';if($('ga4ChTable'))$('ga4ChTable').innerHTML=cth;
+  // region & city bars (sessions over window)
+  var regf=$('f_reg')?$('f_reg').value:'All',cityf=$('f_city')?$('f_city').value:'All';
+  var regB=geoBreak(DATA.reg,DATA.regNames,win), cityB=geoBreak(DATA.city,DATA.cityNames,win);
+  if($('ga4RegTitle'))$('ga4RegTitle').textContent=regf==='All'?'Sessions by region':'Region: '+regf;
+  mkChart('ga4Reg',{type:'bar',data:{labels:regB.map(function(x){return x[0];}),datasets:[{data:regB.map(function(x){return x[1];}),backgroundColor:regB.map(function(x){return x[0]===regf?PALETTE[0]:PALETTE[1];}),borderRadius:4,barThickness:14}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#f1f3f8'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  if($('ga4CityTitle'))$('ga4CityTitle').textContent=cityf==='All'?'Sessions by city':'City: '+cityf;
+  mkChart('ga4City',{type:'bar',data:{labels:cityB.map(function(x){return x[0];}),datasets:[{data:cityB.map(function(x){return x[1];}),backgroundColor:cityB.map(function(x){return x[0]===cityf?PALETTE[0]:PALETTE[1];}),borderRadius:4,barThickness:14}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#f1f3f8'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  // key-event volume trailing 12 months (stacked by type, or just the selected key event)
+  var keMonths=rangeEnd(endM,12).filter(function(m){return DATA.ke&&DATA.ke[m];});
+  if(!keMonths.length)keMonths=Object.keys(DATA.ke||{}).sort().slice(-12);
+  var keLabels=keNames();
+  var keSet=keSel===null?keLabels.map(function(nm,ix){return {nm:nm,ix:ix};}):[{nm:keLabels[keSel],ix:keSel}];
+  mkChart('ga4KE',{type:'bar',data:{labels:keMonths.map(mLabel),datasets:keSet.map(function(s){return {label:s.nm,data:keMonths.map(function(m){return sumKE([m],s.ix);}),backgroundColor:keSel===null?PALETTE[s.ix%PALETTE.length]:PALETTE[0],stack:'s',borderRadius:2};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}},y:{stacked:true,beginAtZero:true,ticks:{font:{size:10}}}}}});
+  if($('ga4KELeg'))$('ga4KELeg').innerHTML=keSet.map(function(s){return '<span><i style="background:'+(keSel===null?PALETTE[s.ix%PALETTE.length]:PALETTE[0])+'"></i>'+esc(s.nm)+'</span>';}).join('');
   renderGA4Ctx(win,prev,mIdx,chf,keSel);
 }
+function geoBreak(map,names,win){return (names||[]).map(function(n){var s=0;win.forEach(function(ym){var d=map&&map[ym];if(d&&d[n])s+=+d[n][0]||0;});return [n,s];}).filter(function(x){return x[1]>0;}).sort(function(a,b){return b[1]-a[1];});}
 function renderGA4Ctx(win,prev,mIdx,chf,keSel){
   var el=$('ga4Ctx');if(!el)return;
   var regf=$('f_reg')?$('f_reg').value:'All',cityf=$('f_city')?$('f_city').value:'All';
@@ -447,7 +504,18 @@ function renderGads(){
   var ct=$('gadsCamps');ct.innerHTML=h;
   if(!ct.__wired){ct.__wired=true;ct.addEventListener('click',function(e){var tr=e.target.closest('tr.camp');if(!tr)return;var ci=tr.getAttribute('data-ci');var open=tr.classList.toggle('open');var car=tr.querySelector('.caret');if(car&&car.style.visibility!=='hidden')car.textContent=open?'▾':'▸';Array.prototype.forEach.call(ct.querySelectorAll('tr.c'+ci),function(x){x.style.display=open?'':'none';});});}
   // keyword table with pagination (#5)
+  renderGadsConv(win);
   renderGadsKw(cur);
+}
+function renderGadsConv(win){
+  var conv=DATA.gads&&DATA.gads.conv&&DATA.gads.conv.byMonth, agg={};
+  if(conv)win.forEach(function(m){var M=conv[m];if(!M)return;Object.keys(M).forEach(function(n){agg[n]=(agg[n]||0)+(+M[n]||0);});});
+  var rows=Object.keys(agg).map(function(n){return [n,agg[n]];}).sort(function(a,b){return b[1]-a[1];});
+  var tot=rows.reduce(function(a,x){return a+x[1];},0)||1;
+  var h='<thead><tr><th>Conversion action</th><th class="num">Conversions</th><th class="num">Share</th></tr></thead><tbody>';
+  if(!rows.length)h+='<tr><td class="muted" colspan="3">No conversion-type data in this window.</td></tr>';
+  rows.forEach(function(r){h+='<tr><td>'+esc(r[0])+'</td><td class="num">'+fmt(r[1])+'</td><td class="num">'+(r[1]/tot*100).toFixed(0)+'%</td></tr>';});
+  h+='</tbody>';if($('gadsConvTable'))$('gadsConvTable').innerHTML=h;
 }
 function renderGadsKw(cur){
   var per=10, kws=cur.kws, pages=Math.max(1,Math.ceil(kws.length/per));
@@ -492,10 +560,68 @@ function renderGSCQueries(win){
   var slice=rows.slice(gscQPage*per,gscQPage*per+per);
   var html='<thead><tr><th>Top query</th><th class="num">Clicks</th><th class="num">Impr</th><th class="num">Pos</th></tr></thead><tbody>';
   if(!slice.length)html+='<tr><td class="muted" colspan="4">No query data in this window.</td></tr>';
-  slice.forEach(function(r){html+='<tr><td>'+esc(r.k)+'</td><td class="num">'+fmt(r.c)+'</td><td class="num">'+fmt(r.i)+'</td><td class="num">'+(r.p?r.p.toFixed(1):'—')+'</td></tr>';});
+  slice.forEach(function(r){html+='<tr class="exp" data-q="'+esc(r.k)+'"><td>'+esc(r.k)+'</td><td class="num">'+fmt(r.c)+'</td><td class="num">'+fmt(r.i)+'</td><td class="num">'+(r.p?r.p.toFixed(1):'—')+'</td></tr>';});
   html+='</tbody>';
-  $('gscQueries').innerHTML=html;
+  var el=$('gscQueries');el.innerHTML=html;
+  if(!el.__wired){el.__wired=true;el.addEventListener('click',function(e){var tr=e.target.closest('tr[data-q]');if(tr)scqTrendShow(tr.getAttribute('data-q'));});}
   renderPager('gscQueriesPager',gscQPage,pages,rows.length,function(p){gscQPage=p;renderGSCQueries(win);});
+}
+function scqTrendShow(q){
+  var months=(DATA.gsc&&DATA.gsc.months&&DATA.gsc.months.length?DATA.gsc.months:Object.keys((DATA.gsc&&DATA.gsc.queries)||{}).sort());
+  var clk=months.map(function(m){var Q=DATA.gsc&&DATA.gsc.queries&&DATA.gsc.queries[m];return Q&&Q[q]?(+Q[q][0]||0):0;});
+  var imp=months.map(function(m){var Q=DATA.gsc&&DATA.gsc.queries&&DATA.gsc.queries[m];return Q&&Q[q]?(+Q[q][1]||0):0;});
+  var w=$('scQTrendWrap');if(w)w.style.display='';
+  if($('scQTrendTitle'))$('scQTrendTitle').textContent='“'+q+'” — clicks & impressions, trailing '+months.length+' months';
+  mkChart('scQTrend',{type:'bar',data:{labels:months.map(mLabel),datasets:[
+    {type:'bar',label:'Clicks',data:clk,backgroundColor:PALETTE[1],borderRadius:3,yAxisID:'y'},
+    {type:'line',label:'Impr',data:imp,borderColor:PALETTE[0],borderWidth:2,tension:.35,pointRadius:0,yAxisID:'y1'}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{position:'left',beginAtZero:true,ticks:{font:{size:10}}},y1:{position:'right',grid:{display:false},beginAtZero:true,ticks:{font:{size:10}}}}}});
+  if(w)w.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ---------- Ahrefs ----------
+var ahKwPage=0, ahPagesPage=0;
+function renderAhrefs(){
+  var a=DATA.ahrefs;
+  if(!a){if($('ahKpis'))$('ahKpis').innerHTML='<div class="muted" style="padding:8px 0">Ahrefs data unavailable (set AHREFS_API_KEY).</div>';return;}
+  var b=a.backlinks||{},m=a.metrics||{};
+  var k=[
+    {lab:'Domain Rating',val:(a.dr!=null?a.dr:'—'),sub:a.ahrefsRank?('Ahrefs rank '+fmt(a.ahrefsRank)):''},
+    {lab:'Referring domains',val:fmt(b.refdomains||0),sub:fmt(b.live||0)+' live backlinks'},
+    {lab:'Organic keywords',val:fmt(m.orgKeywords||0),sub:fmt(m.orgKeywords13||0)+' in top 3'},
+    {lab:'Organic traffic',val:fmt(m.orgTraffic||0)+'/mo',sub:money(m.orgCost||0)+' traffic value'}
+  ];
+  $('ahKpis').innerHTML=k.map(function(x){return '<div class="kpi"><div class="lab">'+x.lab+'</div><div class="val">'+x.val+'</div>'+(x.sub?'<div class="chg muted">'+esc(x.sub)+'</div>':'')+'</div>';}).join('');
+  var th=a.trafficHistory||[];
+  mkChart('ahTraffic',{type:'line',data:{labels:th.map(function(r){return mLabel(r.ym);}),datasets:[
+    {label:'Organic',data:th.map(function(r){return r.org;}),borderColor:PALETTE[1],backgroundColor:'rgba(64,91,164,.12)',fill:true,tension:.3},
+    {label:'Paid',data:th.map(function(r){return r.paid;}),borderColor:PALETTE[0],backgroundColor:'transparent',tension:.3}
+  ]},options:baseOpts(true)});
+  var rh=a.refdomainsHistory||[];
+  mkChart('ahRefdomains',{type:'line',data:{labels:rh.map(function(r){return mLabel(r.ym);}),datasets:[
+    {label:'Referring domains',data:rh.map(function(r){return r.n;}),borderColor:PALETTE[0],backgroundColor:'rgba(233,138,94,.14)',fill:true,tension:.3}
+  ]},options:baseOpts(false)});
+  renderAhKeywords();renderAhPages();
+}
+function renderAhKeywords(){
+  var kws=(DATA.ahrefs&&DATA.ahrefs.keywords)||[],per=10,pages=Math.max(1,Math.ceil(kws.length/per));
+  if(ahKwPage>=pages)ahKwPage=0;
+  var slice=kws.slice(ahKwPage*per,ahKwPage*per+per);
+  var h='<thead><tr><th>Keyword</th><th class="num">Pos</th><th class="num">Volume</th><th class="num">Traffic</th></tr></thead><tbody>';
+  if(!slice.length)h+='<tr><td class="muted" colspan="4">No keyword data.</td></tr>';
+  slice.forEach(function(r){h+='<tr><td>'+esc(r.kw)+'</td><td class="num">'+(r.pos||'—')+'</td><td class="num">'+fmt(r.vol)+'</td><td class="num">'+fmt(r.traffic)+'</td></tr>';});
+  h+='</tbody>';if($('ahKeywords'))$('ahKeywords').innerHTML=h;
+  renderPager('ahKwPager',ahKwPage,pages,kws.length,function(p){ahKwPage=p;renderAhKeywords();});
+}
+function renderAhPages(){
+  var pg=(DATA.ahrefs&&DATA.ahrefs.pages)||[],per=10,pages=Math.max(1,Math.ceil(pg.length/per));
+  if(ahPagesPage>=pages)ahPagesPage=0;
+  var slice=pg.slice(ahPagesPage*per,ahPagesPage*per+per);
+  var h='<thead><tr><th>Page</th><th class="num">Traffic</th><th class="num">Keywords</th></tr></thead><tbody>';
+  if(!slice.length)h+='<tr><td class="muted" colspan="3">No page data.</td></tr>';
+  slice.forEach(function(r){var path=String(r.url||'').replace(/^https?:\/\/[^\/]+/,'')||'/';h+='<tr><td title="'+esc(r.url)+'">'+esc(path)+'</td><td class="num">'+fmt(r.traffic)+'</td><td class="num">'+fmt(r.keywords)+'</td></tr>';});
+  h+='</tbody>';if($('ahPages'))$('ahPages').innerHTML=h;
+  renderPager('ahPagesPager',ahPagesPage,pages,pg.length,function(p){ahPagesPage=p;renderAhPages();});
 }
 
 // ---------- GHL ----------
@@ -658,8 +784,8 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
 
 // ---------- analyst notes (per reporting window) ----------
 var LS='sicora_an_';
-var ALLK=['summary','ga4','gads','gsc','ghl'];
-var AN_IDS={ga4:'an_ga4',gads:'an_gads',gsc:'an_gsc',ghl:'an_ghl'};
+var ALLK=['summary','ga4','gads','gsc','ahrefs','ghl'];
+var AN_IDS={ga4:'an_ga4',gads:'an_gads',gsc:'an_gsc',ahrefs:'an_ahrefs',ghl:'an_ghl'};
 var anBusy=false;
 function bodyEl(k){return k==='summary'?$('execSum'):(function(){var s=$(AN_IDS[k]);return s?s.querySelector('.anote-b'):null;})();}
 function curSig(){return window.__ANSIG||'';}
@@ -678,6 +804,7 @@ function buildSnap(){
   s+='Google Ads: spend '+money(gc)+', conversions '+fmt(gv)+', CPA '+(gv?money(gc/gv):'n/a')+'.\n';
   var gcl=win.reduce(function(a,m){return a+((DATA.gsc&&DATA.gsc.data&&DATA.gsc.data[m]&&DATA.gsc.data[m][0])||0);},0);
   s+='Search Console: clicks '+fmt(gcl)+'.\n';
+  var ah=DATA.ahrefs;if(ah){var ab=ah.backlinks||{},am=ah.metrics||{};s+='Ahrefs: DR '+(ah.dr!=null?ah.dr:'n/a')+', '+fmt(ab.refdomains||0)+' referring domains, '+fmt(am.orgKeywords||0)+' organic keywords ('+fmt(am.orgKeywords13||0)+' top-3), ~'+fmt(am.orgTraffic||0)+' organic visits/mo. Top pages: '+((ah.pages||[]).slice(0,3).map(function(p){return (p.topKw||p.url||'')+' '+fmt(p.traffic);}).join(', '))+'.\n';}
   var sm=(DATA.ghl&&DATA.ghl.summary)||{};var forms=(DATA.ghl&&DATA.ghl.forms)||[];
   s+='GoHighLevel: '+fmt(sm.formFills||0)+' form fills across '+forms.length+' forms ('+forms.slice(0,4).map(function(f){return f.name+' '+f.total;}).join(', ')+'). Open pipeline '+money(sm.openValue||0)+', won '+money(sm.wonValue||0)+' ('+(sm.wonCount||0)+' deals), '+(sm.lostCount||0)+' lost. Sources: '+Object.keys(DATA.ghl&&DATA.ghl.sources||{}).slice(0,5).map(function(k){return prettySrc(k)+' '+DATA.ghl.sources[k];}).join(', ')+'.';
   window.__SNAP=s;
@@ -726,7 +853,7 @@ function render(){
   populateFilters();syncCustomRange();
   buildSnap();
   $('winLabel').textContent=window.__SNAP.split('\n')[0].replace('Sicora Consulting — ','');
-  [renderKPIs,renderGA4,renderGads,renderGSC,renderFormFilter,renderGHLForms,renderJourney,renderPipes].forEach(function(fn){
+  [renderKPIs,renderGA4,renderGads,renderGSC,renderAhrefs,renderFormFilter,renderGHLForms,renderJourney,renderPipes].forEach(function(fn){
     try{fn();}catch(e){try{console.warn(fn.name+' failed:',e&&e.message);}catch(_){}}
   });
   $('genAt').textContent=DATA.generatedAt?('Updated '+new Date(DATA.generatedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})):'';

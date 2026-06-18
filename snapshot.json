@@ -1355,5 +1355,282 @@
     }
   },
   "generatedAt": "2026-06-17T00:00:00.000Z",
-  "build": 9
+  "build": 10,
+  "ahrefs": {
+    "target": "sicoraconsulting.com",
+    "date": "2026-06-18",
+    "dr": 15,
+    "ahrefsRank": 11559636,
+    "backlinks": {
+      "live": 201,
+      "allTime": 3974,
+      "refdomains": 122,
+      "allTimeRefdomains": 857
+    },
+    "metrics": {
+      "orgKeywords": 182,
+      "orgKeywords13": 121,
+      "orgTraffic": 657,
+      "orgCost": 358,
+      "paidKeywords": 28,
+      "paidTraffic": 201
+    },
+    "trafficHistory": [
+      {
+        "ym": "202506",
+        "org": 301,
+        "paid": 36
+      },
+      {
+        "ym": "202507",
+        "org": 233,
+        "paid": 42
+      },
+      {
+        "ym": "202508",
+        "org": 275,
+        "paid": 130
+      },
+      {
+        "ym": "202509",
+        "org": 240,
+        "paid": 104
+      },
+      {
+        "ym": "202510",
+        "org": 189,
+        "paid": 8
+      },
+      {
+        "ym": "202511",
+        "org": 185,
+        "paid": 3
+      },
+      {
+        "ym": "202512",
+        "org": 189,
+        "paid": 20
+      },
+      {
+        "ym": "202601",
+        "org": 259,
+        "paid": 31
+      },
+      {
+        "ym": "202602",
+        "org": 248,
+        "paid": 20
+      },
+      {
+        "ym": "202603",
+        "org": 205,
+        "paid": 13
+      },
+      {
+        "ym": "202604",
+        "org": 186,
+        "paid": 14
+      },
+      {
+        "ym": "202605",
+        "org": 308,
+        "paid": 71
+      },
+      {
+        "ym": "202606",
+        "org": 723,
+        "paid": 172
+      }
+    ],
+    "refdomainsHistory": [
+      {
+        "ym": "202506",
+        "n": 161
+      },
+      {
+        "ym": "202507",
+        "n": 165
+      },
+      {
+        "ym": "202508",
+        "n": 169
+      },
+      {
+        "ym": "202509",
+        "n": 172
+      },
+      {
+        "ym": "202510",
+        "n": 174
+      },
+      {
+        "ym": "202511",
+        "n": 174
+      },
+      {
+        "ym": "202512",
+        "n": 149
+      },
+      {
+        "ym": "202601",
+        "n": 120
+      },
+      {
+        "ym": "202602",
+        "n": 96
+      },
+      {
+        "ym": "202603",
+        "n": 71
+      },
+      {
+        "ym": "202604",
+        "n": 78
+      },
+      {
+        "ym": "202605",
+        "n": 113
+      },
+      {
+        "ym": "202606",
+        "n": 120
+      }
+    ],
+    "keywords": [
+      {
+        "kw": "colour personality test",
+        "pos": 2,
+        "vol": 2900,
+        "traffic": 106
+      },
+      {
+        "kw": "personality colors",
+        "pos": 1,
+        "vol": 1000,
+        "traffic": 21
+      },
+      {
+        "kw": "4 leadership colors test",
+        "pos": 1,
+        "vol": 70,
+        "traffic": 20
+      },
+      {
+        "kw": "four colors personality test",
+        "pos": 1,
+        "vol": 100,
+        "traffic": 16
+      },
+      {
+        "kw": "color personality",
+        "pos": 1,
+        "vol": 1500,
+        "traffic": 16
+      },
+      {
+        "kw": "leadership color personality test",
+        "pos": 1,
+        "vol": 150,
+        "traffic": 13
+      },
+      {
+        "kw": "color personality test",
+        "pos": 9,
+        "vol": 2800,
+        "traffic": 11
+      },
+      {
+        "kw": "leadership colors",
+        "pos": 1,
+        "vol": 200,
+        "traffic": 11
+      },
+      {
+        "kw": "leadership colours",
+        "pos": 1,
+        "vol": 70,
+        "traffic": 9
+      },
+      {
+        "kw": "tti talent insights",
+        "pos": 5,
+        "vol": 100,
+        "traffic": 9
+      },
+      {
+        "kw": "insights personality test",
+        "pos": 6,
+        "vol": 1000,
+        "traffic": 8
+      },
+      {
+        "kw": "balanced scorecard consulting",
+        "pos": 2,
+        "vol": 60,
+        "traffic": 8
+      }
+    ],
+    "pages": [
+      {
+        "url": "https://sicoraconsulting.com/4-colors-of-insights/",
+        "traffic": 501,
+        "keywords": 120,
+        "topKw": "colour personality test"
+      },
+      {
+        "url": "https://sicoraconsulting.com/insights-discovery-assessment/",
+        "traffic": 50,
+        "keywords": 16,
+        "topKw": "insights personality test"
+      },
+      {
+        "url": "https://sicoraconsulting.com/tti-success-insights/",
+        "traffic": 42,
+        "keywords": 12,
+        "topKw": "tti talent insights"
+      },
+      {
+        "url": "https://sicoraconsulting.com/talent-lifecycle/",
+        "traffic": 16,
+        "keywords": 6,
+        "topKw": "talent lifecycle management"
+      },
+      {
+        "url": "https://sicoraconsulting.com/balanced-scorecard/",
+        "traffic": 12,
+        "keywords": 2,
+        "topKw": "balanced scorecard consulting"
+      },
+      {
+        "url": "https://sicoraconsulting.com/8-factors-of-engagement/",
+        "traffic": 9,
+        "keywords": 4,
+        "topKw": "employee engagement factors"
+      },
+      {
+        "url": "https://sicoraconsulting.com/insights-discovery/",
+        "traffic": 7,
+        "keywords": 2,
+        "topKw": "insights logo"
+      },
+      {
+        "url": "https://sicoraconsulting.com/",
+        "traffic": 5,
+        "keywords": 2,
+        "topKw": "sicora consulting"
+      },
+      {
+        "url": "https://sicoraconsulting.com/leading-from-the-helm/",
+        "traffic": 4,
+        "keywords": 2,
+        "topKw": "leading the helm"
+      },
+      {
+        "url": "https://sicoraconsulting.com/lumina-learning/",
+        "traffic": 2,
+        "keywords": 1,
+        "topKw": "lumina learning"
+      }
+    ]
+  }
 }
