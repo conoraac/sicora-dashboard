@@ -1,129 +1,1320 @@
 {
-  "channels": ["Direct", "Organic Search", "Paid Search", "Referral", "Email", "Organic Social", "Paid Other", "Cross-network", "Unassigned"],
-  "months": ["202601", "202602", "202603", "202604", "202605"],
+  "channels": [
+    "Direct",
+    "Organic Search",
+    "Paid Search",
+    "Referral",
+    "Email",
+    "Organic Social",
+    "Paid Other",
+    "Cross-network",
+    "Unassigned"
+  ],
+  "months": [
+    "202601",
+    "202602",
+    "202603",
+    "202604",
+    "202605"
+  ],
   "current": "202605",
   "chm": {
-    "202601": {"Direct": [2980, 2820, 7100, 18200, 31], "Organic Search": [1040, 800, 2600, 6100, 22], "Paid Search": [760, 660, 1700, 4200, 24], "Referral": [80, 60, 190, 420, 2]},
-    "202602": {"Direct": [3120, 2960, 7400, 19100, 33], "Organic Search": [1090, 840, 2700, 6300, 24], "Paid Search": [800, 690, 1800, 4400, 26], "Referral": [85, 64, 200, 440, 2]},
-    "202603": {"Direct": [3378, 3243, 8100, 20800, 38], "Organic Search": [1190, 911, 2900, 6900, 27], "Paid Search": [867, 753, 1950, 4700, 31], "Referral": [89, 53, 210, 470, 3], "Unassigned": [190, 190, 410, 980, 1]},
-    "202604": {"Direct": [662, 595, 1700, 4100, 12], "Organic Search": [1118, 787, 2800, 6700, 25], "Paid Search": [809, 704, 1850, 4500, 29], "Referral": [99, 69, 230, 510, 3]},
-    "202605": {"Direct": [700, 634, 1750, 4200, 14], "Organic Search": [1090, 781, 2750, 6600, 24], "Paid Search": [987, 863, 2100, 5000, 49], "Referral": [83, 63, 200, 450, 2]}
+    "202601": {
+      "Direct": [
+        2980,
+        2820,
+        7100,
+        18200,
+        31
+      ],
+      "Organic Search": [
+        1040,
+        800,
+        2600,
+        6100,
+        22
+      ],
+      "Paid Search": [
+        760,
+        660,
+        1700,
+        4200,
+        24
+      ],
+      "Referral": [
+        80,
+        60,
+        190,
+        420,
+        2
+      ]
+    },
+    "202602": {
+      "Direct": [
+        3120,
+        2960,
+        7400,
+        19100,
+        33
+      ],
+      "Organic Search": [
+        1090,
+        840,
+        2700,
+        6300,
+        24
+      ],
+      "Paid Search": [
+        800,
+        690,
+        1800,
+        4400,
+        26
+      ],
+      "Referral": [
+        85,
+        64,
+        200,
+        440,
+        2
+      ]
+    },
+    "202603": {
+      "Direct": [
+        3378,
+        3243,
+        8100,
+        20800,
+        38
+      ],
+      "Organic Search": [
+        1190,
+        911,
+        2900,
+        6900,
+        27
+      ],
+      "Paid Search": [
+        867,
+        753,
+        1950,
+        4700,
+        31
+      ],
+      "Referral": [
+        89,
+        53,
+        210,
+        470,
+        3
+      ],
+      "Unassigned": [
+        190,
+        190,
+        410,
+        980,
+        1
+      ]
+    },
+    "202604": {
+      "Direct": [
+        662,
+        595,
+        1700,
+        4100,
+        12
+      ],
+      "Organic Search": [
+        1118,
+        787,
+        2800,
+        6700,
+        25
+      ],
+      "Paid Search": [
+        809,
+        704,
+        1850,
+        4500,
+        29
+      ],
+      "Referral": [
+        99,
+        69,
+        230,
+        510,
+        3
+      ]
+    },
+    "202605": {
+      "Direct": [
+        700,
+        634,
+        1750,
+        4200,
+        14
+      ],
+      "Organic Search": [
+        1090,
+        781,
+        2750,
+        6600,
+        24
+      ],
+      "Paid Search": [
+        987,
+        863,
+        2100,
+        5000,
+        49
+      ],
+      "Referral": [
+        83,
+        63,
+        200,
+        450,
+        2
+      ]
+    }
   },
-  "regNames": ["California", "New York", "Texas", "Minnesota", "Other"],
+  "regNames": [
+    "California",
+    "New York",
+    "Texas",
+    "Minnesota",
+    "Other"
+  ],
   "reg": {
-    "202605": {"California": [520, 6], "New York": [410, 5], "Texas": [360, 4], "Minnesota": [300, 8], "Other": [1270, 26]}
+    "202605": {
+      "California": [
+        520,
+        6
+      ],
+      "New York": [
+        410,
+        5
+      ],
+      "Texas": [
+        360,
+        4
+      ],
+      "Minnesota": [
+        300,
+        8
+      ],
+      "Other": [
+        1270,
+        26
+      ]
+    }
   },
-  "cityNames": ["Minneapolis", "Chicago", "New York", "Other"],
+  "cityNames": [
+    "Minneapolis",
+    "Chicago",
+    "New York",
+    "Other"
+  ],
   "city": {
-    "202605": {"Minneapolis": [280, 7], "Chicago": [190, 3], "New York": [170, 2], "Other": [2220, 37]}
+    "202605": {
+      "Minneapolis": [
+        280,
+        7
+      ],
+      "Chicago": [
+        190,
+        3
+      ],
+      "New York": [
+        170,
+        2
+      ],
+      "Other": [
+        2220,
+        37
+      ]
+    }
   },
-  "keNames": ["contact_form_submission", "ghl_form_submit", "checklist_download", "whitepaper_form_submission", "grab_the_helm_course_registration_form", "grab_the_helm_book_preview_form"],
+  "keNames": [
+    "contact_form_submission",
+    "ghl_form_submit",
+    "checklist_download",
+    "whitepaper_form_submission",
+    "grab_the_helm_course_registration_form",
+    "grab_the_helm_book_preview_form"
+  ],
   "ke": {
-    "202601": [22, 18, 7, 3, 2, 2],
-    "202602": [26, 20, 8, 4, 3, 2],
-    "202603": [30, 24, 9, 5, 3, 3],
-    "202604": [31, 26, 10, 5, 4, 3],
-    "202605": [31, 29, 10, 5, 5, 3]
+    "202601": [
+      22,
+      18,
+      7,
+      3,
+      2,
+      2
+    ],
+    "202602": [
+      26,
+      20,
+      8,
+      4,
+      3,
+      2
+    ],
+    "202603": [
+      30,
+      24,
+      9,
+      5,
+      3,
+      3
+    ],
+    "202604": [
+      31,
+      26,
+      10,
+      5,
+      4,
+      3
+    ],
+    "202605": [
+      31,
+      29,
+      10,
+      5,
+      5,
+      3
+    ]
   },
   "gads": {
-    "months": ["202603", "202604", "202605"],
-    "campaigns": ["Search - Insights Discovery", "Search - Leadership Training", "PMax - Brand"],
+    "months": [
+      "202603",
+      "202604",
+      "202605"
+    ],
+    "campaigns": [
+      "Search - Insights Discovery",
+      "Search - Leadership Training",
+      "PMax - Brand"
+    ],
     "data": {
-      "202603": {"Search - Insights Discovery": [520, 9800, 1850.5, 18], "Search - Leadership Training": [240, 5200, 980.2, 8], "PMax - Brand": [85, 2100, 258.79, 3]},
-      "202604": {"Search - Insights Discovery": [470, 9200, 1920.4, 17], "Search - Leadership Training": [220, 4900, 1010.5, 9], "PMax - Brand": [75, 1950, 303.8, 3]},
-      "202605": {"Search - Insights Discovery": [600, 10400, 2150.0, 30], "Search - Leadership Training": [280, 5600, 1180.0, 14], "PMax - Brand": [90, 2300, 317.0, 5]}
+      "202603": {
+        "Search - Insights Discovery": [
+          520,
+          9800,
+          1850.5,
+          18
+        ],
+        "Search - Leadership Training": [
+          240,
+          5200,
+          980.2,
+          8
+        ],
+        "PMax - Brand": [
+          85,
+          2100,
+          258.79,
+          3
+        ]
+      },
+      "202604": {
+        "Search - Insights Discovery": [
+          470,
+          9200,
+          1920.4,
+          17
+        ],
+        "Search - Leadership Training": [
+          220,
+          4900,
+          1010.5,
+          9
+        ],
+        "PMax - Brand": [
+          75,
+          1950,
+          303.8,
+          3
+        ]
+      },
+      "202605": {
+        "Search - Insights Discovery": [
+          600,
+          10400,
+          2150,
+          30
+        ],
+        "Search - Leadership Training": [
+          280,
+          5600,
+          1180,
+          14
+        ],
+        "PMax - Brand": [
+          90,
+          2300,
+          317,
+          5
+        ]
+      }
     },
     "conv": {
-      "months": ["202603", "202604", "202605"],
+      "months": [
+        "202603",
+        "202604",
+        "202605"
+      ],
       "byMonth": {
-        "202603": {"Assessment Purchase": 12, "Contact Form": 11, "Phone Call": 6},
-        "202604": {"Assessment Purchase": 13, "Contact Form": 10, "Phone Call": 6},
-        "202605": {"Assessment Purchase": 24, "Contact Form": 16, "Phone Call": 9}
+        "202603": {
+          "Assessment Purchase": 12,
+          "Contact Form": 11,
+          "Phone Call": 6
+        },
+        "202604": {
+          "Assessment Purchase": 13,
+          "Contact Form": 10,
+          "Phone Call": 6
+        },
+        "202605": {
+          "Assessment Purchase": 24,
+          "Contact Form": 16,
+          "Phone Call": 9
+        }
+      }
+    },
+    "detail": {
+      "202603": {
+        "Search - Insights Discovery": {
+          "Insights Discovery": {
+            "insights discovery": [
+              162,
+              2880,
+              576,
+              8
+            ],
+            "insights discovery training": [
+              81,
+              1530,
+              324,
+              5
+            ],
+            "insights discovery certification": [
+              54,
+              1080,
+              225,
+              3
+            ]
+          },
+          "Personality Assessment": {
+            "personality assessment": [
+              126,
+              2340,
+              468,
+              6
+            ],
+            "disc assessment": [
+              72,
+              1350,
+              270,
+              4
+            ],
+            "leadership color test": [
+              45,
+              900,
+              162,
+              2
+            ]
+          }
+        },
+        "Search - Leadership Training": {
+          "Leadership Dev": {
+            "leadership training": [
+              108,
+              2160,
+              450,
+              5
+            ],
+            "leadership development program": [
+              81,
+              1710,
+              360,
+              5
+            ]
+          },
+          "Team Effectiveness": {
+            "team effectiveness assessment": [
+              63,
+              1350,
+              261,
+              3
+            ]
+          }
+        },
+        "PMax - Brand": {
+          "(no ad group)": {
+            "(no keyword)": [
+              81,
+              2070,
+              285.3,
+              5
+            ]
+          }
+        }
+      },
+      "202604": {
+        "Search - Insights Discovery": {
+          "Insights Discovery": {
+            "insights discovery": [
+              171,
+              3040,
+              608,
+              9
+            ],
+            "insights discovery training": [
+              86,
+              1615,
+              342,
+              5
+            ],
+            "insights discovery certification": [
+              57,
+              1140,
+              237.5,
+              3
+            ]
+          },
+          "Personality Assessment": {
+            "personality assessment": [
+              133,
+              2470,
+              494,
+              7
+            ],
+            "disc assessment": [
+              76,
+              1425,
+              285,
+              4
+            ],
+            "leadership color test": [
+              48,
+              950,
+              171,
+              2
+            ]
+          }
+        },
+        "Search - Leadership Training": {
+          "Leadership Dev": {
+            "leadership training": [
+              114,
+              2280,
+              475,
+              6
+            ],
+            "leadership development program": [
+              86,
+              1805,
+              380,
+              5
+            ]
+          },
+          "Team Effectiveness": {
+            "team effectiveness assessment": [
+              67,
+              1425,
+              275.5,
+              3
+            ]
+          }
+        },
+        "PMax - Brand": {
+          "(no ad group)": {
+            "(no keyword)": [
+              86,
+              2185,
+              301.15,
+              5
+            ]
+          }
+        }
+      },
+      "202605": {
+        "Search - Insights Discovery": {
+          "Insights Discovery": {
+            "insights discovery": [
+              180,
+              3200,
+              640,
+              9
+            ],
+            "insights discovery training": [
+              90,
+              1700,
+              360,
+              5
+            ],
+            "insights discovery certification": [
+              60,
+              1200,
+              250,
+              3
+            ]
+          },
+          "Personality Assessment": {
+            "personality assessment": [
+              140,
+              2600,
+              520,
+              7
+            ],
+            "disc assessment": [
+              80,
+              1500,
+              300,
+              4
+            ],
+            "leadership color test": [
+              50,
+              1000,
+              180,
+              2
+            ]
+          }
+        },
+        "Search - Leadership Training": {
+          "Leadership Dev": {
+            "leadership training": [
+              120,
+              2400,
+              500,
+              6
+            ],
+            "leadership development program": [
+              90,
+              1900,
+              400,
+              5
+            ]
+          },
+          "Team Effectiveness": {
+            "team effectiveness assessment": [
+              70,
+              1500,
+              290,
+              3
+            ]
+          }
+        },
+        "PMax - Brand": {
+          "(no ad group)": {
+            "(no keyword)": [
+              90,
+              2300,
+              317,
+              5
+            ]
+          }
+        }
       }
     }
   },
   "gsc": {
-    "months": ["202601", "202602", "202603", "202604", "202605"],
+    "months": [
+      "202601",
+      "202602",
+      "202603",
+      "202604",
+      "202605"
+    ],
     "data": {
-      "202601": [390, 44200, 9.1],
-      "202602": [405, 45800, 8.9],
-      "202603": [420, 47600, 8.7],
-      "202604": [428, 48900, 8.6],
-      "202605": [435, 49816, 8.52]
+      "202601": [
+        390,
+        44200,
+        9.1
+      ],
+      "202602": [
+        405,
+        45800,
+        8.9
+      ],
+      "202603": [
+        420,
+        47600,
+        8.7
+      ],
+      "202604": [
+        428,
+        48900,
+        8.6
+      ],
+      "202605": [
+        435,
+        49816,
+        8.52
+      ]
     },
     "queries": {
       "202605": {
-        "insights discovery": [120, 8400, 4.2],
-        "leadership training": [78, 6100, 7.1],
-        "employee engagement": [54, 5200, 9.8],
-        "sicora consulting": [92, 1800, 1.4],
-        "team effectiveness assessment": [31, 3900, 12.3]
+        "insights discovery": [
+          120,
+          8400,
+          4.2
+        ],
+        "leadership training": [
+          78,
+          6100,
+          7.1
+        ],
+        "employee engagement": [
+          54,
+          5200,
+          9.8
+        ],
+        "sicora consulting": [
+          92,
+          1800,
+          1.4
+        ],
+        "team effectiveness assessment": [
+          31,
+          3900,
+          12.3
+        ]
       }
     }
   },
   "ghl": {
-    "months": ["202601", "202602", "202603", "202604", "202605"],
+    "months": [
+      "202601",
+      "202602",
+      "202603",
+      "202604",
+      "202605"
+    ],
     "forms": [
-      {"name": "Contact Us", "total": 86, "channels": {"ORGANIC_SEARCH": 34, "PAID_SEARCH": 22, "DIRECT_TRAFFIC": 20, "REFERRALS": 10}},
-      {"name": "4 Colors of Insights Contact", "total": 64, "channels": {"PAID_SEARCH": 38, "ORGANIC_SEARCH": 14, "DIRECT_TRAFFIC": 12}},
-      {"name": "PPC - Insights Discovery Landing Page", "total": 52, "channels": {"PAID_SEARCH": 49, "DIRECT_TRAFFIC": 3}},
-      {"name": "membership", "total": 28, "channels": {"DIRECT_TRAFFIC": 16, "ORGANIC_SEARCH": 8, "EMAIL_MARKETING": 4}},
-      {"name": "Calendly", "total": 19, "channels": {"DIRECT_TRAFFIC": 12, "ORGANIC_SEARCH": 7}}
+      {
+        "name": "Contact Us",
+        "total": 86,
+        "channels": {
+          "ORGANIC_SEARCH": 34,
+          "PAID_SEARCH": 22,
+          "DIRECT_TRAFFIC": 20,
+          "REFERRALS": 10
+        }
+      },
+      {
+        "name": "4 Colors of Insights Contact",
+        "total": 64,
+        "channels": {
+          "PAID_SEARCH": 38,
+          "ORGANIC_SEARCH": 14,
+          "DIRECT_TRAFFIC": 12
+        }
+      },
+      {
+        "name": "PPC - Insights Discovery Landing Page",
+        "total": 52,
+        "channels": {
+          "PAID_SEARCH": 49,
+          "DIRECT_TRAFFIC": 3
+        }
+      },
+      {
+        "name": "membership",
+        "total": 28,
+        "channels": {
+          "DIRECT_TRAFFIC": 16,
+          "ORGANIC_SEARCH": 8,
+          "EMAIL_MARKETING": 4
+        }
+      },
+      {
+        "name": "Calendly",
+        "total": 19,
+        "channels": {
+          "DIRECT_TRAFFIC": 12,
+          "ORGANIC_SEARCH": 7
+        }
+      }
     ],
     "byMonth": {
-      "202601": {"Contact Us": 14, "4 Colors of Insights Contact": 10, "PPC - Insights Discovery Landing Page": 8, "membership": 5, "Calendly": 3},
-      "202602": {"Contact Us": 16, "4 Colors of Insights Contact": 12, "PPC - Insights Discovery Landing Page": 9, "membership": 5, "Calendly": 4},
-      "202603": {"Contact Us": 18, "4 Colors of Insights Contact": 13, "PPC - Insights Discovery Landing Page": 11, "membership": 6, "Calendly": 4},
-      "202604": {"Contact Us": 19, "4 Colors of Insights Contact": 14, "PPC - Insights Discovery Landing Page": 12, "membership": 6, "Calendly": 4},
-      "202605": {"Contact Us": 19, "4 Colors of Insights Contact": 15, "PPC - Insights Discovery Landing Page": 12, "membership": 6, "Calendly": 4}
+      "202601": {
+        "Contact Us": 14,
+        "4 Colors of Insights Contact": 10,
+        "PPC - Insights Discovery Landing Page": 8,
+        "membership": 5,
+        "Calendly": 3
+      },
+      "202602": {
+        "Contact Us": 16,
+        "4 Colors of Insights Contact": 12,
+        "PPC - Insights Discovery Landing Page": 9,
+        "membership": 5,
+        "Calendly": 4
+      },
+      "202603": {
+        "Contact Us": 18,
+        "4 Colors of Insights Contact": 13,
+        "PPC - Insights Discovery Landing Page": 11,
+        "membership": 6,
+        "Calendly": 4
+      },
+      "202604": {
+        "Contact Us": 19,
+        "4 Colors of Insights Contact": 14,
+        "PPC - Insights Discovery Landing Page": 12,
+        "membership": 6,
+        "Calendly": 4
+      },
+      "202605": {
+        "Contact Us": 19,
+        "4 Colors of Insights Contact": 15,
+        "PPC - Insights Discovery Landing Page": 12,
+        "membership": 6,
+        "Calendly": 4
+      }
     },
-    "sources": {"ORGANIC_SEARCH": 77, "PAID_SEARCH": 109, "DIRECT_TRAFFIC": 63, "REFERRALS": 20, "EMAIL_MARKETING": 4, "PAID_SOCIAL": 8, "SOCIAL_MEDIA": 6},
+    "sources": {
+      "ORGANIC_SEARCH": 77,
+      "PAID_SEARCH": 109,
+      "DIRECT_TRAFFIC": 63,
+      "REFERRALS": 20,
+      "EMAIL_MARKETING": 4,
+      "PAID_SOCIAL": 8,
+      "SOCIAL_MEDIA": 6
+    },
     "pipelines": [
-      {"id": "KhRGnWZAolyEaJdw2xSk", "name": "PPC + SEO", "stages": [
-        {"name": "New Lead", "n": 42, "value": 0},
-        {"name": "Initial Outreach Sent", "n": 28, "value": 0},
-        {"name": "Discovery Call Scheduled", "n": 18, "value": 54000},
-        {"name": "Discovery Call Complete", "n": 12, "value": 48000},
-        {"name": "Proposal Sent", "n": 8, "value": 64000},
-        {"name": "Contract Sent", "n": 4, "value": 38000},
-        {"name": "Cancelled", "n": 3, "value": 0},
-        {"name": "Closed - Won", "n": 9, "value": 96000},
-        {"name": "Closed - Lost", "n": 14, "value": 0}
-      ]},
-      {"id": "o7LSxKgSYZA89VKHyDN9", "name": "Rule of 5", "stages": [
-        {"name": "Touch 1", "n": 22, "value": 0},
-        {"name": "Touch 2", "n": 14, "value": 0},
-        {"name": "Touch 3", "n": 9, "value": 0},
-        {"name": "Response Received", "n": 6, "value": 0},
-        {"name": "Conversation Active", "n": 5, "value": 0},
-        {"name": "Meeting Scheduled", "n": 4, "value": 22000},
-        {"name": "Closed - Won", "n": 3, "value": 28000},
-        {"name": "Closed - Lost", "n": 7, "value": 0}
-      ]},
-      {"id": "CAc4sA9sh16psmuZRFIw", "name": "Self Service", "stages": [
-        {"name": "New Lead", "n": 31, "value": 0},
-        {"name": "Assessment for Purchase Email Sent", "n": 19, "value": 0},
-        {"name": "Assessment Payment Made", "n": 14, "value": 4200},
-        {"name": "Assessment In Progress", "n": 9, "value": 0},
-        {"name": "Assessment Complete", "n": 7, "value": 0},
-        {"name": "Upsell Opportunity", "n": 3, "value": 9000},
-        {"name": "Closed - Won", "n": 5, "value": 12500},
-        {"name": "Closed - Lost", "n": 4, "value": 0}
-      ]}
+      {
+        "id": "KhRGnWZAolyEaJdw2xSk",
+        "name": "PPC + SEO",
+        "stages": [
+          {
+            "name": "New Lead",
+            "n": 42,
+            "value": 0
+          },
+          {
+            "name": "Initial Outreach Sent",
+            "n": 28,
+            "value": 0
+          },
+          {
+            "name": "Discovery Call Scheduled",
+            "n": 18,
+            "value": 54000
+          },
+          {
+            "name": "Discovery Call Complete",
+            "n": 12,
+            "value": 48000
+          },
+          {
+            "name": "Proposal Sent",
+            "n": 8,
+            "value": 64000
+          },
+          {
+            "name": "Contract Sent",
+            "n": 4,
+            "value": 38000
+          },
+          {
+            "name": "Cancelled",
+            "n": 3,
+            "value": 0
+          },
+          {
+            "name": "Closed - Won",
+            "n": 9,
+            "value": 96000
+          },
+          {
+            "name": "Closed - Lost",
+            "n": 14,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "id": "o7LSxKgSYZA89VKHyDN9",
+        "name": "Rule of 5",
+        "stages": [
+          {
+            "name": "Touch 1",
+            "n": 22,
+            "value": 0
+          },
+          {
+            "name": "Touch 2",
+            "n": 14,
+            "value": 0
+          },
+          {
+            "name": "Touch 3",
+            "n": 9,
+            "value": 0
+          },
+          {
+            "name": "Response Received",
+            "n": 6,
+            "value": 0
+          },
+          {
+            "name": "Conversation Active",
+            "n": 5,
+            "value": 0
+          },
+          {
+            "name": "Meeting Scheduled",
+            "n": 4,
+            "value": 22000
+          },
+          {
+            "name": "Closed - Won",
+            "n": 3,
+            "value": 28000
+          },
+          {
+            "name": "Closed - Lost",
+            "n": 7,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "id": "CAc4sA9sh16psmuZRFIw",
+        "name": "Self Service",
+        "stages": [
+          {
+            "name": "New Lead",
+            "n": 31,
+            "value": 0
+          },
+          {
+            "name": "Assessment for Purchase Email Sent",
+            "n": 19,
+            "value": 0
+          },
+          {
+            "name": "Assessment Payment Made",
+            "n": 14,
+            "value": 4200
+          },
+          {
+            "name": "Assessment In Progress",
+            "n": 9,
+            "value": 0
+          },
+          {
+            "name": "Assessment Complete",
+            "n": 7,
+            "value": 0
+          },
+          {
+            "name": "Upsell Opportunity",
+            "n": 3,
+            "value": 9000
+          },
+          {
+            "name": "Closed - Won",
+            "n": 5,
+            "value": 12500
+          },
+          {
+            "name": "Closed - Lost",
+            "n": 4,
+            "value": 0
+          }
+        ]
+      }
     ],
-    "summary": {"formFills": 249, "totalContacts": 312, "openValue": 239200, "wonValue": 136500, "wonCount": 17, "lostCount": 25, "openCount": 198},
+    "summary": {
+      "formFills": 249,
+      "totalContacts": 312,
+      "openValue": 239200,
+      "wonValue": 136500,
+      "wonCount": 17,
+      "lostCount": 25,
+      "openCount": 198
+    },
     "contacts": [
-      {"id": "c1", "form": "Contact Us", "channel": "ORGANIC_SEARCH", "detail": "sicoraconsulting.com/contact", "ym": "202605", "isForm": true, "txn": false, "txnVal": 0, "recurring": false, "pipeline": "PPC + SEO", "stage": "Discovery Call Scheduled", "oppStatus": "open"},
-      {"id": "c2", "form": "4 Colors of Insights Contact", "channel": "PAID_SEARCH", "detail": "Auto-tagged PPC", "ym": "202605", "isForm": true, "txn": true, "txnVal": 495, "recurring": false, "pipeline": "Self Service", "stage": "Assessment Payment Made", "oppStatus": "open"},
-      {"id": "c3", "form": "membership", "channel": "DIRECT_TRAFFIC", "detail": "sicoraconsulting.com/engagement", "ym": "202605", "isForm": true, "txn": true, "txnVal": 1200, "recurring": true, "pipeline": "Self Service", "stage": "Closed - Won", "oppStatus": "won"},
-      {"id": "c4", "form": "PPC - Insights Discovery Landing Page", "channel": "PAID_SEARCH", "detail": "lg_search", "ym": "202604", "isForm": true, "txn": false, "txnVal": 0, "recurring": false, "pipeline": "PPC + SEO", "stage": "Proposal Sent", "oppStatus": "open"},
-      {"id": "c5", "form": "Contact Us", "channel": "PAID_SEARCH", "detail": "Auto-tagged PPC", "ym": "202604", "isForm": true, "txn": true, "txnVal": 8000, "recurring": false, "pipeline": "PPC + SEO", "stage": "Closed - Won", "oppStatus": "won"},
-      {"id": "c6", "form": "membership", "channel": "EMAIL_MARKETING", "detail": "hs_email", "ym": "202605", "isForm": true, "txn": true, "txnVal": 1200, "recurring": true, "pipeline": "Self Service", "stage": "Upsell Opportunity", "oppStatus": "open"},
-      {"id": "c7", "form": "4 Colors of Insights Contact", "channel": "ORGANIC_SEARCH", "detail": "sicoraconsulting.com/4-colors-of-insights", "ym": "202603", "isForm": true, "txn": false, "txnVal": 0, "recurring": false, "pipeline": "Rule of 5", "stage": "Meeting Scheduled", "oppStatus": "open"}
+      {
+        "id": "c1",
+        "form": "Contact Us",
+        "channel": "ORGANIC_SEARCH",
+        "detail": "sicoraconsulting.com/contact",
+        "ym": "202605",
+        "isForm": true,
+        "txn": false,
+        "txnVal": 0,
+        "recurring": false,
+        "pipeline": "PPC + SEO",
+        "stage": "Discovery Call Scheduled",
+        "oppStatus": "open"
+      },
+      {
+        "id": "c2",
+        "form": "4 Colors of Insights Contact",
+        "channel": "PAID_SEARCH",
+        "detail": "Auto-tagged PPC",
+        "ym": "202605",
+        "isForm": true,
+        "txn": true,
+        "txnVal": 495,
+        "recurring": false,
+        "pipeline": "Self Service",
+        "stage": "Assessment Payment Made",
+        "oppStatus": "open"
+      },
+      {
+        "id": "c3",
+        "form": "membership",
+        "channel": "DIRECT_TRAFFIC",
+        "detail": "sicoraconsulting.com/engagement",
+        "ym": "202605",
+        "isForm": true,
+        "txn": true,
+        "txnVal": 1200,
+        "recurring": true,
+        "pipeline": "Self Service",
+        "stage": "Closed - Won",
+        "oppStatus": "won"
+      },
+      {
+        "id": "c4",
+        "form": "PPC - Insights Discovery Landing Page",
+        "channel": "PAID_SEARCH",
+        "detail": "lg_search",
+        "ym": "202604",
+        "isForm": true,
+        "txn": false,
+        "txnVal": 0,
+        "recurring": false,
+        "pipeline": "PPC + SEO",
+        "stage": "Proposal Sent",
+        "oppStatus": "open"
+      },
+      {
+        "id": "c5",
+        "form": "Contact Us",
+        "channel": "PAID_SEARCH",
+        "detail": "Auto-tagged PPC",
+        "ym": "202604",
+        "isForm": true,
+        "txn": true,
+        "txnVal": 8000,
+        "recurring": false,
+        "pipeline": "PPC + SEO",
+        "stage": "Closed - Won",
+        "oppStatus": "won"
+      },
+      {
+        "id": "c6",
+        "form": "membership",
+        "channel": "EMAIL_MARKETING",
+        "detail": "hs_email",
+        "ym": "202605",
+        "isForm": true,
+        "txn": true,
+        "txnVal": 1200,
+        "recurring": true,
+        "pipeline": "Self Service",
+        "stage": "Upsell Opportunity",
+        "oppStatus": "open"
+      },
+      {
+        "id": "c7",
+        "form": "4 Colors of Insights Contact",
+        "channel": "ORGANIC_SEARCH",
+        "detail": "sicoraconsulting.com/4-colors-of-insights",
+        "ym": "202603",
+        "isForm": true,
+        "txn": false,
+        "txnVal": 0,
+        "recurring": false,
+        "pipeline": "Rule of 5",
+        "stage": "Meeting Scheduled",
+        "oppStatus": "open"
+      }
     ],
     "contactsCapped": 0,
-    "email": null
+    "email": null,
+    "pipelineDefs": [
+      {
+        "id": "KhRGnWZAolyEaJdw2xSk",
+        "name": "PPC + SEO",
+        "stages": [
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s0",
+            "name": "New Lead",
+            "position": 0
+          },
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s1",
+            "name": "Initial Outreach Sent",
+            "position": 1
+          },
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s2",
+            "name": "Discovery Call Scheduled",
+            "position": 2
+          },
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s3",
+            "name": "Discovery Call Complete",
+            "position": 3
+          },
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s4",
+            "name": "Proposal Sent",
+            "position": 4
+          },
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s5",
+            "name": "Contract Sent",
+            "position": 5
+          },
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s6",
+            "name": "Cancelled",
+            "position": 6
+          },
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s7",
+            "name": "Closed - Won",
+            "position": 7
+          },
+          {
+            "id": "KhRGnWZAolyEaJdw2xSk_s8",
+            "name": "Closed - Lost",
+            "position": 8
+          }
+        ]
+      },
+      {
+        "id": "o7LSxKgSYZA89VKHyDN9",
+        "name": "Rule of 5",
+        "stages": [
+          {
+            "id": "o7LSxKgSYZA89VKHyDN9_s0",
+            "name": "Touch 1",
+            "position": 0
+          },
+          {
+            "id": "o7LSxKgSYZA89VKHyDN9_s1",
+            "name": "Touch 2",
+            "position": 1
+          },
+          {
+            "id": "o7LSxKgSYZA89VKHyDN9_s2",
+            "name": "Touch 3",
+            "position": 2
+          },
+          {
+            "id": "o7LSxKgSYZA89VKHyDN9_s3",
+            "name": "Response Received",
+            "position": 3
+          },
+          {
+            "id": "o7LSxKgSYZA89VKHyDN9_s4",
+            "name": "Conversation Active",
+            "position": 4
+          },
+          {
+            "id": "o7LSxKgSYZA89VKHyDN9_s5",
+            "name": "Meeting Scheduled",
+            "position": 5
+          },
+          {
+            "id": "o7LSxKgSYZA89VKHyDN9_s6",
+            "name": "Closed - Won",
+            "position": 6
+          },
+          {
+            "id": "o7LSxKgSYZA89VKHyDN9_s7",
+            "name": "Closed - Lost",
+            "position": 7
+          }
+        ]
+      },
+      {
+        "id": "CAc4sA9sh16psmuZRFIw",
+        "name": "Self Service",
+        "stages": [
+          {
+            "id": "CAc4sA9sh16psmuZRFIw_s0",
+            "name": "New Lead",
+            "position": 0
+          },
+          {
+            "id": "CAc4sA9sh16psmuZRFIw_s1",
+            "name": "Assessment for Purchase Email Sent",
+            "position": 1
+          },
+          {
+            "id": "CAc4sA9sh16psmuZRFIw_s2",
+            "name": "Assessment Payment Made",
+            "position": 2
+          },
+          {
+            "id": "CAc4sA9sh16psmuZRFIw_s3",
+            "name": "Assessment In Progress",
+            "position": 3
+          },
+          {
+            "id": "CAc4sA9sh16psmuZRFIw_s4",
+            "name": "Assessment Complete",
+            "position": 4
+          },
+          {
+            "id": "CAc4sA9sh16psmuZRFIw_s5",
+            "name": "Upsell Opportunity",
+            "position": 5
+          },
+          {
+            "id": "CAc4sA9sh16psmuZRFIw_s6",
+            "name": "Closed - Won",
+            "position": 6
+          },
+          {
+            "id": "CAc4sA9sh16psmuZRFIw_s7",
+            "name": "Closed - Lost",
+            "position": 7
+          }
+        ]
+      }
+    ],
+    "funnelByForm": {
+      "Contact Us": {
+        "KhRGnWZAolyEaJdw2xSk": {
+          "KhRGnWZAolyEaJdw2xSk_s0": {
+            "n": 20,
+            "value": 0
+          },
+          "KhRGnWZAolyEaJdw2xSk_s2": {
+            "n": 8,
+            "value": 24000
+          },
+          "KhRGnWZAolyEaJdw2xSk_s4": {
+            "n": 4,
+            "value": 32000
+          },
+          "KhRGnWZAolyEaJdw2xSk_s7": {
+            "n": 5,
+            "value": 53000
+          }
+        }
+      },
+      "PPC - Insights Discovery Landing Page": {
+        "KhRGnWZAolyEaJdw2xSk": {
+          "KhRGnWZAolyEaJdw2xSk_s0": {
+            "n": 15,
+            "value": 0
+          },
+          "KhRGnWZAolyEaJdw2xSk_s1": {
+            "n": 10,
+            "value": 0
+          },
+          "KhRGnWZAolyEaJdw2xSk_s5": {
+            "n": 4,
+            "value": 38000
+          },
+          "KhRGnWZAolyEaJdw2xSk_s8": {
+            "n": 3,
+            "value": 0
+          }
+        }
+      },
+      "4 Colors of Insights Contact": {
+        "CAc4sA9sh16psmuZRFIw": {
+          "CAc4sA9sh16psmuZRFIw_s0": {
+            "n": 18,
+            "value": 0
+          },
+          "CAc4sA9sh16psmuZRFIw_s2": {
+            "n": 6,
+            "value": 1800
+          },
+          "CAc4sA9sh16psmuZRFIw_s4": {
+            "n": 2,
+            "value": 0
+          }
+        }
+      },
+      "membership": {
+        "CAc4sA9sh16psmuZRFIw": {
+          "CAc4sA9sh16psmuZRFIw_s5": {
+            "n": 3,
+            "value": 9000
+          },
+          "CAc4sA9sh16psmuZRFIw_s6": {
+            "n": 5,
+            "value": 12500
+          }
+        }
+      },
+      "Calendly": {
+        "o7LSxKgSYZA89VKHyDN9": {
+          "o7LSxKgSYZA89VKHyDN9_s0": {
+            "n": 15,
+            "value": 0
+          },
+          "o7LSxKgSYZA89VKHyDN9_s3": {
+            "n": 1,
+            "value": 0
+          },
+          "o7LSxKgSYZA89VKHyDN9_s5": {
+            "n": 4,
+            "value": 22000
+          },
+          "o7LSxKgSYZA89VKHyDN9_s6": {
+            "n": 3,
+            "value": 28000
+          }
+        }
+      },
+      "(none)": {
+        "KhRGnWZAolyEaJdw2xSk": {
+          "KhRGnWZAolyEaJdw2xSk_s0": {
+            "n": 7,
+            "value": 0
+          },
+          "KhRGnWZAolyEaJdw2xSk_s3": {
+            "n": 12,
+            "value": 48000
+          },
+          "KhRGnWZAolyEaJdw2xSk_s6": {
+            "n": 3,
+            "value": 0
+          }
+        },
+        "o7LSxKgSYZA89VKHyDN9": {
+          "o7LSxKgSYZA89VKHyDN9_s1": {
+            "n": 14,
+            "value": 0
+          },
+          "o7LSxKgSYZA89VKHyDN9_s2": {
+            "n": 9,
+            "value": 0
+          }
+        },
+        "CAc4sA9sh16psmuZRFIw": {
+          "CAc4sA9sh16psmuZRFIw_s1": {
+            "n": 19,
+            "value": 0
+          },
+          "CAc4sA9sh16psmuZRFIw_s3": {
+            "n": 9,
+            "value": 0
+          },
+          "CAc4sA9sh16psmuZRFIw_s5": {
+            "n": 0,
+            "value": 0
+          }
+        }
+      }
+    }
   },
   "generatedAt": "2026-06-17T00:00:00.000Z",
-  "build": 1
+  "build": 5
 }

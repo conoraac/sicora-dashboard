@@ -39,6 +39,29 @@ select{font-family:inherit;font-size:13px;color:var(--ink);background:var(--pape
 .kpi .val{font-family:var(--serif);font-size:26px;font-weight:600;margin-top:4px;color:var(--ink)}
 .kpi .chg{font-size:11.5px;margin-top:3px}
 .up{color:var(--pos)}.down{color:var(--neg)}
+.chg.up{color:var(--pos)}.chg.down{color:var(--neg)}.chg.muted{color:var(--muted)}
+.kpis.sub{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:6px 0 4px}
+.kpis.sub .kpi{padding:10px 12px}.kpis.sub .val{font-size:20px}
+.subhead{font-size:12px;font-family:var(--serif);font-weight:600;color:var(--ink);margin:18px 0 4px}
+.subhint{font-weight:400;font-size:10.5px;color:var(--muted)}
+.tbl-wrap{overflow-x:auto}
+tr.exp{cursor:pointer}tr.exp:hover{background:#fbf9f4}
+.caret{display:inline-block;width:12px;color:var(--gold);font-size:9px;margin-right:5px}
+td.tname{font-weight:500}
+tr.child td{background:#fbfaf7;font-size:12px;color:var(--ink)}
+.pager{display:flex;gap:10px;align-items:center;margin-top:8px;font-size:11.5px;color:var(--muted)}
+.pager .pg{font-family:inherit;font-size:11.5px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer;color:var(--ink)}
+.pager .pg:hover{border-color:var(--gold)}.pager .pg:disabled{opacity:.45;cursor:default}
+.dropdown{position:relative;display:inline-block}
+.dd-btn{font-family:inherit;font-size:13px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer;min-width:200px;text-align:left;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.dd-btn:hover{border-color:var(--gold)}
+.dd-panel{position:absolute;z-index:30;top:calc(100% + 4px);left:0;background:var(--paper);border:1px solid var(--line);border-radius:9px;box-shadow:0 8px 24px rgba(40,40,60,.12);padding:6px;min-width:260px;max-height:300px;overflow-y:auto}
+.dd-panel[hidden]{display:none}
+.dd-opt{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:6px 8px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.dd-opt:hover{background:#f6efde}.dd-opt input{margin:0}
+.dd-opt.all{border-bottom:1px solid var(--line);border-radius:0;margin-bottom:4px;font-weight:600}
+.pipe-ctrl{display:flex;align-items:center;gap:8px;margin:12px 0 4px}
+.pipe-ctrl label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 section{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:18px}
 .sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}
 h2{font-family:var(--serif);font-weight:600;font-size:18px;color:var(--ink)}
@@ -92,8 +115,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 <div class="wrap">
   <header>
     <div class="brand">
-      <div class="w">SICORA</div><div class="rule"></div>
-      <div class="sub">CONSULTING &middot; PERFORMANCE DASHBOARD</div>
+      <div class="w">SICORA CONSULTING</div><div class="rule"></div>
+      <div class="sub">PERFORMANCE DASHBOARD</div>
     </div>
     <div class="hmeta">
       <div class="live"><span class="dot"></span><span id="liveLabel">Live data</span></div>
@@ -160,11 +183,14 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
   <!-- Google Ads -->
   <section>
-    <div class="sec-h"><h2>Google Ads</h2><span class="sec-sub">Spend, conversions and campaigns</span></div>
-    <div class="grid2">
-      <div class="chartbox"><canvas id="gadsTrend"></canvas></div>
-      <div><table id="gadsCamps"></table></div>
-    </div>
+    <div class="sec-h"><h2>Google Ads</h2><span class="sec-sub" id="gadsScope">Spend, clicks &amp; conversions vs comparison</span></div>
+    <div class="kpis sub" id="gadsKpis"></div>
+    <div class="chartbox" style="height:240px;margin-top:6px"><canvas id="gadsTrend"></canvas></div>
+    <h3 class="subhead">Campaigns <span class="subhint">— click a row to drill into ad groups</span></h3>
+    <div class="tbl-wrap"><table id="gadsCamps"></table></div>
+    <h3 class="subhead">Top Keywords</h3>
+    <div class="tbl-wrap"><table id="gadsKw"></table></div>
+    <div class="pager" id="gadsKwPager"></div>
     <div id="an_gads" class="anote"><div class="anote-h">Google Ads Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
 
@@ -173,7 +199,10 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     <div class="sec-h"><h2>Search Console &middot; SEO</h2><span class="sec-sub">Clicks, impressions, position &amp; top queries</span></div>
     <div class="grid2">
       <div class="chartbox"><canvas id="gscTrend"></canvas></div>
-      <div><table id="gscQueries"></table></div>
+      <div>
+        <div class="tbl-wrap"><table id="gscQueries"></table></div>
+        <div class="pager" id="gscQueriesPager"></div>
+      </div>
     </div>
     <div id="an_gsc" class="anote"><div class="anote-h">Search Console Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
@@ -181,7 +210,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- GHL: Forms & Sources -->
   <section>
     <div class="sec-h"><h2>Form Submissions &middot; GoHighLevel</h2><span class="sec-sub">Filter by form — select one or many</span></div>
-    <div class="forms-filter" id="formFilter"></div>
+    <div class="forms-filter"><div class="dropdown" id="formFilter"></div></div>
     <div class="grid2 even">
       <div class="chartbox"><canvas id="ghlForms"></canvas></div>
       <div class="chartbox"><canvas id="ghlSources"></canvas></div>
@@ -198,7 +227,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
   <!-- GHL: Pipelines -->
   <section>
-    <div class="sec-h"><h2>Pipeline Visibility</h2><span class="sec-sub">Open opportunities by pipeline &amp; stage</span></div>
+    <div class="sec-h"><h2>Pipeline Visibility</h2><span class="sec-sub">Open opportunities by pipeline &amp; stage — reflects the form filter</span></div>
+    <div class="pipe-ctrl"><label for="f_pipe">Pipeline</label><select id="f_pipe"><option value="all">All Pipelines</option></select></div>
     <div class="pipes" id="pipes"></div>
     <div id="an_ghl" class="anote"><div class="anote-h">GoHighLevel Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
@@ -273,7 +303,13 @@ function sumGeo(map,win,name){var s=0,k=0;win.forEach(function(ym){var d=map&&ma
 function geoDelta(cur,prev){var p=pct(cur,prev);if(p===null)return cur>0?'new':'—';return (p>=0?'▲ ':'▼ ')+Math.abs(p).toFixed(0)+'%';}
 
 var PALETTE=['#f58459','#405ba4','#6e8298','#8a9b7e','#b5835f','#9a7e8d','#88939b','#d3c08f','#6f6280'];
-function mkChart(id,cfg){if(!HASCHART)return;if(charts[id]){charts[id].destroy();}var el=$(id);if(!el)return;charts[id]=new Chart(el.getContext('2d'),cfg);}
+function mkChart(id,cfg){if(!HASCHART)return;var el=$(id);if(!el)return;
+  try{
+    if(charts[id]){try{charts[id].destroy();}catch(_){}}
+    var ex=(typeof Chart!=='undefined'&&Chart.getChart)?Chart.getChart(el):null;if(ex){try{ex.destroy();}catch(_){}}
+    charts[id]=new Chart(el.getContext('2d'),cfg);
+  }catch(e){charts[id]=null;try{console.warn('mkChart '+id+' failed:',e&&e.message);}catch(_){}}
+}
 function lineCfg(labels,datasets){return {type:'line',data:{labels:labels,datasets:datasets},options:baseOpts(true)};}
 function baseOpts(legend){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:!!legend,position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{font:{size:10}}}}};}
 
@@ -316,58 +352,168 @@ function renderGA4Ctx(win,prev,mIdx,chf,keSel){
   el.innerHTML=parts.join(' &nbsp;·&nbsp; ');
 }
 
+// ---------- shared: pagination ----------
+function pctStr(x){return (x*100).toFixed(1)+'%';}
+function renderPager(id,page,pages,total,go){
+  var el=$(id);if(!el)return;
+  el.__page=page;el.__go=go;
+  if(pages<=1){el.innerHTML=total?('<span class="muted">'+total+' total</span>'):'';return;}
+  el.innerHTML='<button class="pg" '+(page<=0?'disabled':'')+' data-d="-1">‹ Prev</button>'+
+    '<span>Page '+(page+1)+' of '+pages+' · '+total+' total</span>'+
+    '<button class="pg" '+(page>=pages-1?'disabled':'')+' data-d="1">Next ›</button>';
+  if(!el.__wired){el.__wired=true;el.addEventListener('click',function(e){var b=e.target.closest('button.pg');if(!b||b.disabled)return;el.__go(el.__page+(+b.getAttribute('data-d')));});}
+}
+
 // ---------- Google Ads ----------
 function gadsMonthAgg(ym){var d=(DATA.gads&&DATA.gads.data&&DATA.gads.data[ym])||{};var s=[0,0,0,0];Object.keys(d).forEach(function(c){d[c].forEach(function(v,i){s[i]+=+v||0;});});return s;} // [clicks,impr,cost,conv]
+var gadsKwPage=0;
+// Aggregate the drill-down detail over a window -> {camps, kws, tot}. Falls back to campaign-level data if detail absent.
+function gadsAgg(win){
+  var detail=DATA.gads&&DATA.gads.detail, camps={}, kws={}, tot=[0,0,0,0];
+  var haveDetail=detail&&Object.keys(detail).length;
+  if(haveDetail){
+    win.forEach(function(ym){var M=detail[ym];if(!M)return;
+      Object.keys(M).forEach(function(c){var C=camps[c]||(camps[c]={tot:[0,0,0,0],groups:{}});
+        Object.keys(M[c]).forEach(function(g){var G=C.groups[g]||(C.groups[g]=[0,0,0,0]);
+          Object.keys(M[c][g]).forEach(function(k){var v=M[c][g][k];var kw=kws[k]||(kws[k]=[0,0,0,0]);
+            for(var i=0;i<4;i++){var n=+v[i]||0;G[i]+=n;C.tot[i]+=n;tot[i]+=n;kw[i]+=n;}});
+        });
+      });
+    });
+  } else {
+    var data=DATA.gads&&DATA.gads.data;
+    win.forEach(function(ym){var M=data&&data[ym];if(!M)return;
+      Object.keys(M).forEach(function(c){var v=M[c];var C=camps[c]||(camps[c]={tot:[0,0,0,0],groups:{}});
+        for(var i=0;i<4;i++){C.tot[i]+=+v[i]||0;tot[i]+=+v[i]||0;}});});
+  }
+  var kwArr=Object.keys(kws).filter(function(k){return k&&k!=='(no keyword)';}).map(function(k){return [k,kws[k]];}).sort(function(a,b){return b[1][2]-a[1][2];});
+  return {camps:camps,kws:kwArr,tot:tot,haveDetail:!!haveDetail};
+}
+function adsDelta(cur,prev,goodUp){var p=pct(cur,prev);if(p===null)return '<span class="chg muted">—</span>';var rose=cur>=prev;var cls=(rose===goodUp)?'up':'down';return '<span class="chg '+cls+'">'+(rose?'▲':'▼')+' '+Math.abs(p).toFixed(0)+'% vs prev</span>';}
 function renderGads(){
-  var win=windowMonths().filter(function(m){return DATA.gads&&DATA.gads.data&&DATA.gads.data[m];});
-  var labels=win.map(mLabel);
-  var cost=win.map(function(m){return gadsMonthAgg(m)[2];});
-  var conv=win.map(function(m){return gadsMonthAgg(m)[3];});
-  mkChart('gadsTrend',{type:'bar',data:{labels:labels,datasets:[
-    {type:'bar',label:'Spend ($)',data:cost,backgroundColor:PALETTE[0],yAxisID:'y',order:2},
-    {type:'line',label:'Conversions',data:conv,borderColor:PALETTE[1],yAxisID:'y1',tension:.3,order:1}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,position:'left',ticks:{font:{size:10}}},y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{font:{size:10}}}}}});
-  // campaigns table for last month
-  var last=win[win.length-1];var d=(DATA.gads&&DATA.gads.data&&DATA.gads.data[last])||{};
-  var rows=Object.keys(d).map(function(c){var v=d[c];return {c:c,clicks:v[0],cost:v[2],conv:v[3]};}).sort(function(a,b){return b.cost-a.cost;});
-  var html='<tr><th>Campaign — '+mLabel(last)+'</th><th class="num">Clicks</th><th class="num">Spend</th><th class="num">Conv</th><th class="num">CPA</th></tr>';
-  rows.forEach(function(r){html+='<tr><td>'+esc(r.c)+'</td><td class="num">'+fmt(r.clicks)+'</td><td class="num">'+money(r.cost)+'</td><td class="num">'+fmt(r.conv)+'</td><td class="num">'+(r.conv?money(r.cost/r.conv):'—')+'</td></tr>';});
-  $('gadsCamps').innerHTML=html||'<tr><td class="muted">No campaign data.</td></tr>';
+  var win=windowMonths(), prev=prevMonths(win);
+  var cur=gadsAgg(win), cmp=gadsAgg(prev);
+  // KPI row with comparison (#6)
+  var ctr=cur.tot[1]?cur.tot[0]/cur.tot[1]:0, pctr=cmp.tot[1]?cmp.tot[0]/cmp.tot[1]:0;
+  var cpa=cur.tot[3]?cur.tot[2]/cur.tot[3]:0, pcpa=cmp.tot[3]?cmp.tot[2]/cmp.tot[3]:0;
+  var k=[
+    {lab:'Spend',val:money(cur.tot[2]),chg:adsDelta(cur.tot[2],cmp.tot[2],false)},
+    {lab:'Clicks',val:fmt(cur.tot[0]),chg:adsDelta(cur.tot[0],cmp.tot[0],true)},
+    {lab:'Conversions',val:fmt(cur.tot[3]),chg:adsDelta(cur.tot[3],cmp.tot[3],true)},
+    {lab:'CTR',val:cur.tot[1]?pctStr(ctr):'—',chg:adsDelta(ctr,pctr,true)},
+    {lab:'CPA',val:cur.tot[3]?money(cpa):'—',chg:adsDelta(cpa,pcpa,false)}
+  ];
+  $('gadsKpis').innerHTML=k.map(function(x){return '<div class="kpi"><div class="lab">'+x.lab+'</div><div class="val">'+x.val+'</div>'+x.chg+'</div>';}).join('');
+  // trend: clicks + conversions as lines (#3)
+  var wm=win.filter(function(m){return (DATA.gads&&DATA.gads.data&&DATA.gads.data[m])||(DATA.gads&&DATA.gads.detail&&DATA.gads.detail[m]);});
+  if(!wm.length)wm=win;
+  var labels=wm.map(mLabel);
+  var clicks=wm.map(function(m){return gadsAgg([m]).tot[0];});
+  var conv=wm.map(function(m){return gadsAgg([m]).tot[3];});
+  mkChart('gadsTrend',{type:'line',data:{labels:labels,datasets:[
+    {label:'Clicks',data:clicks,borderColor:PALETTE[1],backgroundColor:'transparent',yAxisID:'y',tension:.3},
+    {label:'Conversions',data:conv,borderColor:PALETTE[0],backgroundColor:'rgba(245,132,89,.12)',fill:true,yAxisID:'y1',tension:.3}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,position:'left',ticks:{font:{size:10}},title:{display:true,text:'Clicks',font:{size:9}}},y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{font:{size:10}},title:{display:true,text:'Conversions',font:{size:9}}}}}});
+  // campaign > ad group drill table (#4)
+  var rows=Object.keys(cur.camps).map(function(c){return [c,cur.camps[c]];}).sort(function(a,b){return b[1].tot[2]-a[1].tot[2];});
+  var h='<thead><tr><th>Campaign / Ad group</th><th class="num">Clicks</th><th class="num">Impr</th><th class="num">Spend</th><th class="num">Conv</th><th class="num">CPA</th></tr></thead><tbody>';
+  if(!rows.length)h+='<tr><td class="muted" colspan="6">No campaign data in this window.</td></tr>';
+  rows.forEach(function(r,ci){
+    var c=r[0],C=r[1],t=C.tot;
+    var kids=Object.keys(C.groups||{}).filter(function(g){return g!=='(no ad group)'||Object.keys(C.groups).length>1;});
+    var hk=kids.length>0;
+    h+='<tr class="exp camp" data-ci="'+ci+'"><td class="tname"><span class="caret"'+(hk?'':' style="visibility:hidden"')+'>▸</span>'+esc(c)+'</td><td class="num">'+fmt(t[0])+'</td><td class="num">'+fmt(t[1])+'</td><td class="num">'+money(t[2])+'</td><td class="num">'+fmt(t[3])+'</td><td class="num">'+(t[3]?money(t[2]/t[3]):'—')+'</td></tr>';
+    kids.map(function(g){return [g,C.groups[g]];}).sort(function(a,b){return b[1][2]-a[1][2];}).forEach(function(gr){var g=gr[0],v=gr[1];
+      h+='<tr class="child c'+ci+'" style="display:none"><td class="tname" style="padding-left:28px;font-weight:400">'+esc(g)+'</td><td class="num">'+fmt(v[0])+'</td><td class="num">'+fmt(v[1])+'</td><td class="num">'+money(v[2])+'</td><td class="num">'+fmt(v[3])+'</td><td class="num">'+(v[3]?money(v[2]/v[3]):'—')+'</td></tr>';});
+  });
+  h+='</tbody>';
+  var ct=$('gadsCamps');ct.innerHTML=h;
+  if(!ct.__wired){ct.__wired=true;ct.addEventListener('click',function(e){var tr=e.target.closest('tr.camp');if(!tr)return;var ci=tr.getAttribute('data-ci');var open=tr.classList.toggle('open');var car=tr.querySelector('.caret');if(car&&car.style.visibility!=='hidden')car.textContent=open?'▾':'▸';Array.prototype.forEach.call(ct.querySelectorAll('tr.c'+ci),function(x){x.style.display=open?'':'none';});});}
+  // keyword table with pagination (#5)
+  renderGadsKw(cur);
+}
+function renderGadsKw(cur){
+  var per=10, kws=cur.kws, pages=Math.max(1,Math.ceil(kws.length/per));
+  if(gadsKwPage>=pages)gadsKwPage=0;
+  var slice=kws.slice(gadsKwPage*per,gadsKwPage*per+per);
+  var h='<thead><tr><th>Keyword</th><th class="num">Clicks</th><th class="num">Impr</th><th class="num">Spend</th><th class="num">Conv</th><th class="num">CPA</th></tr></thead><tbody>';
+  if(!slice.length)h+='<tr><td class="muted" colspan="6">'+(cur.haveDetail?'No keyword data in this window.':'Keyword reporting unavailable for this account.')+'</td></tr>';
+  slice.forEach(function(r){var k=r[0],v=r[1];h+='<tr><td>'+esc(k)+'</td><td class="num">'+fmt(v[0])+'</td><td class="num">'+fmt(v[1])+'</td><td class="num">'+money(v[2])+'</td><td class="num">'+fmt(v[3])+'</td><td class="num">'+(v[3]?money(v[2]/v[3]):'—')+'</td></tr>';});
+  h+='</tbody>';
+  $('gadsKw').innerHTML=h;
+  renderPager('gadsKwPager',gadsKwPage,pages,kws.length,function(p){gadsKwPage=p;renderGadsKw(cur);});
 }
 
 // ---------- Search Console ----------
+var gscQPage=0;
+function gscQueryAgg(win){
+  var a={};
+  win.forEach(function(ym){var Q=DATA.gsc&&DATA.gsc.queries&&DATA.gsc.queries[ym];if(!Q)return;
+    Object.keys(Q).forEach(function(q){var v=Q[q];var o=a[q]||(a[q]=[0,0,0,0]);o[0]+=+v[0]||0;o[1]+=+v[1]||0;o[2]+=(+v[2]||0)*(+v[1]||0);o[3]+=+v[1]||0;});});
+  return Object.keys(a).map(function(q){var o=a[q];return {k:q,c:o[0],i:o[1],p:o[3]?o[2]/o[3]:0};}).sort(function(x,y){return y.c-x.c;});
+}
 function renderGSC(){
   var win=windowMonths().filter(function(m){return DATA.gsc&&DATA.gsc.data&&DATA.gsc.data[m];});
+  if(!win.length)win=(DATA.gsc&&DATA.gsc.months||[]).slice(-6);
   var labels=win.map(mLabel);
-  var clicks=win.map(function(m){return DATA.gsc.data[m][0];});
-  var pos=win.map(function(m){return DATA.gsc.data[m][2];});
-  mkChart('gscTrend',{type:'bar',data:{labels:labels,datasets:[
-    {type:'bar',label:'Clicks',data:clicks,backgroundColor:PALETTE[2],yAxisID:'y',order:2},
-    {type:'line',label:'Avg position',data:pos,borderColor:PALETTE[4],yAxisID:'y1',tension:.3,order:1}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,position:'left',ticks:{font:{size:10}}},y1:{reverse:true,position:'right',grid:{display:false},ticks:{font:{size:10}}}}}});
-  var last=win[win.length-1];var q=(DATA.gsc&&DATA.gsc.queries&&DATA.gsc.queries[last])||{};
-  var rows=Object.keys(q).map(function(k){return {k:k,c:q[k][0],i:q[k][1],p:q[k][2]};}).sort(function(a,b){return b.c-a.c;}).slice(0,8);
-  var html='<tr><th>Top query — '+mLabel(last)+'</th><th class="num">Clicks</th><th class="num">Impr</th><th class="num">Pos</th></tr>';
-  rows.forEach(function(r){html+='<tr><td>'+esc(r.k)+'</td><td class="num">'+fmt(r.c)+'</td><td class="num">'+fmt(r.i)+'</td><td class="num">'+(r.p?r.p.toFixed(1):'—')+'</td></tr>';});
-  $('gscQueries').innerHTML=html||'<tr><td class="muted">No query data.</td></tr>';
+  var clicks=win.map(function(m){return (DATA.gsc.data[m]||[0,0,0])[0];});
+  var pos=win.map(function(m){return (DATA.gsc.data[m]||[0,0,0])[2];});
+  // line graph (#7): clicks + avg position, dual axis
+  mkChart('gscTrend',{type:'line',data:{labels:labels,datasets:[
+    {label:'Clicks',data:clicks,borderColor:PALETTE[1],backgroundColor:'rgba(64,91,164,.12)',fill:true,yAxisID:'y',tension:.3},
+    {label:'Avg position',data:pos,borderColor:PALETTE[4],backgroundColor:'transparent',yAxisID:'y1',tension:.3}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,position:'left',ticks:{font:{size:10}},title:{display:true,text:'Clicks',font:{size:9}}},y1:{reverse:true,position:'right',grid:{display:false},ticks:{font:{size:10}},title:{display:true,text:'Avg position',font:{size:9}}}}}});
+  renderGSCQueries(win);
+}
+function renderGSCQueries(win){
+  var per=10, rows=gscQueryAgg(win), pages=Math.max(1,Math.ceil(rows.length/per));
+  if(gscQPage>=pages)gscQPage=0;
+  var slice=rows.slice(gscQPage*per,gscQPage*per+per);
+  var html='<thead><tr><th>Top query</th><th class="num">Clicks</th><th class="num">Impr</th><th class="num">Pos</th></tr></thead><tbody>';
+  if(!slice.length)html+='<tr><td class="muted" colspan="4">No query data in this window.</td></tr>';
+  slice.forEach(function(r){html+='<tr><td>'+esc(r.k)+'</td><td class="num">'+fmt(r.c)+'</td><td class="num">'+fmt(r.i)+'</td><td class="num">'+(r.p?r.p.toFixed(1):'—')+'</td></tr>';});
+  html+='</tbody>';
+  $('gscQueries').innerHTML=html;
+  renderPager('gscQueriesPager',gscQPage,pages,rows.length,function(p){gscQPage=p;renderGSCQueries(win);});
 }
 
 // ---------- GHL ----------
 function ghlForms(){return (DATA.ghl&&DATA.ghl.forms)||[];}
 function activeForms(){return selectedForms||ghlForms().map(function(f){return f.name;});}
+// Form filter as a dropdown (#9): summary button + checkbox panel, scales to many forms.
+function formBtnLabel(){
+  var forms=ghlForms();
+  if(!selectedForms||selectedForms.length>=forms.length)return 'All forms ('+forms.length+')';
+  if(selectedForms.length===1)return selectedForms[0];
+  return selectedForms.length+' forms selected';
+}
 function renderFormFilter(){
   var box=$('formFilter');var forms=ghlForms();
   if(!forms.length){box.innerHTML='<span class="muted">No GoHighLevel form data.</span>';return;}
-  var sel=activeForms();
-  box.innerHTML=forms.map(function(f){var on=sel.indexOf(f.name)>=0;return '<label class="chip '+(on?'on':'')+'"><input type="checkbox" data-form="'+esc(f.name)+'" '+(on?'checked':'')+'>'+esc(f.name)+' <span class="muted">('+f.total+')</span></label>';}).join('');
-  Array.prototype.forEach.call(box.querySelectorAll('input'),function(cb){cb.addEventListener('change',onFormToggle);});
+  var sel=activeForms();var allOn=!selectedForms;
+  var opts='<label class="dd-opt all"><input type="checkbox" data-all="1" '+(allOn?'checked':'')+'>All forms</label>'+
+    forms.map(function(f){var on=sel.indexOf(f.name)>=0;return '<label class="dd-opt"><input type="checkbox" data-form="'+esc(f.name)+'" '+(on?'checked':'')+'>'+esc(f.name)+' <span class="muted">('+f.total+')</span></label>';}).join('');
+  box.innerHTML='<button class="dd-btn" id="formDdBtn"><span>'+esc(formBtnLabel())+'</span><span class="caret" style="color:var(--gold)">▾</span></button>'+
+    '<div class="dd-panel" id="formDdPanel" hidden>'+opts+'</div>';
+  var btn=$('formDdBtn'),panel=$('formDdPanel');
+  btn.addEventListener('click',function(e){e.stopPropagation();panel.hidden=!panel.hidden;});
+  panel.addEventListener('click',function(e){e.stopPropagation();});
+  Array.prototype.forEach.call(panel.querySelectorAll('input'),function(cb){cb.addEventListener('change',onFormToggle);});
 }
-function onFormToggle(){
-  var box=$('formFilter');var on=[];
-  Array.prototype.forEach.call(box.querySelectorAll('input'),function(cb){if(cb.checked)on.push(cb.getAttribute('data-form'));});
-  selectedForms=on.length?on:null; // none checked = treat as all
-  renderFormFilter();renderGHLForms();renderJourney();
+function onFormToggle(e){
+  var panel=$('formDdPanel');var cb=e&&e.target;
+  if(cb&&cb.getAttribute('data-all')){
+    selectedForms=cb.checked?null:[]; // all on, or none
+  }else{
+    var on=[];
+    Array.prototype.forEach.call(panel.querySelectorAll('input[data-form]'),function(c){if(c.checked)on.push(c.getAttribute('data-form'));});
+    selectedForms=(on.length&&on.length<ghlForms().length)?on:(on.length?null:[]);
+  }
+  renderFormFilter();$('formDdPanel').hidden=false; // keep open while choosing
+  renderGHLForms();renderJourney();renderPipes();
 }
+// close the form dropdown on outside click
+document.addEventListener('click',function(){var p=$('formDdPanel');if(p)p.hidden=true;});
 function renderGHLForms(){
   var byMonth=(DATA.ghl&&DATA.ghl.byMonth)||{};
   var win=windowMonths().filter(function(m){return byMonth[m];});
@@ -412,15 +558,38 @@ function renderJourney(){
   if(em&&em.totals){$('emailBlock').classList.remove('hide');var t=em.totals;$('emailBody').textContent='Sent '+fmt(t.sent)+', delivered '+fmt(t.delivered)+', opened '+fmt(t.opened)+' ('+Math.round((em.rates.open||0)*100)+'%), clicked '+fmt(t.clicked)+' ('+Math.round((em.rates.click||0)*100)+'%). Source: '+em.source+'.';}
   else{$('emailBlock').classList.add('hide');}
 }
+// Forms whose opps to include in the pipeline funnel. null (all) => every funnelByForm bucket (incl. '(none)').
+function pipeFormKeys(){
+  var fbf=(DATA.ghl&&DATA.ghl.funnelByForm)||{};
+  if(!selectedForms)return Object.keys(fbf);
+  return selectedForms.slice();
+}
 function renderPipes(){
-  var pipes=(DATA.ghl&&DATA.ghl.pipelines)||[];
-  if(!pipes.length){$('pipes').innerHTML='<span class="muted">No pipeline data.</span>';return;}
-  var html=pipes.map(function(p){
-    var max=Math.max.apply(null,p.stages.map(function(s){return s.n;}).concat([1]));
-    var rows=p.stages.map(function(s){var w=Math.round(s.n/max*120);return '<div class="stage"><span class="nm">'+esc(s.name)+'</span><span class="bar" style="width:'+w+'px"></span><span class="ct">'+s.n+(s.value?' · '+money(s.value):'')+'</span></div>';}).join('');
-    return '<div class="pipe"><h4>'+esc(p.name)+'</h4>'+rows+'</div>';
-  }).join('');
-  $('pipes').innerHTML=html;
+  var defs=(DATA.ghl&&DATA.ghl.pipelineDefs)||[];
+  var fbf=(DATA.ghl&&DATA.ghl.funnelByForm)||{};
+  // Fallback to the precomputed global funnel if the form-aware data isn't present (old snapshot).
+  if(!defs.length||!Object.keys(fbf).length){
+    var pipes=(DATA.ghl&&DATA.ghl.pipelines)||[];
+    if(!pipes.length){$('pipes').innerHTML='<span class="muted">No pipeline data.</span>';return;}
+    $('pipes').innerHTML=pipes.map(pipeCard).join('');
+    return;
+  }
+  var pipeSel=$('f_pipe')?$('f_pipe').value:'all';
+  var forms=pipeFormKeys();
+  var cards=defs.filter(function(p){return pipeSel==='all'||p.id===pipeSel;}).map(function(p){
+    var agg={}; // sid -> {n,value}
+    forms.forEach(function(fm){var ff=fbf[fm];if(!ff)return;var fp=ff[p.id];if(!fp)return;
+      Object.keys(fp).forEach(function(sid){var a=agg[sid]||(agg[sid]={n:0,value:0});a.n+=fp[sid].n||0;a.value+=fp[sid].value||0;});});
+    var stages=p.stages.map(function(s){var a=agg[s.id]||{n:0,value:0};return {name:s.name,n:a.n,value:a.value};});
+    return pipeCard({name:p.name,stages:stages});
+  });
+  var total=cards.length;
+  $('pipes').innerHTML=total?cards.join(''):'<span class="muted">No pipeline data for this selection.</span>';
+}
+function pipeCard(p){
+  var max=Math.max.apply(null,p.stages.map(function(s){return s.n;}).concat([1]));
+  var rows=p.stages.map(function(s){var w=Math.round(s.n/max*120);return '<div class="stage"><span class="nm">'+esc(s.name)+'</span><span class="bar" style="width:'+w+'px"></span><span class="ct">'+s.n+(s.value?' · '+money(s.value):'')+'</span></div>';}).join('');
+  return '<div class="pipe"><h4>'+esc(p.name)+'</h4>'+rows+'</div>';
 }
 
 // ---------- KPIs ----------
@@ -504,6 +673,8 @@ function populateFilters(){
   var rg=$('f_reg');if(rg)rg.innerHTML='<option value="All">All Regions</option>'+((DATA.regNames||[]).filter(function(n){return n!=='Other';})).map(function(c){return '<option>'+esc(c)+'</option>';}).join('');
   var ct=$('f_city');if(ct)ct.innerHTML='<option value="All">All Cities</option>'+((DATA.cityNames||[]).filter(function(n){return n!=='Other';})).map(function(c){return '<option>'+esc(c)+'</option>';}).join('');
   var ke=$('f_ke');if(ke)ke.innerHTML='<option value="all">All Key Events</option>'+keNames().map(function(n,i){return '<option value="'+i+'">'+esc(n)+'</option>';}).join('');
+  var pp=$('f_pipe'),defs=(DATA.ghl&&DATA.ghl.pipelineDefs)||(DATA.ghl&&DATA.ghl.pipelines)||[];
+  if(pp)pp.innerHTML='<option value="all">All Pipelines</option>'+defs.map(function(p){return '<option value="'+esc(p.id||p.name)+'">'+esc(p.name)+'</option>';}).join('');
 }
 function syncCustomRange(){
   var tf=$('f_tf').value,cw=$('customWrap');if(!cw)return;
@@ -516,7 +687,9 @@ function render(){
   populateFilters();syncCustomRange();
   buildSnap();
   $('winLabel').textContent=window.__SNAP.split('\n')[0].replace('Sicora Consulting — ','');
-  renderKPIs();renderGA4();renderGads();renderGSC();renderFormFilter();renderGHLForms();renderJourney();renderPipes();
+  [renderKPIs,renderGA4,renderGads,renderGSC,renderFormFilter,renderGHLForms,renderJourney,renderPipes].forEach(function(fn){
+    try{fn();}catch(e){try{console.warn(fn.name+' failed:',e&&e.message);}catch(_){}}
+  });
   $('genAt').textContent=DATA.generatedAt?('Updated '+new Date(DATA.generatedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})):'';
   $('buildNo').textContent='Build '+(DATA.build||'?');
   $('liveLabel').textContent=(DATA.months&&DATA.months.length)?'Live data':'Sample data';
@@ -524,6 +697,7 @@ function render(){
   if(window.__ANSIG!==window.__ANSIG_last){window.__ANSIG_last=window.__ANSIG;if(window.__anInit)generateAnalysis(false);}
 }
 ['f_tf','f_cmp','f_metric','f_ch','f_reg','f_city','f_ke','f_from','f_to'].forEach(function(id){var el=$(id);if(el)el.addEventListener('change',render);});
+(function(){var pp=$('f_pipe');if(pp)pp.addEventListener('change',function(){try{renderPipes();}catch(e){}});})();
 $('anBtn').addEventListener('click',function(){if(confirm('Regenerate all analysis from the live data? This replaces your edits for this view.'))generateAnalysis(true);});
 $('askGo').addEventListener('click',ask);
 $('askQ').addEventListener('keydown',function(e){if(e.key==='Enter')ask();});
