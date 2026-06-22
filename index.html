@@ -253,7 +253,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     <div class="card mt14"><h3>Clicks &amp; conversions <span class="h3sub">— trailing months</span></h3><div class="chartwrap" style="height:250px"><canvas id="gadsTrend"></canvas></div></div>
     <div class="card mt14"><h3>Conversions by type <span class="h3sub">— current window</span></h3><div class="tbl-wrap"><table id="gadsConvTable"></table></div></div>
     <div class="card mt14"><h3>Campaign &#9656; ad group <span class="h3sub">— click a row to expand</span></h3><div class="tbl-wrap"><table id="gadsCamps"></table></div></div>
-    <div class="card mt14"><h3>Top keywords</h3><div class="tbl-wrap"><table id="gadsKw"></table></div><div class="pager" id="gadsKwPager"></div></div>
+    <div class="card mt14"><h3>Top keywords <span class="h3sub">— Google Ads performance</span></h3><div class="tbl-wrap"><table id="gadsKw"></table></div><div class="pager" id="gadsKwPager"></div></div>
+    <div class="card mt14" id="gadsKwRevCard" style="display:none"><h3>Keywords by won revenue <span class="h3sub">— from GoHighLevel (leads whose paid keyword was captured)</span></h3><div class="tbl-wrap"><table id="gadsKwRev"></table></div><div class="muted" id="gadsKwRevNote" style="font-size:11px;margin-top:8px"></div></div>
     <div id="an_gads" class="anote"><div class="anote-h">Google Ads Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
 
@@ -556,6 +557,17 @@ function renderGads(){
   // keyword table with pagination (#5)
   renderGadsConv(win);
   renderGadsKw(cur);
+  renderGadsKwRev();
+}
+function renderGadsKwRev(){
+  var fs=DATA.ghl&&DATA.ghl.formSources, rows=((fs&&fs.keywords)||[]).filter(function(r){return r.kw&&r.revenue>0;});
+  var card=$('gadsKwRevCard');if(!card)return;
+  if(!rows.length){card.style.display='none';return;}
+  card.style.display='';
+  var h='<thead><tr><th>Keyword</th><th class="num">Leads</th><th class="num">Won revenue</th></tr></thead><tbody>';
+  rows.slice(0,15).forEach(function(r){h+='<tr><td>'+esc(r.kw)+'</td><td class="num">'+fmt(r.n)+'</td><td class="num">'+money(r.revenue)+'</td></tr>';});
+  h+='</tbody>';if($('gadsKwRev'))$('gadsKwRev').innerHTML=h;
+  if($('gadsKwRevNote'))$('gadsKwRevNote').textContent='Based on '+fmt(fs.withKeyword||0)+' leads with a captured paid keyword'+(fs.contacts?(' (of '+fmt(fs.contacts)+' recent contacts)'):'')+'. Revenue = won opportunity value for those leads.';
 }
 function renderGadsConv(win){
   var conv=DATA.gads&&DATA.gads.conv&&DATA.gads.conv.byMonth, agg={};

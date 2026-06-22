@@ -1351,11 +1351,50 @@
         "Bing": 29,
         "LinkedIn": 18,
         "Email": 4
-      }
+      },
+      "withKeyword": 17,
+      "withGclid": 22,
+      "sampleKeys": [
+        "url",
+        "campaign",
+        "utmSource",
+        "utmMedium",
+        "utmTerm",
+        "gclid",
+        "sessionSource",
+        "referrer"
+      ],
+      "keywords": [
+        {
+          "kw": "insights discovery",
+          "n": 6,
+          "revenue": 18000
+        },
+        {
+          "kw": "4 colors of insights",
+          "n": 4,
+          "revenue": 12500
+        },
+        {
+          "kw": "leadership training",
+          "n": 3,
+          "revenue": 9000
+        },
+        {
+          "kw": "color personality test",
+          "n": 2,
+          "revenue": 4200
+        },
+        {
+          "kw": "team effectiveness assessment",
+          "n": 1,
+          "revenue": 2500
+        }
+      ]
     }
   },
   "generatedAt": "2026-06-17T00:00:00.000Z",
-  "build": 13,
+  "build": 14,
   "ahrefs": {
     "target": "sicoraconsulting.com",
     "date": "2026-06-18",

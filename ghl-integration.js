@@ -105,12 +105,25 @@ function attrOf(c) {
     || (Array.isArray(c.attributions) && c.attributions[0])
     || c.lastAttributionSource || c.last_attribution_source || null;
 }
-export async function buildContactSources({ cap = 4000, budgetMs = 25000 } = {}) {
+// Search keyword passed in on a paid click (utm_term / gclid keyword). GHL names vary, so try several.
+function keywordOf(a) {
+  if (!a || typeof a !== 'object') return '';
+  const k = a.utmTerm || a.utm_term || a.utmKeyword || a.utm_keyword || a.keyword || a.term || a.adKeyword || '';
+  return String(k || '').trim();
+}
+function gclidOf(a) {
+  if (!a || typeof a !== 'object') return '';
+  return String(a.gclid || a.gclId || a.gclid || a.gbraid || a.wbraid || '').trim();
+}
+const cid = c => c.id || c.contactId || c.contact_id || c._id || null;
+
+// valueByContact: { contactId: wonRevenue } — lets us aggregate keyword/source -> won revenue.
+export async function buildContactSources({ cap = 4000, budgetMs = 25000, valueByContact = {} } = {}) {
   if (!GHL_KEY) return null;
   const started = Date.now();
-  const byForm = {}, overall = {};
+  const byForm = {}, overall = {}, srcRev = {}, kw = {};
   let url = `${PUBLIC_BASE}/contacts/?locationId=${encodeURIComponent(GHL_LOCATION)}&limit=100`;
-  let fetched = 0, withAttr = 0, pages = 0;
+  let fetched = 0, withAttr = 0, withKeyword = 0, withGclid = 0, sampleKeys = null;
   try {
     while (url && fetched < cap && (Date.now() - started) < budgetMs) {
       const j = await getJSON(url);
@@ -120,12 +133,17 @@ export async function buildContactSources({ cap = 4000, budgetMs = 25000 } = {})
         fetched++;
         const form = c.source || '(none)';
         const a = attrOf(c);
+        const rev = +valueByContact[cid(c)] || 0;
         if (a && (a.utmSource || a.sessionSource || a.medium || a.referrer)) withAttr++;
+        if (a && !sampleKeys && Object.keys(a).length) sampleKeys = Object.keys(a);
         const src = sourceLabel(a);
         (byForm[form] || (byForm[form] = {}))[src] = (byForm[form][src] || 0) + 1;
         overall[src] = (overall[src] || 0) + 1;
+        const sr = srcRev[src] || (srcRev[src] = { n: 0, revenue: 0 }); sr.n++; sr.revenue += rev;
+        const term = keywordOf(a);
+        if (gclidOf(a)) withGclid++;
+        if (term) { withKeyword++; const o = kw[term] || (kw[term] = { n: 0, revenue: 0 }); o.n++; o.revenue += rev; }
       }
-      pages++;
       const meta = j.meta || j.pagination || {};
       const next = meta.nextPageUrl || meta.next_page_url || null;
       if (next) { url = next; }
@@ -138,7 +156,12 @@ export async function buildContactSources({ cap = 4000, budgetMs = 25000 } = {})
   } catch (e) {
     if (!Object.keys(overall).length) return null; // nothing usable
   }
-  return { byForm, overall, contacts: fetched, withAttribution: withAttr, source: 'ghl-api-attribution' };
+  const keywords = Object.entries(kw).map(([term, o]) => ({ kw: term, n: o.n, revenue: o.revenue }))
+    .sort((a, b) => b.revenue - a.revenue || b.n - a.n).slice(0, 50);
+  const sources = Object.entries(srcRev).map(([s, o]) => ({ source: s, n: o.n, revenue: o.revenue }))
+    .sort((a, b) => b.revenue - a.revenue || b.n - a.n);
+  return { byForm, overall, sources, keywords, contacts: fetched, withAttribution: withAttr,
+    withKeyword, withGclid, sampleKeys, source: 'ghl-api-attribution' };
 }
 
 export { normalizeAggregate, sourceLabel };
