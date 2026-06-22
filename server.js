@@ -37,7 +37,7 @@ const USERS = {
 };
 const AUTH_ENABLED = true; // always gate this client report
 const AUTH_SALT = process.env.AUTH_SALT || 'sicora-dash-v1';
-const BUILD = 14; // bump every deploy; surfaced in the footer and /api/health
+const BUILD = 15; // bump every deploy; surfaced in the footer and /api/health
 
 const LOGIN_PAGE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sicora Consulting — Performance Dashboard</title>
@@ -518,6 +518,7 @@ app.get('/api/health', (req, res) => {
       ghlWithGclid: d && d.ghl && d.ghl.formSources ? (d.ghl.formSources.withGclid || 0) : 0,
       ghlKeywordRevenueRows: d && d.ghl && d.ghl.formSources && Array.isArray(d.ghl.formSources.keywords) ? d.ghl.formSources.keywords.length : 0,
       ghlAttrSampleKeys: d && d.ghl && d.ghl.formSources ? (d.ghl.formSources.sampleKeys || null) : null,
+      ghlAttrKwSampleKeys: d && d.ghl && d.ghl.formSources ? (d.ghl.formSources.sampleKwKeys || null) : null,
       ahrefsKeySet: !!process.env.AHREFS_API_KEY,
       ahrefsDR: d && d.ahrefs ? d.ahrefs.dr : null,
       ahrefsKeywords: d && d.ahrefs && Array.isArray(d.ahrefs.keywords) ? d.ahrefs.keywords.length : 0,

@@ -89,7 +89,7 @@ export async function buildEmail(_ctx = {}) {
 // (contact.source == form/source label) so the dashboard can show a real, form-filterable source mix.
 function sourceLabel(a) {
   if (!a || typeof a !== 'object') return 'Direct';
-  let s = a.utmSource || a.utm_source || a.sessionSource || a.medium || a.utmMedium || a.referrer || '';
+  let s = a.utmSource || a.utm_source || a.utmSessionSource || a.utm_session_source || a.sessionSource || a.medium || a.utmMedium || a.referrer || '';
   s = String(s || '').trim();
   if (!s || /^(null|undefined|direct|\(direct\)|none)$/i.test(s)) return 'Direct';
   s = s.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split(/[\/?#]/)[0]; // referrer URL -> domain
@@ -123,7 +123,7 @@ export async function buildContactSources({ cap = 4000, budgetMs = 25000, valueB
   const started = Date.now();
   const byForm = {}, overall = {}, srcRev = {}, kw = {};
   let url = `${PUBLIC_BASE}/contacts/?locationId=${encodeURIComponent(GHL_LOCATION)}&limit=100`;
-  let fetched = 0, withAttr = 0, withKeyword = 0, withGclid = 0, sampleKeys = null;
+  let fetched = 0, withAttr = 0, withKeyword = 0, withGclid = 0, sampleKeys = null, sampleKwKeys = null;
   try {
     while (url && fetched < cap && (Date.now() - started) < budgetMs) {
       const j = await getJSON(url);
@@ -140,8 +140,9 @@ export async function buildContactSources({ cap = 4000, budgetMs = 25000, valueB
         (byForm[form] || (byForm[form] = {}))[src] = (byForm[form][src] || 0) + 1;
         overall[src] = (overall[src] || 0) + 1;
         const sr = srcRev[src] || (srcRev[src] = { n: 0, revenue: 0 }); sr.n++; sr.revenue += rev;
-        const term = keywordOf(a);
-        if (gclidOf(a)) withGclid++;
+        const term = keywordOf(a), gcl = gclidOf(a);
+        if (gcl) withGclid++;
+        if (a && !sampleKwKeys && (term || gcl)) sampleKwKeys = Object.keys(a); // field names on a PAID contact
         if (term) { withKeyword++; const o = kw[term] || (kw[term] = { n: 0, revenue: 0 }); o.n++; o.revenue += rev; }
       }
       const meta = j.meta || j.pagination || {};
@@ -161,7 +162,7 @@ export async function buildContactSources({ cap = 4000, budgetMs = 25000, valueB
   const sources = Object.entries(srcRev).map(([s, o]) => ({ source: s, n: o.n, revenue: o.revenue }))
     .sort((a, b) => b.revenue - a.revenue || b.n - a.n);
   return { byForm, overall, sources, keywords, contacts: fetched, withAttribution: withAttr,
-    withKeyword, withGclid, sampleKeys, source: 'ghl-api-attribution' };
+    withKeyword, withGclid, sampleKeys, sampleKwKeys, source: 'ghl-api-attribution' };
 }
 
 export { normalizeAggregate, sourceLabel };
