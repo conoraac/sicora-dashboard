@@ -287,9 +287,22 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     <div id="an_ahrefs" class="anote"><div class="anote-h">Ahrefs Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
   </section>
 
-  <!-- 5 · GoHighLevel -->
+  <!-- 5 · AI Visibility -->
   <section class="block">
-    <div class="sechead"><span class="secnum">5</span><h2>GoHighLevel &middot; CRM</h2><span class="ss">Form submissions, journey &amp; pipelines</span></div>
+    <div class="sechead"><span class="secnum">5</span><h2>AI Visibility</h2><span class="ss">LLM search &middot; citations</span></div>
+    <div class="help"><span class="hl">What this shows</span>How often AI assistants — <b>ChatGPT, Google AI Overviews, Gemini, Perplexity, Copilot, Grok</b> — cite sicoraconsulting.com in the answers they generate. As people increasingly ask AI instead of Googling, this is your visibility in those answers. More citations = more chances to be recommended by AI.</div>
+    <div class="kpis sub" id="aiKpis"></div>
+    <div class="grid g2 mt14">
+      <div class="card"><h3>Citations by AI platform</h3><div class="chartwrap" style="height:260px"><canvas id="aiBar"></canvas></div></div>
+      <div class="card"><h3>Platform detail <span class="h3sub">— citations &amp; distinct cited pages</span></h3><div class="tbl-wrap"><table id="aiTable"></table></div></div>
+    </div>
+    <div id="aiFoot" class="muted" style="font-size:10.5px;margin-top:10px;line-height:1.6"></div>
+    <div id="an_aivis" class="anote"><div class="anote-h">AI Visibility Analyst Note</div><div class="anote-b" data-empty="1">—</div></div>
+  </section>
+
+  <!-- 6 · GoHighLevel -->
+  <section class="block">
+    <div class="sechead"><span class="secnum">6</span><h2>GoHighLevel &middot; CRM</h2><span class="ss">Form submissions, journey &amp; pipelines</span></div>
     <div class="help"><span class="hl">What this shows</span>Your leads and clients. Which <b>forms</b> people submit, the <b>marketing source</b> that brought them, what happens next (did they pay or become a member), and where deals sit across your three sales <b>pipelines</b>. Use the <b>form dropdown</b> below to focus on one form — the journey and pipeline update to match.</div>
     <div class="forms-filter"><div class="dropdown" id="formFilter"></div></div>
     <div class="grid g2 mt14">
@@ -686,6 +699,31 @@ function renderAhPages(){
   renderPager('ahPagesPager',ahPagesPage,pages,pg.length,function(p){ahPagesPage=p;renderAhPages();});
 }
 
+// ---------- AI Visibility (LLM citations, Ahrefs) ----------
+function renderAiVis(){
+  var src=DATA.aivis;
+  if(!src||!Array.isArray(src.platforms)||!src.platforms.length){
+    if($('aiKpis'))$('aiKpis').innerHTML='<div class="muted" style="padding:8px 0">AI search visibility updates daily and will appear here shortly.</div>';
+    if($('aiTable'))$('aiTable').innerHTML='';if($('aiFoot'))$('aiFoot').innerHTML='';return;
+  }
+  var P=src.platforms, total=src.total!=null?src.total:P.reduce(function(s,p){return s+(p.citations||0);},0);
+  var citing=P.filter(function(p){return p.citations>0;});
+  var top=citing.slice().sort(function(a,b){return b.citations-a.citations;})[0];
+  var pages=P.reduce(function(s,p){return s+(p.pages||0);},0);
+  var kpis=[
+    ['Total Citations',fmt(total),'across all AI platforms'],
+    ['Platforms Citing',citing.length+' of '+P.length,'where you appear'],
+    ['Top Platform',top?top.label:'—',top?fmt(top.citations)+' citations':'no citations yet'],
+    ['Cited Pages',fmt(pages),'distinct URLs cited']
+  ];
+  if($('aiKpis'))$('aiKpis').innerHTML=kpis.map(function(k){return '<div class="kpi"><div class="lab">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="chg muted">'+esc(k[2])+'</div></div>';}).join('');
+  var sorted=P.slice().sort(function(a,b){return b.citations-a.citations;});
+  mkChart('aiBar',{type:'bar',data:{labels:sorted.map(function(p){return p.label;}),datasets:[{data:sorted.map(function(p){return p.citations;}),backgroundColor:PALETTE[1],borderRadius:3,barThickness:15}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#f1f3f8'},ticks:{precision:0,font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  if($('aiTable'))$('aiTable').innerHTML='<thead><tr><th>AI platform</th><th class="num">Citations</th><th class="num">Cited pages</th></tr></thead><tbody>'+sorted.map(function(p){return '<tr><td>'+esc(p.label)+'</td><td class="num">'+fmt(p.citations)+'</td><td class="num">'+fmt(p.pages)+'</td></tr>';}).join('')+'</tbody>';
+  var dom=(DATA.ahrefs&&DATA.ahrefs.target)||'sicoraconsulting.com';
+  if($('aiFoot'))$('aiFoot').innerHTML='Counts how often each AI assistant cites '+esc(dom)+' in its generated answers (Ahrefs, as of '+esc(src.date||'')+'). Claude is not measurable here — it does not publish a citation index. Share of voice vs competitors needs the Ahrefs Brand Radar add-on.';
+}
+
 // ---------- GHL ----------
 function ghlForms(){return (DATA.ghl&&DATA.ghl.forms)||[];}
 function activeForms(){return selectedForms||ghlForms().map(function(f){return f.name;});}
@@ -846,8 +884,8 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
 
 // ---------- analyst notes (per reporting window) ----------
 var LS='sicora_an_';
-var ALLK=['summary','ga4','gads','gsc','ahrefs','ghl'];
-var AN_IDS={ga4:'an_ga4',gads:'an_gads',gsc:'an_gsc',ahrefs:'an_ahrefs',ghl:'an_ghl'};
+var ALLK=['summary','ga4','gads','gsc','ahrefs','aivis','ghl'];
+var AN_IDS={ga4:'an_ga4',gads:'an_gads',gsc:'an_gsc',ahrefs:'an_ahrefs',aivis:'an_aivis',ghl:'an_ghl'};
 var anBusy=false;
 function bodyEl(k){return k==='summary'?$('execSum'):(function(){var s=$(AN_IDS[k]);return s?s.querySelector('.anote-b'):null;})();}
 function curSig(){return window.__ANSIG||'';}
@@ -867,6 +905,7 @@ function buildSnap(){
   var gcl=win.reduce(function(a,m){return a+((DATA.gsc&&DATA.gsc.data&&DATA.gsc.data[m]&&DATA.gsc.data[m][0])||0);},0);
   s+='Search Console: clicks '+fmt(gcl)+'.\n';
   var ah=DATA.ahrefs;if(ah){var ab=ah.backlinks||{},am=ah.metrics||{};s+='Ahrefs: DR '+(ah.dr!=null?ah.dr:'n/a')+', '+fmt(ab.refdomains||0)+' referring domains, '+fmt(am.orgKeywords||0)+' organic keywords ('+fmt(am.orgKeywords13||0)+' top-3), ~'+fmt(am.orgTraffic||0)+' organic visits/mo. Top pages: '+((ah.pages||[]).slice(0,3).map(function(p){return (p.topKw||p.url||'')+' '+fmt(p.traffic);}).join(', '))+'.\n';}
+  var av=DATA.aivis;if(av&&Array.isArray(av.platforms)){var avc=av.platforms.filter(function(p){return p.citations>0;});s+='AI visibility (Ahrefs citations): '+(av.total||0)+' total across AI assistants'+(avc.length?(' — '+avc.map(function(p){return p.label+' '+p.citations;}).join(', ')):' — none yet')+'.\n';}
   var sm=(DATA.ghl&&DATA.ghl.summary)||{};var forms=(DATA.ghl&&DATA.ghl.forms)||[];
   s+='GoHighLevel: '+fmt(sm.formFills||0)+' form fills across '+forms.length+' forms ('+forms.slice(0,4).map(function(f){return f.name+' '+f.total;}).join(', ')+'). Open pipeline '+money(sm.openValue||0)+', won '+money(sm.wonValue||0)+' ('+(sm.wonCount||0)+' deals), '+(sm.lostCount||0)+' lost. Sources: '+Object.keys(DATA.ghl&&DATA.ghl.sources||{}).slice(0,5).map(function(k){return prettySrc(k)+' '+DATA.ghl.sources[k];}).join(', ')+'.';
   window.__SNAP=s;
@@ -915,7 +954,7 @@ function render(){
   populateFilters();syncCustomRange();
   buildSnap();
   $('winLabel').textContent=window.__SNAP.split('\n')[0].replace('Sicora Consulting — ','');
-  [renderGA4,renderGads,renderGSC,renderAhrefs,renderFormFilter,renderGHLForms,renderJourney,renderPipes].forEach(function(fn){
+  [renderGA4,renderGads,renderGSC,renderAhrefs,renderAiVis,renderFormFilter,renderGHLForms,renderJourney,renderPipes].forEach(function(fn){
     try{fn();}catch(e){try{console.warn(fn.name+' failed:',e&&e.message);}catch(_){}}
   });
   $('genAt').textContent=DATA.generatedAt?('Updated '+new Date(DATA.generatedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})):'';

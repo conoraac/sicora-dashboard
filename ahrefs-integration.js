@@ -40,6 +40,35 @@ async function ahrefs(endpoint, params, timeoutMs = 25000) {
   } finally { clearTimeout(t); }
 }
 
+// AI search visibility: how often each AI assistant cites the domain (Ahrefs ai-responses-count).
+// ~105 units/call and changes slowly, so cache per UTC day. Ported from the Psynth dashboard.
+const AI_PLATFORMS = [
+  ['ChatGPT', 'chatgpt'], ['Google AI Overviews', 'google_ai_overviews'], ['Google AI Mode', 'google_ai_mode'],
+  ['Gemini', 'gemini'], ['Perplexity', 'perplexity'], ['Copilot', 'copilot'], ['Grok', 'grok'],
+];
+let _aiCache = { date: '', data: null };
+export async function buildAiVisibility() {
+  if (!AHREFS_KEY) return null;
+  const date = today();
+  if (_aiCache.date === date && _aiCache.data) return _aiCache.data;   // one paid call per day
+  try {
+    const r = await ahrefs('ai-responses-count', {
+      target: AHREFS_TARGET, mode: 'subdomains', date,
+      select: AI_PLATFORMS.map(p => p[1]).join(','),
+    });
+    const c = (r && r.ai_responses_count) ? r.ai_responses_count : null;
+    if (!c) return _aiCache.data || null;
+    const platforms = AI_PLATFORMS.map(([label, key]) => ({
+      label, key,
+      citations: c[key] ? +c[key].citations || 0 : 0,
+      pages: c[key] ? +c[key].pages || 0 : 0,
+    }));
+    const out = { date, platforms, total: platforms.reduce((s, p) => s + p.citations, 0) };
+    _aiCache = { date, data: out };
+    return out;
+  } catch (e) { console.error('AI visibility:', e.message); return _aiCache.data || null; }
+}
+
 export async function buildAhrefs() {
   if (!AHREFS_KEY) return null;                              // no key → frontend uses baked snapshot
   if (_cache.data && Date.now() - _cache.t < TTL_MS) return _cache.data;

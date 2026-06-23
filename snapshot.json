@@ -1394,7 +1394,7 @@
     }
   },
   "generatedAt": "2026-06-17T00:00:00.000Z",
-  "build": 14,
+  "build": 16,
   "ahrefs": {
     "target": "sicoraconsulting.com",
     "date": "2026-06-18",
@@ -1671,5 +1671,53 @@
         "topKw": "lumina learning"
       }
     ]
+  },
+  "aivis": {
+    "date": "2026-06-23",
+    "platforms": [
+      {
+        "label": "ChatGPT",
+        "key": "chatgpt",
+        "citations": 0,
+        "pages": 0
+      },
+      {
+        "label": "Google AI Overviews",
+        "key": "google_ai_overviews",
+        "citations": 2,
+        "pages": 2
+      },
+      {
+        "label": "Google AI Mode",
+        "key": "google_ai_mode",
+        "citations": 1,
+        "pages": 1
+      },
+      {
+        "label": "Gemini",
+        "key": "gemini",
+        "citations": 0,
+        "pages": 0
+      },
+      {
+        "label": "Perplexity",
+        "key": "perplexity",
+        "citations": 0,
+        "pages": 0
+      },
+      {
+        "label": "Copilot",
+        "key": "copilot",
+        "citations": 0,
+        "pages": 0
+      },
+      {
+        "label": "Grok",
+        "key": "grok",
+        "citations": 0,
+        "pages": 0
+      }
+    ],
+    "total": 3
   }
 }
